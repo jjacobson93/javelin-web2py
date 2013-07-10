@@ -1,0 +1,20 @@
+@font-face {
+	font-family: big-noodle;
+	font-style: oblique;
+	src: url("../fonts/big_noodle_titling_oblique.ttf");
+}
+
+a.brand {
+	font-family: big-noodle;
+	font-style: oblique;
+	font-size: 40px !important;
+	line-height: 20px;
+}
+
+li i {
+	padding-right: 4px;
+}
+
+table {
+	margin-top: 0;
+}

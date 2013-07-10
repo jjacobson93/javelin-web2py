@@ -1,0 +1,9 @@
+.DS_Store
+._*
+*.pyc
+*.pyo
+*.egg-info
+logs/
+schema.sql
+applications/*/errors
+applications/*/sessions

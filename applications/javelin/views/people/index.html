@@ -1,0 +1,326 @@
+{{extend 'main.html'}}
+
+{{block center}}
+<style type="text/css">
+table #people-table {
+	font-size: 13px !important;
+}
+
+#people-table tbody > tr:nth-child(odd):not(:hover) > td {
+	background-color: rgb(240, 250, 255);
+}
+
+.btn i {
+	padding-right: 0px;
+}
+
+form .row {
+	margin-left: 0px;
+}
+
+@media (max-width: 767px) {
+	#person-thumb {
+		margin: auto !important;
+	}
+}
+
+.select2-offscreen {
+	display: none !important;
+}
+</style>
+
+<!-- NAV -->
+
+<div class="row-fluid" id="nav"> <!-- padding-left: 15px; margin-bottom: -10px; margin-top: 10px -->
+	<a class="btn btn-primary disabled" id="prev-button" href="#">
+		<i class="icon-arrow-left"></i> Back
+	</a>
+	<a class="btn btn-success pull-right" id="add-button">
+		<i class="icon-plus"></i> Add
+	</a>
+	<a href="#" class="btn btn-primary pull-right disabled" id="save-button" data-loading-text="Saving..." style="margin-right: 10px">
+		<i class='icon-save'></i> Save
+	</a>
+</div>
+<hr>
+
+<!-- ALERTS -->
+
+<div class="alert alert-info" id="noresults" style="display: none;">
+	<strong>No results found</strong>
+</div>
+<div class="alert alert-success" id="success-alert" style="display: none;">
+	<strong>Saved!</strong> The record has been saved.
+</div>
+<div class="alert alert-error" id="error-alert" style="display: none;">
+	<strong>Error!</strong> The record could not be saved. There was an error with the database.
+</div>
+
+<!-- MAIN CONTAINER -->
+
+<div class="carousel slide" id="main-container" data-interval="false">
+	<div class="carousel-inner" style="overflow:visible">
+		<div class="item active" id="people-div">
+			<div class="fuelux" style="height:100%;width:100%;margin-bottom:20px;">
+				<table id="people-table" class="table table-bordered table-striped table-hover datagrid">
+					<thead>
+						<tr>
+							<th>
+								<div class="datagrid-header-right">
+									<div class="input-append search datagrid-search" data-delay="300">
+										<input type="text" id="search-field" class="input-medium" placeholder="Search">
+										<button class="btn">
+											<i class="icon-search"></i>
+										</button>
+									</div>
+								</div>
+							</th>
+						</tr>
+					</thead>
+
+					<tfoot>
+					<tr>
+						<th>
+							<div class="datagrid-footer-left" style="display:none;">
+								<div class="grid-controls">
+									<span>
+										<span class="grid-start"></span> -
+										<span class="grid-end"></span> of
+										<span class="grid-count"></span>
+									</span>
+									<select class="grid-pagesize">
+										<option value="5">5</option>
+										<option value="10" selected="selected">10</option>
+										<option value="20">20</option>
+										<option value="50">50</option>
+										<option value="100">100</option>
+									</select>
+									<span>Per Page</span>
+								</div>
+							</div>
+							<div class="datagrid-footer-right" style="display:none">
+								<div class="grid-pager">
+									<button type="button" class="btn grid-prevpage"><i class="icon-chevron-left"></i></button>
+									<span>Page</span>
+									<select></select>
+									<span>of <span class="grid-pages"></span></span>
+									<button type="button" class="btn grid-nextpage"><i class="icon-chevron-right"></i></button>
+								</div>
+							</div>
+						</th>
+					</tr>
+					</tfoot>
+				</table>
+			</div>
+		</div>
+		<div class="item" id="person-pane">
+			<ul class="nav nav-pills">
+				<li class="active"><a href="#info" data-toggle="tab">Info</a></li>
+				<li><a href="#notes" data-toggle="tab">Notes</a></li>
+				<li><a href="#docs" data-toggle="tab">Docs</a></li>
+				<!-- <li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+						Modules <b class="caret"></b>
+					</a>
+					
+					<ul class="dropdown-menu" id="module-dropdown">
+						These will be dynamically loaded from the list of modules
+						<li><a href="#groups" data-toggle="tab">Groups</a></li>
+						<li><a href="#schedule" data-toggle="tab">Schedule</a></li>
+						<li><a href="#time-card" data-toggle="tab">Time Card</a></li>
+					</ul>
+				</li> -->
+			</ul>
+			<div class="tab-content">
+				<div class="tab-pane fade active in" id="info">
+					<form>
+						<div class="row-fluid">
+							<div class="span3" id="person-thumb" style="width: 180px; margin: 0 20px 15px 0;">
+								<a href="#" class="thumbnail" id="person-pic" style="text-align: center; padding: 75px 0"></a>
+							</div>
+							<div class="span9" style="margin-left: 0" id="main-form">
+								<div class="row">
+									<div class="span3">
+										<fieldset>
+											<label class="control-label" for="id">ID</label>
+											<input class="span12" type="text" id="id" placeholder="ID" disabled>
+										</fieldset>
+									</div>
+									<div class="span4">
+										<fieldset>
+											<label class="control-label" for="last_name">Last Name</label>
+											<input class="span12" type="text" id="last_name" placeholder="Last Name">
+										</fieldset>
+									</div>
+									<div class="span4">
+										<fieldset>
+											<label class="control-label" for="first_name">First Name</label>
+											<input class="span12" type="text" id="first_name" placeholder="First Name">
+										</fieldset>
+									</div>
+									<div class="span1">
+										<fieldset>
+											<label class="control-label" for="gender">Gender</label>
+											<select class="span12" id="gender">
+												<option></option>
+												<option>M</option>
+												<option>F</option>
+											</select>
+										</fieldset>
+									</div>
+								</div>
+								<div class="row">
+									<div class="span3">
+										<fieldset>
+											<label class="control-label" for="phone">Cell Phone</label>
+											<input class="span12" type="text" id="phone" placeholder="Cell Phone">
+										</fieldset>
+									</div>
+									<div class="span3">
+										<fieldset>
+											<label class="control-label" for="home_phone">Home Phone</label>
+											<input class="span12" type="text" id="home_phone" placeholder="Home Phone">
+										</fieldset>
+									</div>
+									<div class="span6">
+										<fieldset>
+											<label class="control-label" for="email">Email</label>
+											<input class="span12" type="text" id="email" placeholder="Email">
+										</fieldset>
+									</div>
+								</div>
+								<div class="row">
+									<div class="span5">
+										<fieldset>
+											<label class="control-label" for="street">Address</label>
+											<input class="span12" type="text" id="street" placeholder="Street">
+										</fieldset>
+									</div>
+									<div class="span4">
+										<fieldset>
+											<label class="control-label" for="city">City</label>
+											<input class="span12" type="text" id="city" placeholder="City">
+										</fieldset>
+									</div>
+									<div class="span1">
+										<fieldset>
+											<label class="control-label" for="state">State</label>
+											<input class="span12" type="text" id="state" placeholder="State">
+										</fieldset>
+									</div>
+									<div class="span2">
+										<fieldset>
+											<label class="control-label" for="zip_code">Zip Code</label>
+											<input class="span12" type="text" id="zip_code" placeholder="Zip Code">
+										</fieldset>
+									</div>
+								</div>
+								<!-- DYNAMIC FORM -->
+								{{for row in form:}}
+								<div class="row">
+									{{for field in row:}}
+									<div class="span{{=field['span']}}">
+										<fieldset>
+											<label class="control-label" for="{{=field['id']}}">{{=field['name']}}</label>
+											<input class="span12" type="text" id="{{=field['id']}}" placeholder="{{=field['name']}}">
+										</fieldset>
+									</div>
+									{{pass}}
+								</div>
+								{{pass}}
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="tab-pane fade" id="notes">
+					<!-- <legend>Notes</legend> -->
+					<form>
+						<textarea class="span11" id="inputNotes" rows="10"></textarea>
+					</form>
+				</div>
+				<div class="tab-pane fade" id="docs">
+					<!-- <legend>Documents -->
+						<a class="btn pull-right" href="#" id="upload-btn"><i class="icon-plus"></i> Upload</a>
+					<!-- </legend> -->
+				</div>
+				<!-- These will be dynamically loaded from the list of modules -->
+				<div class="tab-pane fade" id="groups">
+					<legend>Groups</legend>
+					<div id="groups-div"></div>
+				</div>
+				<div class="tab-pane fade" id="schedule">
+					<legend>Schedule</legend>
+				</div>
+				<div class="tab-pane fade" id="time-card">
+					<legend>Time Card</legend>
+				</div>
+			</div>
+			<!-- <div class="form-actions">
+				<a class="btn btn-primary disabled" id="prev-button" href="#main-container" data-slide="prev">
+					<i class="icon-arrow-left"></i> Back
+				</a>
+				<a href="#" class="btn btn-primary pull-right" id="save-button" data-loading-text="Saving...">Save changes</a>
+			</div> -->
+		</div>
+	</div>
+</div>
+
+<!-- THE MODALS -->
+
+<div class="modal hide fade" id="upload-pic-modal">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		<h3>Upload</h3>
+	</div>
+	<div class="fileupload fileupload-new modal-body" data-provides="fileupload">
+		<input type="hidden" value name/>
+		<div class="span3" style="width: 180px; margin: 0 20px 15px 0;">
+			<a href="#" class="fileupload-preview thumbnail" id="current-pic" style="width: 180px; height: 172px; text-align: center; padding: 75px 0; line-height: 172px"></a>
+		</div>
+		<p id="row-info">Choose an image to upload.</p>
+		<div>
+			<span class="btn btn-file">
+				<span class="fileupload-new">Select Image</span>
+				<span class="fileupload-exists">Change</span>
+				<input type="file"/>
+			</span>
+			<a href="#" id="remove-btn" class="btn fileupload-exists" data-dismiss="fileupload">Remove</a>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<a href="#" class="btn" data-dismiss="modal">Cancel</a>
+		<a href="#" class="btn btn-primary" id="upload-pic-btn">Upload</a>
+	</div>
+</div>
+
+<div class="modal hide fade" id="upload-doc-modal">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		<h3>Upload</h3>
+	</div>
+	<div class="modal-body">
+		<p id="row-info">Choose a file to upload.</p>
+	</div>
+	<div class="modal-footer">
+		<a href="#" class="btn" data-dismiss="modal">Cancel</a>
+		<a href="#" class="btn btn-primary">Upload</a>
+	</div>
+</div>
+
+<div class="modal hide fade" id="save-approve-modal">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		<h3>Are you sure?</h3>
+	</div>
+	<div class="modal-body">
+		<p>You have unsaved changes, are you sure you would like to continue?</p>
+	</div>
+	<div class="modal-footer">
+		<a href="#" class="btn" data-dismiss="modal" id="cont-button">Continue</a>
+		<a href="#" class="btn btn-primary" id="save-changes-button">Save Changes</a>
+	</div>
+</div>
+
+<script src="{{=URL('static', 'js/modules/people-datasource.js') }}"></script>
+<script src="{{=URL('static', 'js/modules/people.js') }}"></script>
+{{end}}

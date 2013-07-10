@@ -1,0 +1,58 @@
+html,
+body {
+	height: 100%;
+	/* The html and body elements cannot have any padding or margin. */
+}
+
+#push {
+	height: 76px;
+}
+
+footer {
+	height: 50px;
+	background-color: #f5f5f5;
+	border-top: 1px solid #ccc;
+	padding-top: 25px;
+}
+
+#top-margin {
+	height: 60px;
+}
+
+/* Wrapper for page content to push down footer */
+#wrap {
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+	/* Negative indent footer by it's height */
+	margin: 0 auto -76px;
+}
+
+/* Lastly, apply responsive CSS fixes as necessary */
+@media (max-width: 767px) {
+	footer {
+		margin-left: -20px;
+		margin-right: -20px;
+		padding-left: 20px;
+		padding-right: 20px;
+	}
+}
+
+@media (max-width: 979px) {
+	#wrap {
+		margin: 0 auto -61px;
+	}
+
+	#top-margin {
+		height: 0px;
+	}
+
+	#push {
+		height: 61px;
+	}
+
+	footer {
+		height: 40px;
+		padding-top: 20px;
+	}
+}

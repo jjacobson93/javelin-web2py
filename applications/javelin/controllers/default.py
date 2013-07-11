@@ -3,10 +3,7 @@
     Javelin Web2Py Default Controller
 """
 
-# from applications.javelin import modules
 from applications.javelin.modules import modules_enabled
-from gluon.custom_import import track_changes
-track_changes(True)
 
 from gluon.tools import Service
 service = Service(globals())
@@ -47,7 +44,7 @@ def download():
     """
     return response.download(request, db)
 
-
+@auth.requires_login()
 def call():
     """
     exposes services. for example:
@@ -56,7 +53,6 @@ def call():
     supports xml, json, xmlrpc, jsonrpc, amfrpc, rss, csv
     """
     return service()
-
 
 @auth.requires_signature()
 def data():
@@ -77,5 +73,5 @@ def data():
 
 @auth.requires_login()
 @service.json
-def concat(id):
-    return id
+def test(id):
+    return "Success!"

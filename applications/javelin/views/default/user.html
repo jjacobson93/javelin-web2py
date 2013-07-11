@@ -1,6 +1,8 @@
 {{extend 'layout.html'}}
 
 {{block content}}
+<!-- <div id="filter-block"></div> -->
+<div id="login-form" class="well">
 <h2>{{=T( request.args(0).replace('_',' ').capitalize() )}}</h2>
 <div id="web2py_user_form">
 {{
@@ -15,6 +17,7 @@ pass
 =form
 }}
 </div>
+</div>
 <script language="javascript"><!--
 jQuery("#web2py_user_form input:visible:enabled:first").focus();
 {{if request.args(0)=='register':}}
@@ -22,5 +25,49 @@ jQuery("#web2py_user_form input:visible:enabled:first").focus();
 {{elif request.args(0)=='change_password':}}
     web2py_validate_entropy(jQuery('#no_table_new_password'),100);
 {{pass}}
+$(function() {
+	$('#auth_user_username__label').html("Username ");
+	$('#auth_user_username').attr("placeholder", "Username");
+	$('#auth_user_password__label').html("Password ");
+	$('#auth_user_password').attr("placeholder", "Password");
+	$('input[type="submit"]').addClass("span12");
+	$('input[type="submit"]').addClass("btn-primary");
+	$('input[type="submit"]').css('height', 34);
+	$('input[type="submit"]').css('font-size', 16);
+	$('input[type="submit"]').css('font-weight', 'bold');
+	$('.w2p_fl').remove();
+	$('.w2p_fc').remove();
+
+	$('input[type="text"], input[type="password"]').css('height', 28);
+	$('input[type="text"], input[type="password"]').css('font-weight', 'bold');
+
+	var navbarHeight = $('.navbar').height() + $('#top-margin').height() + parseInt($('.navbar').css('margin-bottom'));
+	var footerHeight = $('footer').height() + parseInt($('footer').css('padding-top')) + parseInt($('footer').css('border-top'));
+	var newHeight = $(window).height() - navbarHeight - footerHeight;
+	if (newHeight < $('#login-form').height() + 80)
+		newHeight = $('#login-form').height() + 80; 
+
+	$('.row-fluid').css('height', newHeight);
+
+	// $('#filter-block').css('top', $('#login-form').position().top - 15);
+	// $('#filter-block').css('left', parseInt($('#login-form').css('margin-left')));
+	// $('#filter-block').css('height', $('#login-form').height() + 35);
+	// $('#filter-block').css('width', $('#login-form').width() + 45);
+
+	$(window).on('resize', function() {
+		var navbarHeight = $('.navbar').height() + $('#top-margin').height() + parseInt($('.navbar').css('margin-bottom'));
+		var footerHeight = $('footer').height() + parseInt($('footer').css('padding-top')) + parseInt($('footer').css('border-top'));
+		var newHeight = $(window).height() - navbarHeight - footerHeight;
+		if (newHeight < $('#login-form').height() + 80)
+			newHeight = $('#login-form').height() + 80; 
+
+		$('.row-fluid').css('height', newHeight);
+
+		// $('#filter-block').css('top', $('#login-form').position().top - 15);
+		// $('#filter-block').css('left', parseInt($('#login-form').css('margin-left')));
+		// $('#filter-block').css('height', $('#login-form').height() + 35);
+		// $('#filter-block').css('width', $('#login-form').width() + 45);
+	});
+});
 //--></script>
 {{end}}

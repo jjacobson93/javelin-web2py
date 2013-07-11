@@ -11,14 +11,12 @@ __email__ = "jjacobson93@gmail.com"
 __data__ = {'name' : 'people', 'label' : 'People', 'description' : 'Keep track of people and edit their data', 
 	'icon' : 'user', 'u-icon' : u'\uf007', 'required' : True}
 
-from applications.javelin.models.sqladb import Table, db, metadata
+# from applications.javelin.models.sqladb import Table, db, metadata
+# from applications.javelin.models.db import db
 from sqlalchemy.sql.expression import or_
-from gluon.custom_import import track_changes
-track_changes(True)
+from gluon.http import HTTP
 
-person = Table('person', metadata, autoload=True)
-
-hello = 'Hello! My name is person module'
+# person = Table('person', metadata, autoload=True)
 
 default_inputs = ['id', 'last_name', 'first_name', 'gender',
 	'phone', 'home_phone', 'email', 'street', 'city', 
@@ -32,7 +30,7 @@ def data(str_filter=None):
 			person.c.id.contains(str_filter))).execute().tolist()
 	else:
 		try:
-			people = person.select().execute().tolist()
+			people = person.select().order_by('id').execute().tolist()
 		except Exception as error:
 			print error
 
@@ -65,13 +63,13 @@ def load_form():
 
 def record(id):
 	try:
-		p = person.select().where(person.c.id==id).execute().fetchone()
+		p = person.select().where(person.c.id==id).execute().fetchone().todict()
 	except:
 		raise HTTP(500, "Database error. Could not retrieve record")
 
-	return p.todict()
+	return p
 
-def update_record(id):
+def update_record(id, values):
 	try:
 		person.update().where(person.c.id==id).values(values).execute()
 	except:

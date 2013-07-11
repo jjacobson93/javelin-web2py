@@ -11,10 +11,43 @@ a.brand {
 	line-height: 20px;
 }
 
-li i {
+i {
 	padding-right: 4px;
+}
+
+li i {
+	padding-right: 6px;
 }
 
 table {
 	margin-top: 0;
 }
+
+#login-form {
+	position: relative;
+	top: 50%;
+	margin: 0 auto;
+	margin-top: -160px;
+	width: 320px;
+	text-align: center;
+}
+
+#main-nav li {
+	font-size: 14px;
+}
+
+#main-nav li a {
+	height: 25px;
+	line-height: 25px;
+}
+
+/*#filter-block {
+	position: absolute;
+	background-color: lightblue;
+	-webkit-filter: blur(20px);
+    -moz-filter: blur(15px);
+    -o-filter: blur(15px);
+    -ms-filter: blur(15px);
+    filter: blur(15px);
+    opacity: 0.95;
+}*/

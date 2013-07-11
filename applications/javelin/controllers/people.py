@@ -3,11 +3,9 @@
 	Javelin Web2Py People Controller
 """
 
-from applications.javelin.modules import modules_enabled
-from applications.javelin.modules import people
+from applications.javelin.modules import modules_enabled, people
 
 from gluon.tools import Service
-
 service = Service(globals())
 
 @auth.requires_login()
@@ -24,5 +22,24 @@ def data(str_filter=None):
 def record(id):
 	return people.record(id)
 
+@auth.requires_login()
+@service.json
+def update_record():
+	id = None
+	values = {}
+	for key in request.vars:
+		if key == 'id':
+			id = request.vars[key]
+		else:
+			values[key] = request.vars[key]
+
+	return people.update_record(id, values)
+
+@auth.requires_login()
+@service.json
+def update_pic(id, pic):
+	return people.update_pic(id, pic)
+
+@auth.requires_login()
 def call():
     return service()

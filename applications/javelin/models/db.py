@@ -9,19 +9,31 @@
 ## be redirected to HTTPS, uncomment the line below:
 # request.requires_https()
 
+import logging
+logger = logging.getLogger('web2py.app.javelin')
+logger.setLevel(logging.DEBUG)
+
+from gluon.custom_import import track_changes
+track_changes(True)
+
 if not request.env.web2py_runtime_gae:
 	## if NOT running on Google App Engine use SQLite or other DB
-	# dal = DAL('sqlite://storage.sqlite',pool_size=1,check_reserved=['all'],migrate=False)
-	dal = DAL('postgres://postgres:p0stmast3r!@localhost/javelin')
+	# db = DAL('sqlite://storage.sqlite',pool_size=1,check_reserved=['all'],migrate=False)
+	db = DAL('postgres://postgres:p0stmast3r!@localhost/javelin')
 else:
 	## connect to Google BigTable (optional 'google:datastore://namespace')
-	dal = DAL('google:datastore')
+	db = DAL('google:datastore')
 	## store sessions and tickets there
-	session.connect(request, response, db=dal)
+	session.connect(request, response, db=db)
 	## or store session in Memcache, Redis, etc.
 	## from gluon.contrib.memdb import MEMDB
 	## from google.appengine.api.memcache import Client
 	## session.connect(request, response, db = MEMDB(Client()))
+
+from globals import current
+from gluon.storage import Storage
+current.javelin = Storage()
+current.javelin.db = db
 
 ## by default give a view/generic.extension to all actions from localhost
 ## none otherwise. a pattern can be 'controller/function.extension'
@@ -41,11 +53,12 @@ response.generic_patterns = ['*'] if request.is_local else []
 #########################################################################
 
 from gluon.tools import Auth, Crud, Service, PluginManager, prettydate
-auth = Auth(dal)
-crud, service, plugins = Crud(dal), Service(), PluginManager()
+auth = Auth(db)
+crud, service, plugins = Crud(db), Service(), PluginManager()
 
 ## create all tables needed by auth if not custom tables
-auth.define_tables(username=False, signature=False)
+auth.define_tables(username=True, signature=False)
+
 
 ## configure email
 mail = auth.settings.mailer
@@ -80,6 +93,42 @@ use_janrain(auth, filename='private/janrain.key')
 ## >>> rows=db(db.mytable.myfield=='value').select(db.mytable.ALL)
 ## >>> for row in rows: print row.id, row.myfield
 #########################################################################
+
+db.define_table('person',
+	Field('last_name', 'string', notnull=True),
+	Field('first_name', 'string', notnull=True),
+	Field('phone', 'string'),
+	Field('home_phone', 'string'),
+	Field('gender', 'string'),
+	Field('email', 'string'),
+	Field('street', 'string'),
+	Field('city', 'string'),
+	Field('state', 'string'),
+	Field('zip_code', 'string'),
+	Field('notes', 'string'),
+	Field('pic', 'blob'))
+
+db.define_table('groups',
+	Field('name', 'string', notnull=True),
+	Field('description', 'string'))
+
+db.define_table('group_rec',
+	Field('group_id', db.groups, notnull=True),
+	Field('person_id', db.person, notnull=True),
+	primarykey=['group_id', 'person_id'])
+
+# db.define_table('events',
+# 	Field('title', 'string'),
+# 	Field('description', 'string'),
+# 	Field('start_time', 'time'),
+# 	Field('end_time', 'time'),
+# 	Field('allDay', 'boolean', default=False),
+# 	Field('recurring', 'boolean', default=False),
+# 	Field('end_recur', 'time'))
+
+# db.define_table('module_names',
+# 	Field('name', 'string', notnull=True, unique=True),
+# 	Field('label', 'string', notnull=True))
 
 ## after defining tables, uncomment below to enable auditing
 # auth.enable_record_versioning(db)

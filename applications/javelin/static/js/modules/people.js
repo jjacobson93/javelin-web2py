@@ -1,4 +1,72 @@
-$(document).ready(function() {
+function loadRecord(id) {
+	$.ajax({
+		type: "POST",
+		url: "/people/call/json/record",
+		data: {
+			'id' : id
+		},
+		dataType: "json",
+		success: function(data) {
+			$.each(data, function(k, v) {
+				if (k != 'pic')
+					$('#' + k).val(v);
+			});
+
+			var pic = data['pic']
+			$('#person-pic').empty();
+			if (pic != null) {
+				$('#person-pic').css("padding", 0);
+				$('#person-pic').append("<img src='data:image/jpeg;base64," + pic + "' style='height: 172px; width: 180px'>");
+			} else {
+				$('#person-pic').css("padding", "75px 0"); 
+				$('#person-pic').text("No picture");
+			}
+		},
+		error: function() {
+			displayError("The record could not be loaded")
+			$('#person-pic').empty();
+			$('#person-pic').css("padding", "75px 0"); 
+			$('#person-pic').text("No picture");
+		}
+	});
+}
+
+function saveChanges() {
+	var data = {}
+	$('#main-form input, #main-form select').each(function(i, e) {
+		var id = $(e).attr('id');
+		data[id] = $(e).val();
+	});
+	
+	$.ajax({
+		type: "POST",
+		url: "/people/call/json/update_record",
+		data: data,
+		dataType: "json",
+		success: function() {
+			saveComplete(true);
+			displaySuccess("The record has been saved.");
+		},
+		error: function() {
+			saveComplete(false);
+			displayError("The record could not be saved.");
+		}
+	});
+
+}
+
+function saveComplete(saved) {
+	$('#save-approve-modal').modal('hide');
+	
+	if (saved) {
+		$('#save-button').addClass('disabled');
+		$('#main-container').carousel('prev');
+	} else {
+
+	}
+}
+
+$(function() {
 	$('#people-table').datagrid({
 		dataSource: new PeopleDataSource({
 			columns: [
@@ -80,16 +148,13 @@ $(document).ready(function() {
 	$('#main-container').on('slid', function() {
 		$('.carousel-inner').css('overflow', 'visible');
 		$('#prev-button').removeClass('disabled');
-		// $('#save-button').removeClass('disabled');
 		$('#add-button').removeClass('disabled');
-		// $('#next-button').removeClass('disabled');
 		
 		if ($('.carousel-inner .item:first').hasClass('active')) {
 			$('#prev-button').addClass('disabled');
-			// $('#save-button').addClass('disabled');
+			$('#people-table').datagrid('reload');
 		} 
 		else if ($('.carousel-inner .item:last').hasClass('active')) {
-			$('#next-button').addClass('disabled');
 			$('#add-button').addClass('disabled');
 		}
 	});
@@ -109,7 +174,11 @@ $(document).ready(function() {
 	});
 
 	$('#prev-button').on('click', function(e) {
-		e.preventDefault();
+		if($(this).hasClass('disabled')) {
+			 e.preventDefault();
+			 return false;
+		}
+
 		if (!$('#save-button').hasClass('disabled')) {
 			$('#save-approve-modal').modal('show');
 		} else {
@@ -125,11 +194,7 @@ $(document).ready(function() {
 
 	$('#save-changes-button').on('click', function(e) {
 		e.preventDefault();
-		var saved = saveChanges();
-		if (saved) {
-			$('#main-container').carousel('prev');
-			$('#save-approve-modal').modal('hide');
-		}
+		saveChanges();
 	});
 
 	$('#person-pic').on('click', function() {
@@ -149,7 +214,7 @@ $(document).ready(function() {
 
 		$.ajax({
 			type: "POST",
-			url: "/people/update_pic",
+			url: "/people/call/json/update_pic",
 			data: {
 				"id" : id,
 				"pic" : pic
@@ -177,63 +242,3 @@ $(document).ready(function() {
 		$('#current-pic').append($('#person-pic').html());
 	});
 });
-
-function loadRecord(id) {
-	$.ajax({
-		type: "POST",
-		url: "/people/call/json/record",
-		data: {
-			"id" : id
-		},
-		dataType: "json",
-		success: function(data) {
-			$.each(data, function(k, v) {
-				if (k != 'pic')
-					$('#' + k).val(v);
-			});
-
-			var pic = data['pic']
-			$('#person-pic').empty();
-			if (pic != null) {
-				$('#person-pic').css("padding", 0);
-				$('#person-pic').append("<img src='data:image/jpeg;base64," + pic + "' style='height: 172px; width: 180px'>");
-			} else {
-				$('#person-pic').css("padding", "75px 0"); 
-				$('#person-pic').text("No picture");
-			}
-		},
-		error: function() {
-			displayError("The record could not be loaded")
-			$('#person-pic').empty();
-			$('#person-pic').css("padding", "75px 0"); 
-			$('#person-pic').text("No picture");
-		}
-	});
-}
-
-function saveChanges() {
-	var data = {}
-	var saved = false;
-	$('#main-form input, #main-form select').each(function(i, e) {
-		var id = $(e).attr('id');
-		data[id] = $(e).val();
-	});
-	
-	$.ajax({
-		type: "POST",
-		url: "/people/update_record",
-		data: data,
-		success: function() {
-			saveComplete();
-			displaySuccess("The record has been saved.")
-		},
-		error: function() {
-			displayError("The record could not be saved.")
-		}
-	});
-
-}
-
-function saveComplete() {
-	$('#save-button').addClass('disabled');
-}

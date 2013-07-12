@@ -10,17 +10,17 @@ p5
 I00
 sS'sortable'
 p6
-I2
+I3
 sS'sql'
 p7
-S'INTEGER'
+S'INTEGER REFERENCES person (id) ON DELETE CASCADE'
 p8
 sS'notnull'
 p9
 I01
 sS'type'
 p10
-S'reference person'
+S'references person'
 p11
 ssS'group_id'
 p12
@@ -30,12 +30,29 @@ I512
 sg5
 I00
 sg6
-I1
+I2
 sg7
-g8
+S'INTEGER REFERENCES groups (id) ON DELETE CASCADE'
+p14
 sg9
 I01
 sg10
-S'reference groups'
-p14
+S'references groups'
+p15
+ssS'id'
+p16
+(dp17
+g4
+I512
+sg5
+I00
+sg6
+I1
+sg7
+S'SERIAL PRIMARY KEY'
+p18
+sg9
+I00
+sg10
+g16
 ss.

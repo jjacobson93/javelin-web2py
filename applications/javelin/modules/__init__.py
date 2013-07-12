@@ -53,9 +53,12 @@ def get_module_data():
 
 def init_modules():
 	global modules_enabled, modules_data
-	for m in __all__:
-		modules_enabled.append(__import__('applications.javelin.modules.%s' % m, globals(), locals(), [m]))
+	
+	if not modules_enabled:
+		for m in __all__:
+			modules_enabled.append(__import__('applications.javelin.modules.%s' % m, globals(), locals(), [m]))
 
-	modules_data = get_module_data()
+	if not modules_data:
+		modules_data = get_module_data()
 
 init_modules()

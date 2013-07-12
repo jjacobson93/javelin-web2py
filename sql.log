@@ -1,0 +1,32 @@
+timestamp: 2013-07-10T21:27:08.935230
+CREATE TABLE person(
+    id SERIAL PRIMARY KEY,
+    last_name VARCHAR(512) NOT NULL,
+    first_name VARCHAR(512) NOT NULL,
+    phone VARCHAR(512),
+    home_phone VARCHAR(512),
+    gender VARCHAR(512),
+    email VARCHAR(512),
+    street VARCHAR(512),
+    city VARCHAR(512),
+    state VARCHAR(512),
+    zip_code VARCHAR(512),
+    notes VARCHAR(512),
+    pic BYTEA
+);
+timestamp: 2013-07-11T00:02:22.875358
+CREATE TABLE person(
+    id SERIAL PRIMARY KEY,
+    last_name VARCHAR(512) NOT NULL,
+    first_name VARCHAR(512) NOT NULL,
+    phone VARCHAR(512),
+    home_phone VARCHAR(512),
+    gender VARCHAR(512),
+    email VARCHAR(512),
+    street VARCHAR(512),
+    city VARCHAR(512),
+    state VARCHAR(512),
+    zip_code VARCHAR(512),
+    notes VARCHAR(512),
+    pic BYTEA
+);

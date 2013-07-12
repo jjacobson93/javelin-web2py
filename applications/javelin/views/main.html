@@ -4,8 +4,9 @@
 <div class="span3">
 	<div class="well" style="padding: 8px 0 !important">
 		<ul class="nav nav-list" id="main-nav">
+			<li class="nav-header">Modules</li>
 			{{for module in modules_enabled:}}
-			<li class="{{if module.__data__['name'] == active_module:}}active{{pass}}"><a href="/{{=module.__data__['name']}}"><i class="icon-{{=module.__data__['icon']}}"></i>{{=module.__data__['label']}}</a></li>
+			<li class="{{if module.__data__['name'] == active_module:}}active{{pass}}"><a href="/{{=module.__data__['name']}}"><i class="icon-{{=module.__data__['icon']}} icon-large"></i>{{=module.__data__['label']}}</a></li>
 			{{pass}}
 		</ul>
 	</div>

@@ -68,26 +68,37 @@ function loadRecordsTable(id) {
 
 	$('#records-table').datagrid('reload');
 
+	$('#rec-pagesize').select2('destroy');
+	$('#rec-page-select').select2('destroy');
+
 	$('#rec-pagesize').select2();
 	$('#rec-page-select').select2();
 }
 
-function addGroup(data) {
+function addGroup(name, description, values) {
 	$.ajax({
 		type: "POST",
 		url: "/groups/call/json/add_group",
-		data: data,
-		success: function() {
-			$('#inputName').val("");
-			$('#inputDescription').val("");
-			$('#add-group-modal').modal('hide');
-			displaySuccess("The group has been added");
+		data: {
+			'name' : name,
+			'description' : description,
+			'values' : JSON.stringify(values)
+		},
+		success: function(data) {
+			if (!data.exists) {
+				$('#inputName').val("");
+				$('#inputDescription').val("");
+				$('#add-group-modal').modal('hide');
+				displaySuccess("The group has been added");
 
-			$('#groups-table').datagrid('reload');
+				$('#groups-table').datagrid('reload');
+			} else {
+				displayError("A group with that name already exists.", true);
+			}
 		},
 		error: function() {
-			$('#add-group-modal').modal('hide');
-			displayError("Could not add group.");
+			// $('#add-group-modal').modal('hide');
+			displayError("Could not add group.", true);
 		}
 	});
 }
@@ -114,7 +125,7 @@ function addPerson() {
 
 			},
 			error: function() {
-				displayError("Could not add. There was an error with the database.");
+				displayError("Could not add group. There was a server or database error.");
 			}
 		});
 	} else {
@@ -135,15 +146,19 @@ function editGroup(id) {
 			"description" : desc
 		},
 		dataType: "json",
-		success: function() {
-			$('#edit-group-modal').modal('hide');
-			displaySuccess("The group has been edited.");
+		success: function(data) {
+			if (!data.exists) {
+				$('#edit-group-modal').modal('hide');
+				displaySuccess("The group has been edited.");
 
-			$('#groups-table').datagrid('reload');
+				$('#groups-table').datagrid('reload');
+			} else {
+				displayError("Could not edit group. A group already exists with that name.", true);
+			}
 		},
 		error: function() {
-			$("#edit-group-modal").modal("hide");
-			displayError("Could not edit group.");
+			// $("#edit-group-modal").modal("hide");
+			displayError("Could not edit group. There was a server or database error.", true);
 		}
 	})
 }
@@ -164,8 +179,8 @@ function deleteGroup(id) {
 			$('#groups-table').datagrid('reload');
 		},
 		error: function() {
-			$("#delete-group-modal").modal("hide");
-			displayError("Could not delete group.");
+			// $("#delete-group-modal").modal("hide");
+			displayError("Could not delete group. There was a server or database error.", true);
 		}
 	});
 }
@@ -175,18 +190,20 @@ function deletePersonFromGroup(p_id, g_id) {
 		type: "POST",
 		url: "/groups/call/json/delete_from_group",
 		data: {
-			"p_id" : p_id,
-			"g_id" : g_id
+			"person_id" : p_id,
+			"group_id" : g_id
 		},
 		dataType: "json",
 		success: function() {
 			$("#delete-person-modal").modal("hide");
-			$("#delete-person-done-btn").attr("href", "#");
+			$("#delete-person-done-btn").attr("data-group", "");
+			$("#delete-person-done-btn").attr("data-person", "");
 			displaySuccess("Person has been deleted from the group.");
 
 			$('#records-table').datagrid('reload');
 		},
 		error: function() {
+			$("#delete-person-modal").modal("hide");
 			displayError("Could not delete person from group.");
 		}
 	});
@@ -201,6 +218,9 @@ $(function() {
 	$('#records-div').height($(window).height()*.6);
 
 	$('#groups-table').on('loaded', function() {
+		$('#groups-div .grid-pagesize').select2('destroy');
+		$('#groups-div .grid-pager select').select2('destroy');
+
 		$('#groups-div .grid-pagesize').select2();
 		$('#groups-div .grid-pager select').select2({ placeholder: "1" });
 
@@ -213,9 +233,6 @@ $(function() {
 	});
 
 	$('#records-table').on('loaded', function() {
-		$('#records-div .grid-pagesize').select2();
-		$('#records-div .grid-pager select').select2({ placeholder: "1" });
-
 		var rowCount = $('#record-table').find('tr').length;
 		if (rowCount == 1) {
 			$('#no-rows-alert').css("display", "block");
@@ -233,7 +250,7 @@ $(function() {
 			$('#groups-table').datagrid('reload');
 		} else if ($('.carousel-inner .item:last').hasClass('active')) {
 			$('#add-group-btn').addClass('disabled');
-			$('#records-table').datagrid('reload');
+			// $('#records-table').datagrid('reload');
 		}
 	});
 
@@ -284,36 +301,32 @@ $(function() {
 			values.push(entry.value);
 		});
 
-		var data = {
-			"name" : name,
-			"description" : description,
-			"values" : values
-		};
-
-		addGroup(data);
+		addGroup(name, description, values);
 	});
 
 	$('#groups-div').on('click', '#groups-table tr td:not(:last-child)', function() {
 		// row was clicked
-		var id = $(this).parent().attr("id");
-		var name = $(this).parent().find("td").eq(0).html();
+		if ($(this).html() !== "0 items") {
+			var id = $(this).parent().attr("id");
+			var name = $(this).parent().find("td").eq(0).html();
 
-		$('#group-legend').html(name);
+			$('#group-legend').html(name);
 
-		loadRecordsTable(id);
+			loadRecordsTable(id);
 
-		$('#main-container').carousel('next');
-		$('#main-container').carousel('pause');
+			$('#main-container').carousel('next');
+			$('#main-container').carousel('pause');
+		} else {
+			console.log("OOPS");
+		}
 	});
 
 	$('#groups-div').on('click', '#groups-table td button[id^="delete-row"]', function(e) {
-		// e.preventDefault();
-		// var id = $(this).parent().parent().attr("id");
 		var id = $(this).attr('id').match(/[\d]+/);
 		var name = $(this).parent().parent().find("td").eq(0).html();
 
 		$("#group-name-delete").html(name);
-		$("#delete-done-btn").attr("href", "javascript:deleteGroup(" + id + ")");
+		$("#delete-done-btn").attr("data-group", id);
 		$("#delete-group-modal").modal("show");
 	});
 
@@ -325,27 +338,14 @@ $(function() {
 		$('#group-name-edit').html(name);
 		$('#name-field').val(name);
 		$('#desc-field').val(desc);
-		$("#edit-done-btn").attr("href", "javascript:editGroup(" + id + ")");
+		$("#edit-done-btn").attr("data-group",  id);
 		$("#edit-group-modal").modal("show");
 	});
 
-	/*$('a[id^="edit-row"]').on('click', function(e) {
-		e.preventDefault();
-
-		var id = $(this).parent().parent().attr("id");
-		var name = $(this).parent().parent().find("td").eq(0).html();
-
-		$.ajaxSetup( { "async": false } );
-		$.getJSON("modules/groups/get-people.php?group=" + name, function(data) {
-			$.each(data, function(i, entry) {
-				$("#people-select").append('<option value="' + entry.value + '">' + entry.label + "</option>");
-			});
-		});
-		$.ajaxSetup( { "async": true } );
-
-		$('#group-name-edit').html(name);
-		$('#edit-group-modal').modal('show');
-	});*/
+	$('#edit-done-btn').on('click', function() {
+		var id = $(this).attr("data-group");
+		editGroup(id);
+	});
 
 	$('#records-table').on('click', 'td button[id^="delete-row"]', function() {
 		var p_id = $(this).attr("id").match(/[\d]+/);
@@ -355,11 +355,23 @@ $(function() {
 
 		$('#person-name-delete').html(name);
 		$('#from-group').html(group);
-		$('#delete-person-done-btn').attr("href", "javascript:deletePersonFromGroup(" + p_id + ", " + g_id + ")");
+		$('#delete-person-done-btn').attr("data-person", p_id);
+		$('#delete-person-done-btn').attr("data-group", g_id);
 		$('#delete-person-modal').modal('show');
 	});
 
 	$('#add-person-btn').on('click', addPerson);
+
+	$('#delete-done-btn').on('click', function() {
+		var id = $(this).attr('data-group');
+		deleteGroup(id);
+	});
+
+	$('#delete-person-done-btn').on('click', function() {
+		var p_id = $(this).attr('data-person');
+		var g_id = $(this).attr('data-group');
+		deletePersonFromGroup(p_id, g_id);
+	});
 });
 
 $(document).on('mouseleave', '.carousel', function() {

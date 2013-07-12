@@ -20,73 +20,65 @@ def data():
 	
 	return groups
 
-	# raise HTTP(500, "Database error. Could not get records")
-
 def records(id):
 	db = current.javelin.db
-	result = db(db.group_rec.group_id==id).select(
-		db.person.id, db.person.last_name, db.person.first_name,
-		join=db.group_rec.person_id==db.person.id).as_list()
+	result = db(db.group_rec.group_id==id).select(db.person.id, db.person.last_name, db.person.first_name, join=db.person.on(db.person.id==db.group_rec.person_id)).as_list()
 	
-	if result:
-		return result
-
-	raise HTTP(500, "Database error. Could not get records")
+	return result
 
 def add_group(name, description, values):
-	try:
-		# Insert new group
-		group.insert().values({'name' : name, 'description' : description}).execute()
-		# Select group
-		g = group.select().where(group.c.name==name).execute().fetchone()
+	db = current.javelin.db
 
-		group_rec.insert().values([{'group_id' : g.id, 'person_id' : x} for x in values]).execute()
-	except:
-		raise HTTP(500, "Database error. Could not add group")
+	exists = not db(db.groups.name==name).isempty()
 
-	return {'status' : 'success'}
+	if not exists:
+		id = db.groups.insert(name=name, description=description)
+
+		if values:
+			rec_id = db.group_rec.bulk_insert([{'group_id' : id, 'person_id' : person_id} for person_id in values])
+		else:
+			rec_id = 0
+
+		return dict(group_id=id, group_rec_id=rec_id)
+	else:
+		return dict(exists=True)
 
 def add_to_group(person_id, group_id):
-	try:
-		group_rec.insert().values({'person_id' : person_id, 'group_id' : group_id})
-	except:
-		raise HTTP(500, "Database error. Could not add to group")
+	db = current.javelin.db
+	rec_id = db.group_rec.insert(person_id=person_id, group_id=group_id)
 
-	return {'status' : 'success'}
+	return dict(group_rec_id=rec_id)
 
 def delete_group(id):
-	try:
-		group.delete().where(group.c.id==id).execute()
-	except:
-		raise HTTP(500, "Database error. Could not delete group")
-
-	return {'status' : 'success'}
-
-def delete_from_group(person_id, group_id):		
-	try:
-		group_rec.delete().where(and_(group_rec.c.person_id==person_id, 
-			group_rec.c.group_id==group_id)).execute()
-	except:
-		raise HTTP(500, "Database error. Could not add group")
+	db = current.javelin.db
+	deleted = db(db.groups.id==id).delete()
 	
-	return {'status' : 'success'}
+	return dict(deleted=deleted)
+
+def delete_from_group(person_id, group_id):
+	db = current.javelin.db
+	deleted = db((db.group_rec.person_id==person_id) & (db.group_rec.group_id==group_id)).delete() # group_rec.delete().where(and_(group_rec.c.person_id==person_id, group_rec.c.group_id==group_id)).execute()
+	
+	return dict(deleted=deleted)
 
 def edit_group(id, name, description):
-	try:
-		group.update().where(group.c.id==id).values({'name' : name, 'description' : description}).execute()
-	except:
-		raise HTTP(500, "Database error. Could not add group")
+	db = current.javelin.db
+	exists = not db(db.groups.name==name).isempty()
 
-	return {'status' : 'success'}
+	if not exists:
+		response = db(db.groups.id==id).update(name=name, description=description)
+
+		return dict(response=response)
+	else:
+		return dict(exists=True)
 
 def get_people():
-	try:
-		people = person.select().execute().fetchall()
-	except:
-		raise HTTP(500, "Database error. Could not get people")
+	db = current.javelin.db
+	
+	people = db().select(db.person.ALL).as_list() # people = person.select().execute().fetchall()
 
 	result = []
 	for p in people:
-		result.append({'value' : str(p.id), 'label' : p.last_name + ", " + p.first_name})
+		result.append({'value' : str(p['id']), 'label' : p['last_name'] + ", " + p['first_name']})
 	
 	return result

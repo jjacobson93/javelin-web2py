@@ -34,7 +34,9 @@
 
 <!-- ALERTS -->
 
-<div class="alert alert-info" id="noresults" style="display: none;">
+<div class="alert-container"></div>
+
+<!-- <div class="alert alert-info" id="noresults" style="display: none;">
 	<strong>No results found</strong>
 </div>
 
@@ -52,7 +54,7 @@
 
 <div class="alert alert-info" id="no-rows-alert" style="display: none;">
 	<strong>No records.</strong> To add to the {{ labels['lower'] }}, enter an ID or name below.
-</div>
+</div> -->
 
 <!-- MAIN CONTAINER -->
 
@@ -64,6 +66,9 @@
 					<thead>
 						<tr>
 							<th>
+								<div class="datagrid-header-left">
+									<h4>Groups</h4>
+								</div>
 								<div class="datagrid-header-right">
 									<div class="input-append search datagrid-search" data-delay="300">
 										<input type="text" id="search-field" class="input-medium" placeholder="Search">
@@ -112,7 +117,6 @@
 			</div>
 		</div>
 		<div class="item" id="records-for-">
-			<!-- <legend id="group-legend">Members</legend> -->
 			<div id="records-div" class="fuelux" style="height:100%;width:100%;margin-bottom:20px;">
 				<table id="records-table" class="table table-bordered table-striped table-hover datagrid">
 					<thead>

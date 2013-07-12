@@ -11,42 +11,38 @@ __email__ = "jjacobson93@gmail.com"
 __data__ = {'name' : 'people', 'label' : 'People', 'description' : 'Keep track of people and edit their data', 
 	'icon' : 'user', 'u-icon' : u'\uf007', 'required' : True}
 
-# from applications.javelin.models.sqladb import Table, db, metadata
-# from applications.javelin.models.db import db
-from sqlalchemy.sql.expression import or_
-from gluon.http import HTTP
-
-# person = Table('person', metadata, autoload=True)
+from globals import current
 
 default_inputs = ['id', 'last_name', 'first_name', 'gender',
 	'phone', 'home_phone', 'email', 'street', 'city', 
 	'state', 'zip_code', 'notes', 'pic']
 
 def data(str_filter=None):
+	db = current.javelin.db
+
 	if str_filter:
-		people = person.select(or_(
-			person.c.last_name.contains(str_filter),
-			person.c.first_name.contains(str_filter),
-			person.c.id.contains(str_filter))).execute().tolist()
+		people = db().select(db.person.ALL, 
+			(db.person.last_name.contains(str_filter)) |
+			(db.person.first_name.contains(str_filter)) |
+			(db.person.id.contains(str_filter))).as_list()
 	else:
-		try:
-			people = person.select().order_by('id').execute().tolist()
-		except Exception as error:
-			print error
+		people = db().select(db.person.ALL, orderby=db.person.id).as_list()
 
 	return people
 
 def load_form():
+	db = current.javelin.db
+
 	form = list()
-	num_left = len(person.c) - len(default_inputs)
+	num_left = len(db.person.fields) - len(default_inputs)
 	num = 3
 	row = list()
 
-	for c in person.c:
-		if c.name not in default_inputs:
-			name = str(' ').join([x.capitalize() for x in c.name.split('_')])
+	for field in db.person.fields:
+		if field not in default_inputs:
+			name = str(' ').join([x.capitalize() for x in field.split('_')])
 
-			field = { 'span' : num, 'id' : c.name, 'name' : name }
+			field = { 'span' : num, 'id' : field.name, 'name' : name }
 
 			row.append(field)
 
@@ -62,25 +58,19 @@ def load_form():
 	return form
 
 def record(id):
-	try:
-		p = person.select().where(person.c.id==id).execute().fetchone().todict()
-	except:
-		raise HTTP(500, "Database error. Could not retrieve record")
+	db = current.javelin.db
+	person = db.person(id).as_dict() # p = person.select().where(person.c.id==id).execute().fetchone().todict()
 
-	return p
+	return person
 
 def update_record(id, values):
-	try:
-		person.update().where(person.c.id==id).values(values).execute()
-	except:
-		raise HTTP(500, "Database error. Could not update record")
+	db = current.javelin.db
+	response = db(db.person.id==id).update(**values) # person.update().where(person.c.id==id).values(values).execute()
 
-	return {'status' : 'success'}
+	return dict(response=response)
 
 def update_pic(id, pic):
-	try:
-		person.update().where(person.c.id == id).values(pic=pic).execute()
-	except:
-		raise HTTP(500, "Database error. Could not update picture")
+	db = current.javelin.db
+	response = db(db.person.id==id).update(pic=pic)
 
-	return {'status' : 'success'}
+	return dict(response=response)

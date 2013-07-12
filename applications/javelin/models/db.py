@@ -19,7 +19,7 @@ track_changes(True)
 if not request.env.web2py_runtime_gae:
 	## if NOT running on Google App Engine use SQLite or other DB
 	# db = DAL('sqlite://storage.sqlite',pool_size=1,check_reserved=['all'],migrate=False)
-	db = DAL('postgres://postgres:p0stmast3r!@localhost/javelin')
+	db = DAL('postgres://postgres:p0stmast3r!@localhost/javelin', migrate=True)
 else:
 	## connect to Google BigTable (optional 'google:datastore://namespace')
 	db = DAL('google:datastore')
@@ -95,8 +95,8 @@ use_janrain(auth, filename='private/janrain.key')
 #########################################################################
 
 db.define_table('person',
-	Field('last_name', 'string', notnull=True),
-	Field('first_name', 'string', notnull=True),
+	Field('last_name', 'string', notnull=True, required=True),
+	Field('first_name', 'string', notnull=True, required=True),
 	Field('phone', 'string'),
 	Field('home_phone', 'string'),
 	Field('gender', 'string'),
@@ -109,13 +109,12 @@ db.define_table('person',
 	Field('pic', 'blob'))
 
 db.define_table('groups',
-	Field('name', 'string', notnull=True),
+	Field('name', 'string', notnull=True, required=True, unique=True),
 	Field('description', 'string'))
 
 db.define_table('group_rec',
-	Field('group_id', db.groups, notnull=True),
-	Field('person_id', db.person, notnull=True),
-	primarykey=['group_id', 'person_id'])
+	Field('group_id', 'references groups', notnull=True, required=True),
+	Field('person_id', 'references person', notnull=True, required=True))
 
 # db.define_table('events',
 # 	Field('title', 'string'),

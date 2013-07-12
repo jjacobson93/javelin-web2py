@@ -46,15 +46,7 @@ form .row {
 
 <!-- ALERTS -->
 
-<div class="alert alert-info" id="noresults" style="display: none;">
-	<strong>No results found</strong>
-</div>
-<div class="alert alert-success" id="success-alert" style="display: none;">
-	<strong>Saved!</strong> The record has been saved.
-</div>
-<div class="alert alert-error" id="error-alert" style="display: none;">
-	<strong>Error!</strong> The record could not be saved. There was an error with the database.
-</div>
+<div class="alert-container"></div>
 
 <!-- MAIN CONTAINER -->
 
@@ -66,6 +58,9 @@ form .row {
 					<thead>
 						<tr>
 							<th>
+								<div class="datagrid-header-left">
+									<h4>People</h4>
+								</div>
 								<div class="datagrid-header-right">
 									<div class="input-append search datagrid-search" data-delay="300">
 										<input type="text" id="search-field" class="input-medium" placeholder="Search">
@@ -136,7 +131,7 @@ form .row {
 					<form>
 						<div class="row-fluid">
 							<div class="span3" id="person-thumb" style="width: 180px; margin: 0 20px 15px 0;">
-								<a href="#" class="thumbnail" id="person-pic" style="text-align: center; padding: 75px 0"></a>
+								<a href="#" class="thumbnail" id="person-pic"></a>
 							</div>
 							<div class="span9" style="margin-left: 0" id="main-form">
 								<div class="row">
@@ -173,13 +168,13 @@ form .row {
 									<div class="span3">
 										<fieldset>
 											<label class="control-label" for="phone">Cell Phone</label>
-											<input class="span12" type="text" id="phone" placeholder="Cell Phone">
+											<input class="span12" type="text" id="phone" placeholder="Cell Phone" data-mask="999-999-9999">
 										</fieldset>
 									</div>
 									<div class="span3">
 										<fieldset>
 											<label class="control-label" for="home_phone">Home Phone</label>
-											<input class="span12" type="text" id="home_phone" placeholder="Home Phone">
+											<input class="span12" type="text" id="home_phone" placeholder="Home Phone" data-mask="999-999-9999">
 										</fieldset>
 									</div>
 									<div class="span6">
@@ -205,13 +200,13 @@ form .row {
 									<div class="span1">
 										<fieldset>
 											<label class="control-label" for="state">State</label>
-											<input class="span12" type="text" id="state" placeholder="State">
+											<input class="span12" type="text" id="state" placeholder="State" data-mask="aa">
 										</fieldset>
 									</div>
 									<div class="span2">
 										<fieldset>
 											<label class="control-label" for="zip_code">Zip Code</label>
-											<input class="span12" type="text" id="zip_code" placeholder="Zip Code">
+											<input class="span12" type="text" id="zip_code" placeholder="Zip Code" data-mask="99999">
 										</fieldset>
 									</div>
 								</div>
@@ -275,7 +270,7 @@ form .row {
 	<div class="fileupload fileupload-new modal-body" data-provides="fileupload">
 		<input type="hidden" value name/>
 		<div class="span3" style="width: 180px; margin: 0 20px 15px 0;">
-			<a href="#" class="fileupload-preview thumbnail" id="current-pic" style="width: 180px; height: 172px; text-align: center; padding: 75px 0; line-height: 172px"></a>
+			<div class="fileupload-preview thumbnail" id="current-pic" style="width: 180px; height: 172px; text-align: center; padding: 75px 0; line-height: 172px"></div>
 		</div>
 		<p id="row-info">Choose an image to upload.</p>
 		<div>
@@ -289,7 +284,7 @@ form .row {
 	</div>
 	<div class="modal-footer">
 		<a href="#" class="btn" data-dismiss="modal">Cancel</a>
-		<a href="#" class="btn btn-primary" id="upload-pic-btn">Upload</a>
+		<a href="#" class="btn btn-primary disabled" id="upload-pic-btn">Upload</a>
 	</div>
 </div>
 

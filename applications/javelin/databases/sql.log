@@ -1,3 +1,87 @@
-timestamp: 2013-07-10T18:06:17.204863
-ALTER TABLE auth_user ADD username VARCHAR(128);
+timestamp: 2013-07-12T16:15:47.284310
+CREATE TABLE auth_user(
+    id SERIAL PRIMARY KEY,
+    first_name VARCHAR(128),
+    last_name VARCHAR(128),
+    email VARCHAR(512),
+    username VARCHAR(128),
+    password VARCHAR(512),
+    registration_key VARCHAR(512),
+    reset_password_key VARCHAR(512),
+    registration_id VARCHAR(512)
+);
+success!
+timestamp: 2013-07-12T16:15:47.571841
+CREATE TABLE auth_group(
+    id SERIAL PRIMARY KEY,
+    role VARCHAR(512),
+    description TEXT
+);
+success!
+timestamp: 2013-07-12T16:15:47.579303
+CREATE TABLE auth_membership(
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES auth_user (id) ON DELETE CASCADE,
+    group_id INTEGER REFERENCES auth_group (id) ON DELETE CASCADE
+);
+success!
+timestamp: 2013-07-12T16:15:47.627135
+CREATE TABLE auth_permission(
+    id SERIAL PRIMARY KEY,
+    group_id INTEGER REFERENCES auth_group (id) ON DELETE CASCADE,
+    name VARCHAR(512),
+    table_name VARCHAR(512),
+    record_id INTEGER
+);
+success!
+timestamp: 2013-07-12T16:15:47.641737
+CREATE TABLE auth_event(
+    id SERIAL PRIMARY KEY,
+    time_stamp TIMESTAMP,
+    client_ip VARCHAR(512),
+    user_id INTEGER REFERENCES auth_user (id) ON DELETE CASCADE,
+    origin VARCHAR(512),
+    description TEXT
+);
+success!
+timestamp: 2013-07-12T16:15:47.648533
+CREATE TABLE auth_cas(
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES auth_user (id) ON DELETE CASCADE,
+    created_on TIMESTAMP,
+    service VARCHAR(512),
+    ticket VARCHAR(512),
+    renew CHAR(1)
+);
+success!
+timestamp: 2013-07-12T16:15:47.656208
+CREATE TABLE person(
+    id SERIAL PRIMARY KEY,
+    last_name VARCHAR(512) NOT NULL,
+    first_name VARCHAR(512) NOT NULL,
+    phone VARCHAR(512),
+    home_phone VARCHAR(512),
+    gender VARCHAR(512),
+    email VARCHAR(512),
+    street VARCHAR(512),
+    city VARCHAR(512),
+    state VARCHAR(512),
+    zip_code VARCHAR(512),
+    notes VARCHAR(512),
+    pic BYTEA
+);
+success!
+timestamp: 2013-07-12T16:15:47.662691
+CREATE TABLE groups(
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(512) NOT NULL UNIQUE,
+    description VARCHAR(512)
+);
+success!
+timestamp: 2013-07-12T16:15:47.692929
+CREATE TABLE group_rec(
+    id SERIAL PRIMARY KEY,
+    group_id INTEGER REFERENCES groups (id) ON DELETE CASCADE,
+    person_id INTEGER REFERENCES person (id) ON DELETE CASCADE
+);
 success!

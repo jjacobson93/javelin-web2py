@@ -5,13 +5,23 @@ body {
 }
 
 #push {
-	height: 76px;
+	height: 75px;
 }
 
 footer {
 	height: 50px;
-	background-color: #f5f5f5;
-	border-top: 1px solid #ccc;
+	background-color: #1b1b1b;
+	/*background-image: -moz-linear-gradient(top,#222,#111);
+	background-image: -webkit-gradient(linear,0 0,0 100%,from(#222),to(#111));
+	background-image: -webkit-linear-gradient(top,#222,#111);
+	background-image: -o-linear-gradient(top,#222,#111);
+	background-image: linear-gradient(to bottom,#222,#111);
+	background-repeat: repeat-x;
+	border-color: #252525;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff222222',endColorstr='#ff111111',GradientType=0);*/
+
+	/*background-color: #f5f5f5;*/
+	/*border-top: 1px solid #ccc;*/
 	padding-top: 25px;
 }
 
@@ -25,7 +35,7 @@ footer {
 	height: auto !important;
 	height: 100%;
 	/* Negative indent footer by it's height */
-	margin: 0 auto -76px;
+	margin: 0 auto -75px;
 }
 
 /* Lastly, apply responsive CSS fixes as necessary */
@@ -40,7 +50,7 @@ footer {
 
 @media (max-width: 979px) {
 	#wrap {
-		margin: 0 auto -61px;
+		margin: 0 auto -60px;
 	}
 
 	#top-margin {
@@ -48,7 +58,7 @@ footer {
 	}
 
 	#push {
-		height: 61px;
+		height: 60px;
 	}
 
 	footer {

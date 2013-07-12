@@ -32,11 +32,8 @@ table {
 	text-align: center;
 }
 
-#main-nav li {
-	font-size: 14px;
-}
-
 #main-nav li a {
+	/*font-size: 15px;*/
 	height: 25px;
 	line-height: 25px;
 }
@@ -51,3 +48,19 @@ table {
     filter: blur(15px);
     opacity: 0.95;
 }*/
+
+#person-pic {
+	width: 180px; 
+	height: 180px;
+	overflow: hidden;
+	display: inline-block;
+	vertical-align: middle;
+	text-align: center;
+	line-height: 180px;
+}
+
+#person-pic img {
+	display: inline-block;
+	vertical-align: middle;
+	max-height: 100%;
+}

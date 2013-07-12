@@ -26,6 +26,15 @@ jQuery("#web2py_user_form input:visible:enabled:first").focus();
     web2py_validate_entropy(jQuery('#no_table_new_password'),100);
 {{pass}}
 $(function() {
+	if (navigator.userAgent.match(/msie/i)) {
+		window.alert("It appears that you are using Microsoft Internet Explorer. " + 
+			"Javelin frowns upon using an archaic browser such as this, " +
+			"since there are not only ascetic and programmatic defects, but " +
+			"serious security risks as well. We recommend Firefox or Chrome, which " +
+			"you can download here for Firefox: https://www.mozilla.org/firefox/, " +
+			"and here for Chrome: https://www.google.com/chrome/");
+	}
+
 	$('#auth_user_username__label').html("Username ");
 	$('#auth_user_username').attr("placeholder", "Username");
 	$('#auth_user_password__label').html("Password ");

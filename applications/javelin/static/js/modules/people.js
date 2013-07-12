@@ -15,8 +15,27 @@ function loadRecord(id) {
 			var pic = data['pic']
 			$('#person-pic').empty();
 			if (pic != null) {
+				var img = new Image();
+				var imgElement = $("<img src='data:image/jpeg;base64," + pic + "'>");
+
+				// img.src = imgElement.attr('src');
+				// var originalHeight = img.height;
+				// var originalWidth = img.width;
+				
+				// if (originalWidth >= originalHeight) {
+				// 	var scaledHeight = 'auto';
+				// 	var scaledWidth = '180px';
+				// } else {
+				// 	var scaledWidth = 'auto';
+				// 	var scaledHeight = '180px';
+				// }
+
+				// imgElement.css('height', scaledHeight);
+				// imgElement.css('width', scaledWidth);
 				$('#person-pic').css("padding", 0);
-				$('#person-pic').append("<img src='data:image/jpeg;base64," + pic + "' style='height: 172px; width: 180px'>");
+				$('#person-pic').append(imgElement);
+				
+				// $('#person-pic img').css('margin-top', -scaledHeight/2.0);
 			} else {
 				$('#person-pic').css("padding", "75px 0"); 
 				$('#person-pic').text("No picture");
@@ -31,38 +50,73 @@ function loadRecord(id) {
 	});
 }
 
-function saveChanges() {
-	var data = {}
+function saveChanges(toPrev) {
+	var id;
+	var values = {};
 	$('#main-form input, #main-form select').each(function(i, e) {
-		var id = $(e).attr('id');
-		data[id] = $(e).val();
+		var eid = $(e).attr('id');
+		if ($(e).val() != "" && eid != 'id')
+			values[eid] = $(e).val();
+		else if (eid == "id")
+			id = $(e).val();
 	});
-	
+
 	$.ajax({
 		type: "POST",
 		url: "/people/call/json/update_record",
-		data: data,
+		data: {
+			'id' : id,
+			'values' : JSON.stringify(values)
+		},
 		dataType: "json",
 		success: function() {
-			saveComplete(true);
+			saveComplete(true, toPrev);
 			displaySuccess("The record has been saved.");
 		},
 		error: function() {
-			saveComplete(false);
+			saveComplete(false, toPrev);
 			displayError("The record could not be saved.");
 		}
 	});
 
 }
 
-function saveComplete(saved) {
+function saveComplete(saved, toPrev) {
 	$('#save-approve-modal').modal('hide');
 	
-	if (saved) {
+	if (saved && !toPrev) {
+		$('#save-button').addClass('disabled');
+	} else if (saved && toPrev) {
 		$('#save-button').addClass('disabled');
 		$('#main-container').carousel('prev');
-	} else {
+	}
+}
 
+function updatePic(id, pic) {
+	$.ajax({
+		type: "POST",
+		url: "/people/call/json/update_pic",
+		data: {
+			"id" : id,
+			"pic" : pic
+		},
+		dataType: 'json',
+		success: function() {
+			loadRecord(id);
+			$('.fileupload').fileupload('clear');
+			displaySuccess("The picture has been uploaded.");
+		},
+		error: function() {
+			displayError("The picture could not be uploaded.");
+		}
+	});
+}
+
+function checkPictureForUpload() {
+	if ($('#current-pic').html() !== '') {
+		$('#upload-pic-btn').removeClass('disabled');
+	} else if (!$('#upload-pic-btn').hasClass('disabled')) {
+		$('#upload-pic-btn').addClass('disabled');
 	}
 }
 
@@ -101,15 +155,22 @@ $(function() {
 	});
 
 	$('#people-table').on('loaded', function() {
+		$('.grid-pagesize').select2('destroy');
+		$('.grid-pager select').select2('destroy');
+		
 		$('.grid-pagesize').select2();
 		$('.grid-pager select').select2({ placeholder: "1" });
 	});
 	// $('.grid-pager select').select2('val', $('#people-table').datagrid('pageNum'));
 
 
-	$('#people-div').height($(window).height()*.7);
+	$('#people-div').height($(window).height()*.6);
 
 	$('#person-pane').on('keyup', 'input,textarea', function() {
+		$('#save-button').removeClass('disabled');
+	});
+
+	$('#person-pane').on('change', 'select', function() {
 		$('#save-button').removeClass('disabled');
 	});
 
@@ -129,13 +190,15 @@ $(function() {
 
 	$('.table > tbody').on('click', 'tr', function() {
 		// row was clicked
-		var td = $(this).find("td");
-		var p_id = td.eq(0).html();
-		
-		loadRecord(p_id);
-		
-		$('#main-container').carousel('next');
-		$('#main-container').carousel('pause');
+		if ($(this).find("td").html() !== "0 items") {
+			var td = $(this).find("td");
+			var p_id = td.eq(0).html();
+			
+			loadRecord(p_id);
+			
+			$('#main-container').carousel('next');
+			$('#main-container').carousel('pause');
+		}
 	});
 
 	$('a').on('click', function(e) {
@@ -153,6 +216,7 @@ $(function() {
 		if ($('.carousel-inner .item:first').hasClass('active')) {
 			$('#prev-button').addClass('disabled');
 			$('#people-table').datagrid('reload');
+			$('#people-div').height($(window).height()*.6);
 		} 
 		else if ($('.carousel-inner .item:last').hasClass('active')) {
 			$('#add-button').addClass('disabled');
@@ -168,7 +232,7 @@ $(function() {
 		var btn = $(this);
 		if (!btn.hasClass("disabled")) {
 			btn.button('loading');
-			saveChanges();
+			saveChanges(false);
 			btn.button('reset');
 		}
 	});
@@ -194,10 +258,11 @@ $(function() {
 
 	$('#save-changes-button').on('click', function(e) {
 		e.preventDefault();
-		saveChanges();
+		saveChanges(true);
 	});
 
-	$('#person-pic').on('click', function() {
+	$('#person-pic').on('click', function(e) {
+		e.preventDefault();
 		$('#current-pic').empty();
 		$('#current-pic').append($('#person-pic').html());
 		$('#current-pic').css("padding", 0);
@@ -205,28 +270,15 @@ $(function() {
 		$('#upload-pic-modal').modal('show');
 	});
 
-	$('#upload-pic-btn').on('click', function() {
-		var id = $('#inputID').val();
+	$('#upload-pic-btn').on('click', function(e) {
+		e.preventDefault();
+		var id = $('#id').val();
 		var pic = $('#current-pic').find("img").attr("src");
 		pic = pic.substr(pic.indexOf(",") + 1);
 
 		$('#upload-pic-modal').modal('hide');
 
-		$.ajax({
-			type: "POST",
-			url: "/people/call/json/update_pic",
-			data: {
-				"id" : id,
-				"pic" : pic
-			},
-			success: function() {
-				loadRecord(id);
-				displaySuccess("The picture has been uploaded.")
-			},
-			error: function() {
-				displayError("The picture could not be uploaded.")
-			}
-		});
+		updatePic(id, pic);
 	})
 
 	$('#upload-btn').on('click', function(e) {
@@ -237,8 +289,22 @@ $(function() {
 		});
 	});
 
-	$('#remove-btn').on('click', function() {
-		$('#current-pic').empty();
-		$('#current-pic').append($('#person-pic').html());
+	$('#remove-btn').on('click', function(e) {
+		e.preventDefault();
+		// $('.fileupload').fileupload('clear');
+		// $('#current-pic').empty();
+		// $('#current-pic').append($('#person-pic').html());
+	});
+
+	$('.fileupload').on('change', function(e) {
+		checkPictureForUpload();
+	});
+
+	$('#upload-pic-modal').on('hidden', function() {
+		$('.fileupload').fileupload('clear');
+		$('.fileupload').fileupload('reset');
+		if (!$('#upload-pic-btn').hasClass('disabled')) {
+			$('#upload-pic-btn').addClass('disabled');
+		}
 	});
 });

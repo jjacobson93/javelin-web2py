@@ -1,0 +1,105 @@
+{{extend 'main.html'}}
+
+{{block center}}
+<!-- MAIN CONTENT -->
+
+<ul class="nav nav-tabs">
+	<li class="active"><a href="#modules" data-toggle="tab"><i class="icon-puzzle-piece icon-large"></i>Modules</a></li>
+	<li><a href="#users" data-toggle="tab"><i class="icon-group icon-large"></i>Users</a></li>
+</ul>
+
+<div class="tab-content">
+
+	<!-- MODULES TAB -->
+	<div class="tab-pane fade active in" id="modules">
+		<div id="modules-div">
+			<table class="table table-striped" id="modules-table" style="font-size: 14px !important">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Custom Name</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody id="modules-tbody">
+					{{for mod in modules_data:}}
+					<tr>
+						<td>{{=modules_data[mod]['label']}}</td>
+						<td>{{=modules_data[mod]['description']}}</td>
+						<td><input class='span12' type="text" id="inputCustom" placeholder="Name" value="{{=modules_data[mod].get('custom', '')}}"></td>
+						<td>
+							{{if modules_data[mod]['required'] == False:}}
+							<a href="#"><i class='icon-trash'></i></a>
+							{{pass}}
+						</td>
+					</tr>
+					{{pass}}
+				</tbody>
+			</table>
+			<div class="form-actions">
+				<a href="#" class="btn btn-primary pull-right" id="save-button" data-loading-text="Saving...">Save changes</a>
+			</div>
+		</div>
+	</div>
+
+	<!-- USERS TAB -->
+	<div class="tab-pane fade" id="users">
+		<div id="users-div">
+			<table class="table table-striped" id="user-table" style="font-size: 14px !important">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Last Name</th>
+						<th>First Name</th>
+						<th>Admin</th>
+						<th>Active</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{for user in users:}}
+					<tr>
+						<td>{{=user.id}}</td>
+						<td>{{=user.last_name}}</td>
+						<td>{{=user.first_name}}</td>
+						<td><div class="switch switch-small"><input type="checkbox" {{if auth.has_membership('admin', user.id):}}checked{{pass}}></td>
+						<td><div class="switch switch-small"><input type="checkbox" {{if user.active:}}checked{{pass}}></td>
+					</tr>
+					{{pass}}
+				</tbody>
+			</table>
+		</div>
+		<!-- <a class="btn btn-success pull-right" href="#" id="add-user-button"><i class="icon-plus-sign"></i>Add User</a> -->
+	</div>
+
+</div>
+
+<!-- MODALS -->
+
+<div class="modal hide fade" id="add-user-modal">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		<h3>Add User</h3>
+	</div>
+	<div class="modal-body">
+		<form>
+			<fieldset>
+				<label class="control-label" for="lastname-field">Last Name</label>
+				<input type="text" id="lastname-field">
+				<label class="control-label" for="firstname-field">First Name</label>
+				<input type="text" id="firstname-field">
+			</fieldset>
+		</form>
+	</div>
+	<div class="modal-footer">
+		<a href="#" class="btn" data-dismiss="modal">Cancel</a>
+		<a href="#" class="btn btn-primary" id="add-user-button">Add User</a>
+	</div>
+</div>
+
+</div>
+
+<!-- JAVASCRIPT -->
+
+<script src="{{=URL('static', 'js/modules/admin.js')}}"></script>
+{{end}}

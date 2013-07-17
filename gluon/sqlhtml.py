@@ -86,8 +86,8 @@ def show_if(cond):
     if not cond:
         return None
     base = "%s_%s" % (cond.first.tablename, cond.first.name)
-    if ((cond.op.__name__ == 'EQ' and cond.second == True) or
-        (cond.op.__name__ == 'NE' and cond.second == False)):
+    if ((cond.op.__name__ == 'EQ' and cond.second == True) or 
+        (cond.op.__name__ == 'NE' and cond.second == False)):            
         return base,":checked"
     if ((cond.op.__name__ == 'EQ' and cond.second == False) or
         (cond.op.__name__ == 'NE' and cond.second == True)):
@@ -97,7 +97,7 @@ def show_if(cond):
     if cond.op.__name__ == 'NE':
         return base,"[value!='%s']" % cond.second
     if cond.op.__name__ == 'CONTAINS':
-        return base,"[value~='%s']" % cond.second
+        return base,"[value~='%s']" % cond.second    
     if cond.op.__name__ == 'BELONGS' and isinstance(cond.second,(list,tuple)):
         return base,','.join("[value='%s']" % (v) for v in cond.second)
     raise RuntimeError("Not Implemented Error")
@@ -126,7 +126,7 @@ class FormWidget(object):
             _id='%s_%s' % (field.tablename, field.name),
             _class=cls._class or
                 widget_class.match(str(field.type)).group(),
-            _name=field.name,
+            _name=field.name,            
             requires=field.requires,
         )
         if getattr(field,'show_if',None):
@@ -295,15 +295,57 @@ class ListWidget(StringWidget):
             _class = 'string'
         requires = field.requires if isinstance(
             field.requires, (IS_NOT_EMPTY, IS_LIST_OF)) else None
+        attributes['_style'] = 'list-style:none'
         nvalue = value or ['']
         items = [LI(INPUT(_id=_id, _class=_class, _name=_name,
                           value=v, hideerror=k < len(nvalue) - 1,
                           requires=requires),
                     **attributes) for (k, v) in enumerate(nvalue)]
+        script = SCRIPT("""
+// from http://refactormycode.com/codes/694-expanding-input-list-using-jquery
+(function(){
+jQuery.fn.grow_input = function() {
+  return this.each(function() {
+    var ul = this;
+    jQuery(ul).find(":text").after('<a href="javascript:void(0)">+</a>&nbsp;<a href="javascript:void(0)">-</a>').keypress(function (e) { return (e.which == 13) ? pe(ul, e) : true; }).next().click(function(e){ pe(ul, e) }).next().click(function(e){ rl(ul, e)});
+  });
+};
+function pe(ul, e) {
+  var new_line = ml(ul);
+  rel(ul);
+  if (jQuery(e.target).parent().is(':visible')) {
+    //make sure we didn't delete the element before we insert after
+    new_line.insertAfter(jQuery(e.target).parent());
+  } else {
+    //the line we clicked on was deleted, just add to end of list
+    new_line.appendTo(ul);
+  }
+  new_line.find(":text").focus();
+  return false;
+}
+function rl(ul, e) {
+  if (jQuery(ul).children().length > 1) {
+    //only remove if we have more than 1 item so the list is never empty
+    jQuery(e.target).parent().remove();
+  }
+}
+function ml(ul) {
+  var line = jQuery(ul).find("li:first").clone(true);
+  line.find(':text').val('');
+  return line;
+}
+function rel(ul) {
+  jQuery(ul).find("li").each(function() {
+    var trimmed = jQuery.trim(jQuery(this.firstChild).val());
+    if (trimmed=='') jQuery(this).remove(); else jQuery(this.firstChild).val(trimmed);
+  });
+}
+})();
+jQuery(document).ready(function(){jQuery('#%s_grow_input').grow_input();});
+""" % _id)
         attributes['_id'] = _id + '_grow_input'
         attributes['_style'] = 'list-style:none'
-        attributes['_class'] = 'w2p_list'
-        return TAG[''](UL(*items, **attributes))
+        return TAG[''](UL(*items, **attributes), script)
 
 
 class MultipleOptionsWidget(OptionsWidget):
@@ -479,6 +521,7 @@ class PasswordWidget(FormWidget):
             _value=(value and cls.DEFAULT_PASSWORD_DISPLAY) or '',
         )
         attr = cls._attributes(field, default, **attributes)
+        output = CAT(INPUT(**attr))
 
         # deal with entropy check!
         requires = field.requires
@@ -486,9 +529,10 @@ class PasswordWidget(FormWidget):
             requires = [requires]
         is_strong = [r for r in requires if isinstance(r, IS_STRONG)]
         if is_strong:
-            attr['_data-w2p_entropy'] = is_strong[0].entropy if is_strong[0].entropy else "null"
+            output.append(SCRIPT("web2py_validate_entropy(jQuery('#%s'),%s);" % (
+                        attr['_id'], is_strong[0].entropy
+                        if is_strong[0].entropy else "null")))
         # end entropy check
-        output = INPUT(**attr)
         return output
 
 
@@ -607,7 +651,7 @@ class AutocompleteWidget(object):
         self.help_fields = help_fields or []
         self.help_string = help_string
         if self.help_fields and not self.help_string:
-            self.help_string = ' '.join('%%(%s)s'%f.name
+            self.help_string = ' '.join('%%(%s)s'%f.name 
                                         for f in self.help_fields)
 
         self.request = request
@@ -634,9 +678,9 @@ class AutocompleteWidget(object):
         if self.keyword in self.request.vars:
             field = self.fields[0]
             if is_gae:
-                rows = self.db(field.__ge__(self.request.vars[self.keyword]) & field.__lt__(self.request.vars[self.keyword] + u'\ufffd')).select(orderby=self.orderby, limitby=self.limitby, *(self.fields+self.help_fields))
+                rows = self.db(field.__ge__(self.request.vars[self.keyword]) & field.__lt__(self.request.vars[self.keyword] + u'\ufffd')).select(orderby=self.orderby, limitby=self.limitby, *(self.fields+self.help_field))
             else:
-                rows = self.db(field.like(self.request.vars[self.keyword] + '%')).select(orderby=self.orderby, limitby=self.limitby, distinct=self.distinct, *(self.fields+self.help_fields))
+                rows = self.db(field.like(self.request.vars[self.keyword] + '%')).select(orderby=self.orderby, limitby=self.limitby, distinct=self.distinct, *(self.fields+self.help_field))
             if rows:
                 if self.is_reference:
                     id_field = self.fields[1]
@@ -1116,7 +1160,7 @@ class SQLFORM(FORM):
                 inp = self.widgets[field_type].widget(field, default)
 
             xfields.append((row_id, label, inp, comment))
-            self.custom.dspval[fieldname] = dspval if (dspval is not None) else nbsp
+            self.custom.dspval[fieldname] = dspval or nbsp
             self.custom.inpval[
                 fieldname] = inpval if not inpval is None else ''
             self.custom.widget[fieldname] = inp
@@ -1440,7 +1484,7 @@ class SQLFORM(FORM):
                         continue
                     else:
                         f = os.path.join(
-                            current.request.folder,
+                            current.request.folder, 
                             os.path.normpath(f))
                         source_file = open(f, 'rb')
                         original_filename = os.path.split(f)[1]
@@ -1915,7 +1959,7 @@ class SQLFORM(FORM):
                 tablenames += db._adapter.tables(join)
         tables = [db[tablename] for tablename in tablenames]
         if fields:
-            columns = [f for f in fields if f.tablename in tablenames]
+            columns = copy.copy(fields)
         else:
             fields = []
             columns = []
@@ -2097,7 +2141,7 @@ class SQLFORM(FORM):
                 else:
                     rows = dbset.select(left=left, orderby=orderby,
                                     cacheable=True, *expcolumns)
-
+                
                 value = exportManager[export_type]
                 clazz = value[0] if hasattr(value, '__getitem__') else value
                 oExp = clazz(rows)
@@ -2188,7 +2232,7 @@ class SQLFORM(FORM):
                 continue
             key = str(field)
             header = headers.get(str(field), field.label or key)
-            if sortable and not isinstance(field, Field.Virtual):
+            if sortable:
                 if key == order:
                     key, marker = '~' + order, sorter_icons[0]
                 elif key == order[1:]:
@@ -2571,7 +2615,7 @@ class SQLFORM(FORM):
         except (KeyError, ValueError, TypeError):
             redirect(URL(args=table._tablename))
         if nargs == len(args) + 1:
-            query = table._db._adapter.id_query(table)
+            query = table._id != None
 
         # filter out data info for displayed table
         if table._tablename in constraints:
@@ -2644,13 +2688,9 @@ class SQLFORM(FORM):
             if grid.create_form:
                 header = T('New %(entity)s') % dict(entity=table._singular)
             elif grid.update_form:
-                header = T('Edit %(entity)s') % dict(
-                    entity=format(grid.update_form.table,
-                                  grid.update_form.record))
+                header = T('Edit %(entity)s') % dict(entity=format(table,grid.update_form.record))
             elif grid.view_form:
-                header = T('View %(entity)s') % dict(
-                    entity=format(grid.view_form.table,
-                                  grid.view_form.record))
+                header = T('View %(entity)s') % dict(entity=format(table,grid.view_form.record))
             if next:
                 breadcrumbs.append(LI(
                             A(T(header), _class=trap_class(),_href=url()),
@@ -3092,3 +3132,4 @@ class ExporterJSON(ExportClass):
             return self.rows.as_json()
         else:
             return 'null'
+

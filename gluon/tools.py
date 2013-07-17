@@ -878,8 +878,7 @@ class Auth(object):
         alternate_requires_registration=False,
         create_user_groups="user_%(id)s",
         everybody_group_id=None,
-        manager_actions={},
-        auth_manager_role=None,
+        manager_group_role=None,
         login_captcha=None,
         register_captcha=None,
         retrieve_username_captcha=None,
@@ -920,8 +919,6 @@ class Auth(object):
         update_fields = ['email'],
         ondelete="CASCADE",
         client_side = True,
-        keep_session_onlogin=True,
-        keep_session_onlogout=False,
         wiki = Settings(),
     )
         # ## these are messages that can be customized
@@ -969,7 +966,6 @@ class Auth(object):
         new_password='New password',
         old_password='Old password',
         group_description='Group uniquely assigned to user %(id)s',
-        logging_enabled = True,
         register_log='User %(id)s Registered',
         login_log='User %(id)s Logged-in',
         login_failed_log=None,
@@ -1116,7 +1112,7 @@ class Auth(object):
                    f=f, args=args, vars=vars, scheme=scheme)
 
     def here(self):
-        return current.request.env.request_uri
+        return URL(args=current.request.args, vars=current.request.vars)
 
     def __init__(self, environment=None, db=None, mailer=True,
                  hmac_key=None, controller='default', function='user',
@@ -1450,7 +1446,7 @@ class Auth(object):
         """
         tables = [table for table in tables]
         for table in tables:
-            if '_id' in table.fields() and 'modified_on' in table.fields() and not current_record in table.fields():
+            if 'modified_on' in table.fields() and not current_record in table.fields():
                 table._enable_record_versioning(
                     archive_db=archive_db,
                     archive_name=archive_names,
@@ -1545,7 +1541,7 @@ class Auth(object):
                 settings.table_user_name, []) + signature_list
             if username or settings.cas_provider:
                 is_unique_username = \
-                    [IS_MATCH('[\w\.\-]+', strict=True),
+                    [IS_MATCH('[\w\.\-]+'),
                      IS_NOT_IN_DB(db, '%s.username' % settings.table_user_name)]
                 if not settings.username_case_sensitive:
                     is_unique_username.insert(1, IS_LOWER())
@@ -1740,7 +1736,7 @@ class Auth(object):
 
             auth.log_event(description='this happened', origin='auth')
         """
-        if not self.settings.logging_enabled or not description:
+        if not description:
             return
         elif self.is_logged_in():
             user_id = self.user.id
@@ -1751,7 +1747,7 @@ class Auth(object):
             description=str(description % vars),
             origin=origin, user_id=user_id)
 
-    def get_or_create_user(self, keys, update_fields=['email'], login=True):
+    def get_or_create_user(self, keys, update_fields=['email']):
         """
         Used for alternate login methods:
             If the user exists already then password is updated.
@@ -1791,16 +1787,13 @@ class Auth(object):
                 guess = keys.get('email', 'anonymous').split('@')[0]
                 keys['first_name'] = keys.get('username', guess)
             user_id = table_user.insert(**table_user._filter_fields(keys))
-            user = table_user[user_id]            
-            print user
+            user = self.user = table_user[user_id]
             if self.settings.create_user_groups:
                 group_id = self.add_group(
                     self.settings.create_user_groups % user)
                 self.add_membership(group_id, user_id)
             if self.settings.everybody_group_id:
                 self.add_membership(self.settings.everybody_group_id, user_id)
-            if login:
-                self.user = user
         return user
 
     def basic(self, basic_auth_realm=False):
@@ -1826,7 +1819,7 @@ class Auth(object):
         basic = current.request.env.http_authorization
         if basic_auth_realm:
             if callable(basic_auth_realm):
-                basic_auth_realm = basic_auth_realm()
+                basic_auth_realm = basic_auth_auth()
             elif isinstance(basic_auth_realm, (unicode, str)):
                 basic_realm = unicode(basic_auth_realm)
             elif basic_auth_realm is True:
@@ -1849,15 +1842,13 @@ class Auth(object):
         """
         from gluon.settings import global_settings
         if global_settings.web2py_runtime_gae:
-            user = Row(self.settings.table_user._filter_fields(user, id=True))
+            user = Row(self.db.auth_user._filter_fields(user, id=True))
             delattr(user,'password')
         else:
             user = Row(user)
             for key,value in user.items():
                 if callable(value) or key=='password':
                     delattr(user,key)
-        current.session.renew(
-            clear_session=not self.settings.keep_session_onlogin, db=self.db)
         current.session.auth = Storage(
             user = user,
             last_visit=current.request.now,
@@ -2244,8 +2235,6 @@ class Auth(object):
 
         current.session.auth = None
         current.session.flash = self.messages.logged_out
-        current.session.renew(
-            clear_session=not self.settings.keep_session_onlogout, db=self.db)
         if not next is None:
             redirect(next)
 
@@ -2928,22 +2917,20 @@ class Auth(object):
             auth.user.update(
                 table_user._filter_fields(user, True))
             self.user = auth.user
-            self.update_groups()
             onaccept = self.settings.login_onaccept
-            log = self.messages.impersonate_log
-            self.log_event(log, dict(id=current_id, other_id=auth.user.id))
             if onaccept:
                 form = Storage(dict(vars=self.user))
                 if not isinstance(onaccept,(list, tuple)):
                     onaccept = [onaccept]
                 for callback in onaccept:
                     callback(form)
+            log = self.messages.impersonate_log
+            self.log_event(log, dict(id=current_id, other_id=auth.user.id))
         elif user_id in (0, '0'):
             if self.is_impersonating():
                 session.clear()
                 session.update(cPickle.loads(auth.impersonator))
                 self.user = session.auth.user
-                self.update_groups()
             return None
         if requested_id is DEFAULT and not request.post_vars:
             return SQLFORM.factory(Field('user_id', 'integer'))
@@ -3910,7 +3897,6 @@ class Crud(object):
         """
         table = tables[0]
         fields = args.get('fields', table.fields)
-        validate = args.get('validate',True)
         request = current.request
         db = self.db
         if not (isinstance(table, db.Table) or table in db.tables):
@@ -3965,15 +3951,13 @@ class Crud(object):
                     if field.type[0:10] == 'reference ':
                         refsearch.append(self.get_query(field,
                                     opval, txtval, refsearch=True))
-                    elif validate:
+                    else:
                         value, error = field.validate(txtval)
                         if not error:
                             ### TODO deal with 'starts with', 'ends with', 'contains' on GAE
                             query &= self.get_query(field, opval, value)
                         else:
                             row[3].append(DIV(error, _class='error'))
-                    else:
-                        query &= self.get_query(field, opval, txtval)
                 selected.append(field)
         form = FORM(tbl, INPUT(_type="submit"))
         if selected:
@@ -4439,9 +4423,7 @@ class Service(object):
         jsonrpc_2 = data.get('jsonrpc')
         if jsonrpc_2: #hand over to version 2 of the protocol
             return self.serve_jsonrpc2(data)
-        id, method, params = data.get('id'), data.get('method'), data.get('params', [])
-        if id is None:
-            return return_error(0, 100, 'missing id')
+        id, method, params = data['id'], data['method'], data.get('params', '')
         if not method in methods:
             return return_error(id, 100, 'method "%s" does not exist' % method)
         try:
@@ -4454,12 +4436,15 @@ class Service(object):
             return return_response(id, s)
         except Service.JsonRpcException, e:
             return return_error(id, e.code, e.info)
-        except:
+        except BaseException:
             etype, eval, etb = sys.exc_info()
+            code = 100
             message = '%s: %s' % (etype.__name__, eval)
             data = request.is_local and traceback.format_tb(etb)
-            logger.warning('jsonrpc exception %s\n%s' % (message, traceback.format_tb(etb)))
-            return return_error(id, 100, message, data)
+            return return_error(id, code, message, data)
+        except:
+            etype, eval, etb = sys.exc_info()
+            return return_error(id, 100, 'Exception %s: %s' % (etype, eval))
 
     def serve_jsonrpc2(self, data=None, batch_element=False):
 
@@ -4561,11 +4546,14 @@ class Service(object):
             raise e
         except Service.JsonRpcException, e:
             return return_error(id, e.code, e.info)
+        except BaseException:
+            etype, eval, etb = sys.exc_info()
+            code = -32099
+            data = '%s: %s\n' % (etype.__name__, eval) + str(request.is_local and traceback.format_tb(etb))
+            return return_error(id, code, data=data)
         except:
             etype, eval, etb = sys.exc_info()
-            data = '%s: %s\n' % (etype.__name__, eval) + str(request.is_local and traceback.format_tb(etb))
-            logger.warning('%s: %s\n%s' % (etype.__name__, eval, traceback.format_tb(etb)))
-            return return_error(id, -32099, data=data)
+            return return_error(id, -32099, data='Exception %s: %s' % (etype, eval))
 
 
     def serve_xmlrpc(self):
@@ -5199,19 +5187,19 @@ class Wiki(object):
         return True
 
     def can_see_menu(self):
+        if self.settings.menu_groups is None:
+            return True
         if self.auth.user:
-            if self.settings.menu_groups is None:
+            groups = self.auth.user_groups.values()
+            if any(t in self.settings.menu_groups for t in groups):
                 return True
-            else:
-                groups = self.auth.user_groups.values()
-                if any(t in self.settings.menu_groups for t in groups):
-                    return True
         return False
 
     ### END POLICY
 
     def automenu(self):
         """adds the menu if not present"""
+        request = current.request
         if not self.wiki_menu_items and self.settings.controller and self.settings.function:
             self.wiki_menu_items = self.menu(self.settings.controller,
                                              self.settings.function)

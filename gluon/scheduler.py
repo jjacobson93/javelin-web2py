@@ -480,8 +480,7 @@ class Scheduler(MetaScheduler):
             Field('function_name',
                   requires=IS_IN_SET(sorted(self.tasks.keys()))
                   if self.tasks else DEFAULT),
-            Field('uuid', length=255,
-                  requires=IS_NOT_IN_DB(db, 'scheduler_task.uuid'),
+            Field('uuid', requires=IS_NOT_IN_DB(db, 'scheduler_task.uuid'),
                   unique=True, default=web2py_uuid),
             Field('args', 'text', default='[]', requires=TYPE(list)),
             Field('vars', 'text', default='{}', requires=TYPE(dict)),
@@ -522,7 +521,7 @@ class Scheduler(MetaScheduler):
 
         db.define_table(
             'scheduler_worker',
-            Field('worker_name', length=255, unique=True),
+            Field('worker_name', unique=True),
             Field('first_heartbeat', 'datetime'),
             Field('last_heartbeat', 'datetime'),
             Field('status', requires=IS_IN_SET(WORKER_STATUS)),

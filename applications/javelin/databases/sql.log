@@ -85,3 +85,12 @@ CREATE TABLE group_rec(
     person_id INTEGER REFERENCES person (id) ON DELETE CASCADE
 );
 success!
+timestamp: 2013-07-12T20:14:18.002561
+CREATE TABLE module_names(
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(512) NOT NULL UNIQUE,
+    label VARCHAR(512) NOT NULL
+);
+success!
+timestamp: 2013-07-12T21:11:54.526419
+ALTER TABLE auth_user ADD active CHAR(1);

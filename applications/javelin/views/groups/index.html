@@ -27,7 +27,7 @@
 		<i class="icon-arrow-left"></i>Back
 	</a>
 	<a class="btn btn-success pull-right" href="#" id="add-group-btn">
-		<i class="icon-plus"></i>Add {{ labels['sing'] }}
+		<i class="icon-plus"></i>Add {{=labels['sing']}}
 	</a>
 </div>
 <hr>
@@ -67,7 +67,7 @@
 						<tr>
 							<th>
 								<div class="datagrid-header-left">
-									<h4>Groups</h4>
+									<h4>{{=modules_data['groups']['labels']['cap']}}</h4>
 								</div>
 								<div class="datagrid-header-right">
 									<div class="input-append search datagrid-search" data-delay="300">
@@ -189,7 +189,7 @@
 				<input type="text" id="inputName" placeholder="Name" />
 				<label class="control-label" for="inputDescription">Description</label>
 				<input type="text" id="inputDescription" placeholder="Description" />
-				<p>The {{ labels['sing'].lower() }} can't have no one! Let's add some people!</p>
+				<p>The {{=labels['sing'].lower()}} can't have no one! Let's add some people!</p>
 				<select id="people-select" multiple="multiple"></select>
 			</fieldset>
 		</form>
@@ -203,7 +203,7 @@
 <div class="modal hide fade" id="delete-group-modal">
 	<div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h3>Delete Group</h3>
+		<h3>Delete {{=modules_data['groups']['labels']['sing']}}</h3>
 	</div>
 	<div class="modal-body">
 		<p>Are you sure you want to delete <strong id="group-name-delete"></strong>?</p>
@@ -239,7 +239,7 @@
 <div class="modal hide fade" id="delete-person-modal">
 	<div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h3>Delete from Group</h3>
+		<h3>Delete from {{=modules_data['groups']['labels']['sing']}}</h3>
 	</div>
 	<div class="modal-body">
 		<p>Are you sure you want to delete <strong id="person-name-delete"></strong> from <strong id="from-group"></strong>?</p>

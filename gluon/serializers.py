@@ -130,7 +130,7 @@ def csv(value):
 def ics(events, title=None, link=None, timeshift=0, calname=True,
         **ignored):
     import datetime
-    title = title or '(unknown)'
+    title = title or '(unkown)'
     if link and not callable(link):
         link = lambda item, prefix=link: prefix.replace(
             '[id]', str(item['id']))

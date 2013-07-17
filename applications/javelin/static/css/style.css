@@ -27,9 +27,21 @@ table {
 	position: relative;
 	top: 50%;
 	margin: 0 auto;
-	margin-top: -160px;
+	/*margin-top: -160px;*/
 	width: 320px;
 	text-align: center;
+}
+
+#login-form input[type="submit"] {
+	margin-bottom: 10px;
+}
+
+#login-form .btn {
+	margin-right: 0px;
+}
+
+#login-form table, #login-form form {
+	margin-bottom: 0;
 }
 
 #main-nav li a {

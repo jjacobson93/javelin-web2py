@@ -59,7 +59,7 @@ form .row {
 						<tr>
 							<th>
 								<div class="datagrid-header-left">
-									<h4>People</h4>
+									<h4>{{=modules_data['people']['labels']['cap']}}</h4>
 								</div>
 								<div class="datagrid-header-right">
 									<div class="input-append search datagrid-search" data-delay="300">
@@ -315,6 +315,33 @@ form .row {
 		<a href="#" class="btn btn-primary" id="save-changes-button">Save Changes</a>
 	</div>
 </div>
+
+{{if auth.has_membership('admin'):}}
+<div class="modal hide fade" id="import-modal">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		<h3>Import from CSV</h3>
+	</div>
+	<div class="modal-body">
+		<div class="fileupload fileupload-new" data-provides="fileupload">
+			<div class="input-append">
+				<div class="uneditable-input span3">
+					<i class="icon-file fileupload-exists"></i><span class="fileupload-preview"></span>
+				</div>
+				<span class="btn btn-file">
+					<span class="fileupload-new">Select file</span>
+					<span class="fileupload-exists">Change</span>
+					<input type="file" />
+				</span><a href="#" class="btn fileupload-exists" data-dismiss="fileupload">Remove</a>
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<a href="#" class="btn" data-dismiss="modal">Cancel</a>
+		<a href="#" class="btn btn-primary disabled" id="import-button">Import</a>
+	</div>
+</div>
+{{pass}}
 
 <script src="{{=URL('static', 'js/modules/people-datasource.js')}}"></script>
 <script src="{{=URL('static', 'js/modules/people.js')}}"></script>

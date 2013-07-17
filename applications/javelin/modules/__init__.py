@@ -9,25 +9,22 @@ __copyright__ = "(c) 2013, Jacobson and Varni, LLC"
 __date__ = "7/5/2013"
 __email__ = "jjacobson93@gmail.com"
 
-# from applications.javelin.models.sqladb import Table, metadata
-
-__all__ = ['people', 'groups']
+__all__ = ['people', 'groups', 'admin']
 modules_enabled = list()
 modules_data = None
 
 def get_module_data():
 	"""Get data about modules"""
-	# module_names = Table('module_names', metadata, autoload=True)
+	from globals import current
+	db = current.javelin.db
 
 	from collections import OrderedDict as odict
-	# try:
-	# 	rows = module_names.select().execute().fetchall()
-	# except:
-	# 	return None
+	rows = db().select(db.module_names.ALL).as_list()
 
 	labels = {}
-	# for r in rows:
-	# 	labels[r['name']] = r['label']
+	if rows:
+		for r in rows:
+			labels[r['name']] = r['label']
 
 	mods = odict()
 	for mod in modules_enabled:
@@ -47,7 +44,6 @@ def get_module_data():
 		data['labels'] = mod_labels
 		mods[name] = data
 		del mod
-	# del module_names
 	
 	return mods
 
@@ -57,8 +53,5 @@ def init_modules():
 	if not modules_enabled:
 		for m in __all__:
 			modules_enabled.append(__import__('applications.javelin.modules.%s' % m, globals(), locals(), [m]))
-
-	if not modules_data:
-		modules_data = get_module_data()
 
 init_modules()

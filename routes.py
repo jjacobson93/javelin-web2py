@@ -38,41 +38,43 @@ routers = dict(
 		default_controller='default',
 		controllers='DEFAULT',
 		default_function='index',
-	),
-	javelin=dict(
-		default_function='index',
-		functions=['index','user','profile', 'download','call','data','error']
-   )
+	) #,
+	# javelin=dict(
+	# 	default_function='index',
+	# 	functions=['index','user','profile', 'download','call','data','error']
+	# )
+
 )
 
 BASE = ''  # optonal prefix for incoming URLs
 
-routes_in = (
-	# do not reroute admin unless you want to disable it
-	(BASE + '/admin', '/admin/default/index'),
-	(BASE + '/admin/$anything', '/admin/$anything'),
-	# do not reroute appadmin unless you want to disable it
-	(BASE + '/$app/appadmin', '/$app/appadmin/index'),
-	(BASE + '/$app/appadmin/$anything', '/$app/appadmin/$anything'),
-	# do not reroute static files
-	(BASE + '/$app/static/$anything', '/$app/static/$anything'),
-	# reroute favicon and robots, use exable for lack of better choice
-	('/favicon.ico', '/examples/static/favicon.ico'),
-	('/robots.txt', '/examples/static/robots.txt'),
-	# do other stuff
-	((r'.*http://otherdomain.com.* (?P<any>.*)', r'/app/ctr\g<any>')),
-	# remove the BASE prefix
-	(BASE + '/$anything', '/$anything'),
-	# custom routes
-	(BASE + '/', '/javelin'),
-	(BASE + '/javelin/$anything', '/$anything'),
-)
+# routes_in = (
+# 	# do not reroute admin unless you want to disable it
+# 	(BASE + '/admin', '/admin/default/index'),
+# 	(BASE + '/admin/$anything', '/admin/$anything'),
+# 	# do not reroute appadmin unless you want to disable it
+# 	(BASE + '/$app/appadmin', '/$app/appadmin/index'),
+# 	(BASE + '/$app/appadmin/$anything', '/$app/appadmin/$anything'),
+# 	# do not reroute static files
+# 	(BASE + '/$app/static/$anything', '/$app/static/$anything'),
+# 	# reroute favicon and robots, use exable for lack of better choice
+# 	('/favicon.ico', '/examples/static/favicon.ico'),
+# 	('/robots.txt', '/examples/static/robots.txt'),
+# 	# do other stuff
+# 	((r'.*http://otherdomain.com.* (?P<any>.*)', r'/app/ctr\g<any>')),
+# 	# remove the BASE prefix
+# 	# (BASE + '/$anything', '/$anything'),
+# 	# custom routes
+# 	(BASE + '/', '/javelin/default/index'),
+# 	(BASE + '/javelin/default/index', '/'),
+# 	(BASE + '/$anything', '/javelin/$anything'),
+# )
 
 # routes_out, like routes_in translates URL paths created with the web2py URL()
 # function in the same manner that route_in translates inbound URL paths.
 #
 
-routes_out = [(x, y) for (y, x) in routes_in[:-2]]
+# routes_out = [(x, y) for (y, x) in routes_in[:-2]]
 
 # Specify log level for rewrite's debug logging
 # Possible values: debug, info, warning, error, critical (loglevels),

@@ -56,21 +56,25 @@ from gluon.tools import Auth, Crud, Service, PluginManager, prettydate
 auth = Auth(db)
 crud, service, plugins = Crud(db), Service(), PluginManager()
 
+## add field for user.active
+auth.settings.extra_fields['auth_user'] = [Field('active', 'boolean', default=True)]
+
 ## create all tables needed by auth if not custom tables
 auth.define_tables(username=True, signature=False)
-
 
 ## configure email
 mail = auth.settings.mailer
 mail.settings.server = 'logging' or 'smtp.gmail.com:587'
-mail.settings.sender = 'you@gmail.com'
-mail.settings.login = 'username:password'
+mail.settings.sender = 'vc2messager@gmail.com'
+mail.settings.login = 'vc2messager:srivijaya'
 
 ## configure auth policy
-auth.settings.registration_requires_verification = False
-auth.settings.registration_requires_approval = False
+auth.settings.registration_requires_verification = True
+auth.settings.registration_requires_approval = True
 auth.settings.reset_password_requires_verification = True
-auth.settings.actions_disabled=['register','change_password','request_reset_password']
+auth.settings.register_fields=['first_name', 'last_name', 'email', 'username', 'password']
+auth.settings.profile_fields=['first_name', 'last_name', 'email', 'username']
+# auth.settings.actions_disabled=['register','change_password','request_reset_password']
 
 ## if you need to use OpenID, Facebook, MySpace, Twitter, Linkedin, etc.
 ## register with janrain.com, write your domain:api_key in private/janrain.key
@@ -122,12 +126,14 @@ db.define_table('group_rec',
 # 	Field('start_time', 'time'),
 # 	Field('end_time', 'time'),
 # 	Field('allDay', 'boolean', default=False),
-# 	Field('recurring', 'boolean', default=False),
+# 	Field('recurring', 'boolean', default=False),`
 # 	Field('end_recur', 'time'))
 
-# db.define_table('module_names',
-# 	Field('name', 'string', notnull=True, unique=True),
-# 	Field('label', 'string', notnull=True))
+db.define_table('module_names',
+	Field('name', 'string', notnull=True, unique=True),
+	Field('label', 'string', notnull=True))
+
+
 
 ## after defining tables, uncomment below to enable auditing
 # auth.enable_record_versioning(db)

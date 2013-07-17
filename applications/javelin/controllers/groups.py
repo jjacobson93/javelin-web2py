@@ -3,7 +3,7 @@
 	Javelin Web2Py Groups Controller
 """
 
-from applications.javelin.modules import modules_enabled, modules_data, groups
+from applications.javelin.modules import modules_enabled, get_module_data, groups
 from gluon.contrib import simplejson as json
 
 from gluon.tools import Service
@@ -18,7 +18,8 @@ def index():
 
 	:returns: a dictionary to pass to the view with the list of modules_enabled, the active module ('groups') and the labels for 'groups'
 	"""
-	return dict(modules_enabled=modules_enabled, active_module='groups', labels=modules_data['groups']['labels'])
+	modules_data = get_module_data()
+	return dict(modules_enabled=modules_enabled, active_module='groups', labels=modules_data['groups']['labels'], modules_data=modules_data)
 
 @auth.requires_login()
 @service.json

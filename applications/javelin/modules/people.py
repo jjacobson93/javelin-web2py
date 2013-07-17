@@ -74,3 +74,8 @@ def update_pic(id, pic):
 	response = db(db.person.id==id).update(pic=pic)
 
 	return dict(response=response)
+
+def import_from_csv(file, contains_ids=True):
+	import logging
+	logger = logging.getLogger('web2py.app.javelin')
+	logger.debug(file)

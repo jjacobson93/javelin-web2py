@@ -3,7 +3,7 @@
     Javelin Web2Py Default Controller
 """
 
-from applications.javelin.modules import modules_enabled
+from applications.javelin.modules import modules_enabled, get_module_data
 
 from gluon.tools import Service
 service = Service(globals())
@@ -17,7 +17,8 @@ def index():
     if you need a simple wiki simple replace the two lines below with:
     return auth.wiki()
     """
-    return dict(modules_enabled=modules_enabled, active_module='None')
+    modules_data = get_module_data()
+    return dict(modules_enabled=modules_enabled, active_module='None', modules_data=modules_data)
 
 def user():
     """
@@ -73,5 +74,5 @@ def data():
 
 @auth.requires_login()
 @service.json
-def test(id):
-    return "Success!"
+def test():
+    return None

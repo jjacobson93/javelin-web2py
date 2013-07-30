@@ -33,17 +33,20 @@ PeopleDataSource.prototype = {
 					// FILTERING
 					if (options.filter) {
 						data = _.filter(data, function (item) {
-							// switch(options.filter.value) {
-							// 	case 'lt5m':
-							// 		if(item.population < 5000000) return true;
-							// 		break;
-							// 	case 'gte5m':
-							// 		if(item.population >= 5000000) return true;
-							// 		break;
-							// 	default:
-							// 		return true;
-							// 		break;
-							// }
+							switch(options.filter.value) {
+								case 'leaders':
+									if(item.grade != 9 && item.leader) return true;
+									break;
+								case 'freshmen':
+									if(item.grade == 9) return true;
+									break;
+								case 'non_leaders':
+									if(item.grade != 9 && !item.leader) return true;
+									break;
+								default:
+									return true;
+									break;
+							}
 						});
 					}
 
@@ -67,12 +70,19 @@ PeopleDataSource.prototype = {
 
 					if (self._formatter) self._formatter(data);
 
+					$.each(data, function(i) {
+						$.each(data[i], function(j) {
+							if (data[i][j] === null)
+								data[i][j] = '';
+						});
+					});
+
 					callback({ data: data, start: start, end: end, count: count, pages: pages, page: page });
 
 				}, this._delay);
 			},
 			error: function() {
-				displayError("<strong>Error!</strong> Could not retrieve records.");
+				displayError("Could not retrieve records.");
 				callback({ data: [], start: 0, end: 0, count: 0, pages: 0, page: 0 });
 			}
 		});

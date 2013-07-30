@@ -9,7 +9,7 @@ __copyright__ = "(c) 2013, Jacobson and Varni, LLC"
 __date__ = "7/5/2013"
 __email__ = "jjacobson93@gmail.com"
 
-__all__ = ['people', 'groups', 'admin']
+__all__ = ['people', 'groups', 'events', 'messages', 'orientation', 'admin']
 modules_enabled = list()
 modules_data = None
 

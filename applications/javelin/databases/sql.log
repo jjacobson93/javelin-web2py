@@ -94,3 +94,186 @@ CREATE TABLE module_names(
 success!
 timestamp: 2013-07-12T21:11:54.526419
 ALTER TABLE auth_user ADD active CHAR(1);
+timestamp: 2013-07-13T08:21:20.029443
+CREATE TABLE events(
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(512),
+    description VARCHAR(512),
+    start_time TIME,
+    end_time TIME,
+    allDay CHAR(1),
+    recurring CHAR(1),
+    end_recur TIME
+);
+success!
+timestamp: 2013-07-13T08:23:30.201757
+CREATE TABLE attendance(
+    id SERIAL PRIMARY KEY,
+    event_id INTEGER REFERENCES events (id) ON DELETE CASCADE,
+    person_id INTEGER REFERENCES person (id) ON DELETE CASCADE,
+    present CHAR(1)
+);
+success!
+timestamp: 2013-07-13T20:10:21.777726
+ALTER TABLE events ADD notes VARCHAR(512);
+timestamp: 2013-07-13T20:10:21.923557
+ALTER TABLE events DROP COLUMN description;
+timestamp: 2013-07-13T20:17:08.261104
+ALTER TABLE events ADD end TIME;
+timestamp: 2013-07-13T21:10:18.211986
+ALTER TABLE events ADD end_recur__tmp INTEGER;
+UPDATE events SET end_recur__tmp=end_recur;
+timestamp: 2013-07-13T21:20:51.861548
+CREATE TABLE events(
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(512),
+    notes VARCHAR(512),
+    start_time INTEGER,
+    end_time INTEGER,
+    allDay CHAR(1),
+    recurring CHAR(1),
+    end_recur INTEGER
+);
+timestamp: 2013-07-13T21:22:46.262753
+CREATE TABLE events(
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(512),
+    notes VARCHAR(512),
+    start_time INTEGER,
+    end_time INTEGER,
+    allDay CHAR(1),
+    recurring CHAR(1),
+    end_recur INTEGER
+);
+timestamp: 2013-07-25T22:05:42.599277
+CREATE TABLE events(
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(512),
+    notes VARCHAR(512),
+    start_time INTEGER,
+    end_time INTEGER,
+    allDay CHAR(1),
+    recurring CHAR(1),
+    end_recur INTEGER
+);
+success!
+timestamp: 2013-07-26T06:53:36.308504
+ALTER TABLE person ADD cell_phone VARCHAR(512);
+timestamp: 2013-07-26T06:53:36.394419
+ALTER TABLE person DROP COLUMN phone;
+timestamp: 2013-07-26T06:54:17.418626
+CREATE TABLE person(
+    id SERIAL PRIMARY KEY,
+    last_name VARCHAR(512) NOT NULL,
+    first_name VARCHAR(512) NOT NULL,
+    home_phone VARCHAR(512),
+    cell_phone VARCHAR(512),
+    gender VARCHAR(512),
+    email VARCHAR(512),
+    street VARCHAR(512),
+    city VARCHAR(512),
+    state VARCHAR(512),
+    zip_code VARCHAR(512),
+    notes VARCHAR(512),
+    pic BYTEA
+);
+timestamp: 2013-07-26T07:46:48.989081
+CREATE TABLE person(
+    id SERIAL PRIMARY KEY,
+    last_name VARCHAR(512) NOT NULL,
+    first_name VARCHAR(512) NOT NULL,
+    home_phone VARCHAR(512),
+    cell_phone VARCHAR(512),
+    gender VARCHAR(512),
+    email VARCHAR(512),
+    street VARCHAR(512),
+    city VARCHAR(512),
+    state VARCHAR(512),
+    zip_code VARCHAR(512),
+    notes VARCHAR(512),
+    pic BYTEA
+);
+success!
+timestamp: 2013-07-26T10:45:23.371504
+CREATE TABLE person(
+    id INTEGER NOT NULL,
+    last_name VARCHAR(512) NOT NULL,
+    first_name VARCHAR(512) NOT NULL,
+    home_phone VARCHAR(512),
+    cell_phone VARCHAR(512),
+    gender VARCHAR(512),
+    email VARCHAR(512),
+    street VARCHAR(512),
+    city VARCHAR(512),
+    state VARCHAR(512),
+    zip_code VARCHAR(512),
+    notes VARCHAR(512),
+    pic BYTEA,
+    PRIMARY KEY(id)) ;
+success!
+timestamp: 2013-07-27T02:37:29.397992
+CREATE TABLE file(
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(512) NOT NULL
+);
+success!
+timestamp: 2013-07-27T02:39:32.894360
+ALTER TABLE file ADD file VARCHAR(512) NOT NULL;
+timestamp: 2013-07-27T03:48:45.693770
+ALTER TABLE file ADD file_blob BYTEA;
+timestamp: 2013-07-27T04:21:02.041153
+ALTER TABLE file DROP COLUMN file_blob;
+timestamp: 2013-07-27T07:20:43.180379
+ALTER TABLE person ADD student_id INTEGER;
+timestamp: 2013-07-27T07:21:35.592486
+CREATE TABLE person(
+    id SERIAL PRIMARY KEY,
+    student_id INTEGER,
+    last_name VARCHAR(512) NOT NULL,
+    first_name VARCHAR(512) NOT NULL,
+    home_phone VARCHAR(512),
+    cell_phone VARCHAR(512),
+    gender VARCHAR(512),
+    email VARCHAR(512),
+    street VARCHAR(512),
+    city VARCHAR(512),
+    state VARCHAR(512),
+    zip_code VARCHAR(512),
+    notes VARCHAR(512),
+    pic BYTEA
+);
+success!
+timestamp: 2013-07-27T07:22:04.782074
+ALTER TABLE person ADD student_id__tmp INTEGER NOT NULL UNIQUE;
+UPDATE person SET student_id__tmp=student_id;
+ALTER TABLE person DROP COLUMN student_id;
+ALTER TABLE person ADD student_id INTEGER NOT NULL UNIQUE;
+UPDATE person SET student_id=student_id__tmp;
+ALTER TABLE person DROP COLUMN student_id__tmp;
+timestamp: 2013-07-27T07:24:26.436851
+ALTER TABLE person ADD crew INTEGER REFERENCES crew (id) ON DELETE CASCADE;
+timestamp: 2013-07-27T07:33:25.944326
+CREATE TABLE crew(
+    id SERIAL PRIMARY KEY,
+    room VARCHAR(512),
+    wefsk VARCHAR(512)
+);
+success!
+timestamp: 2013-07-27T07:33:26.484393
+ALTER TABLE person ADD crew INTEGER REFERENCES crew (id) ON DELETE CASCADE;
+timestamp: 2013-07-27T07:33:26.744279
+ALTER TABLE person ADD cell_provider VARCHAR(512);
+timestamp: 2013-07-27T07:36:17.082663
+ALTER TABLE person ADD grade INTEGER;
+timestamp: 2013-07-27T08:06:00.933135
+CREATE TABLE leader_rec(
+    id SERIAL PRIMARY KEY,
+    person_id INTEGER NOT NULL UNIQUE
+);
+success!
+timestamp: 2013-07-27T08:30:35.687192
+ALTER TABLE person ADD isleader CHAR(1);
+timestamp: 2013-07-27T08:31:13.142511
+ALTER TABLE person ADD leader CHAR(1);
+timestamp: 2013-07-27T08:31:13.145130
+ALTER TABLE person DROP COLUMN isleader;

@@ -9,7 +9,12 @@ function loadRecord(id) {
 		success: function(data) {
 			$.each(data, function(k, v) {
 				if (k != 'pic')
-					$('#' + k).val(v);
+					if (v && typeof(v) != "boolean")
+						$('#' + k).val(String(v));
+					else if (typeof(v) == "boolean")
+						$('#' + k).prop('checked', v);
+					else
+						$('#' + k).val("");
 			});
 
 			var pic = data['pic']
@@ -17,34 +22,15 @@ function loadRecord(id) {
 			if (pic != null) {
 				var img = new Image();
 				var imgElement = $("<img src='data:image/jpeg;base64," + pic + "'>");
-
-				// img.src = imgElement.attr('src');
-				// var originalHeight = img.height;
-				// var originalWidth = img.width;
-				
-				// if (originalWidth >= originalHeight) {
-				// 	var scaledHeight = 'auto';
-				// 	var scaledWidth = '180px';
-				// } else {
-				// 	var scaledWidth = 'auto';
-				// 	var scaledHeight = '180px';
-				// }
-
-				// imgElement.css('height', scaledHeight);
-				// imgElement.css('width', scaledWidth);
 				$('#person-pic').css("padding", 0);
 				$('#person-pic').append(imgElement);
-				
-				// $('#person-pic img').css('margin-top', -scaledHeight/2.0);
 			} else {
-				$('#person-pic').css("padding", "75px 0"); 
 				$('#person-pic').text("No picture");
 			}
 		},
 		error: function() {
 			displayError("The record could not be loaded")
 			$('#person-pic').empty();
-			$('#person-pic').css("padding", "75px 0"); 
 			$('#person-pic').text("No picture");
 		}
 	});
@@ -55,7 +41,11 @@ function saveChanges(toPrev) {
 	var values = {};
 	$('#main-form input, #main-form select').each(function(i, e) {
 		var eid = $(e).attr('id');
-		if ($(e).val() != "" && eid != 'id')
+		if ($(e).attr('type') == 'checkbox' && $(e).val() == 'on')
+			values[eid] = true;
+		else if ($(e).attr('type') == 'checkbox' && $(e).val() == 'off')
+			values[eid] = false;
+		else if ($(e).val() != "" && eid != 'id')
 			values[eid] = $(e).val();
 		else if (eid == "id")
 			id = $(e).val();
@@ -130,6 +120,11 @@ $(function() {
 					sortable: true
 				},
 				{
+					property: 'student_id',
+					label: 'Student ID',
+					sortable: true
+				},
+				{
 					property: 'last_name',
 					label: 'Last Name',
 					sortable: true
@@ -145,8 +140,8 @@ $(function() {
 					sortable: true
 				},
 				{
-					property: 'phone',
-					label: 'Phone',
+					property: 'home_phone',
+					label: 'Home Phone',
 					sortable: true
 				}
 			]
@@ -154,17 +149,14 @@ $(function() {
 		stretchHeight: true
 	});
 
-	$('#people-table').on('loaded', function() {
-		$('.grid-pagesize').select2('destroy');
-		$('.grid-pager select').select2('destroy');
-		
-		$('.grid-pagesize').select2();
-		$('.grid-pager select').select2({ placeholder: "1" });
-	});
-	// $('.grid-pager select').select2('val', $('#people-table').datagrid('pageNum'));
-
+	$('select.grid-pagesize').select2();
+	$('select.grid-page').select2({placeholder: "1"});
 
 	$('#people-div').height($(window).height()*.6);
+
+	$('#person-pane').on('change', 'input', function() {
+		$('#save-button').removeClass('disabled');
+	});
 
 	$('#person-pane').on('keyup', 'input,textarea', function() {
 		$('#save-button').removeClass('disabled');

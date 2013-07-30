@@ -12,7 +12,6 @@ __data__ = {'name' : 'groups', 'label' : 'Groups', 'description' : 'Create group
 	'icon' : 'book', 'u-icon' : u'\uf02d', 'required' : True}
 
 from globals import current
-from gluon.http import HTTP
 
 def data():
 	db = current.javelin.db

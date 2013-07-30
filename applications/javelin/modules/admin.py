@@ -22,3 +22,30 @@ def update_names(names):
 		response.append(r)
 
 	return response
+
+def import_from_csv(csv_file, contains_ids):
+	db = current.javelin.db
+
+	import logging
+	logger = logging.getLogger('web2py.app.javelin')
+
+	response = list()
+
+	lines = csv_file.rstrip().splitlines()
+
+	if len(lines) > 0:
+		columns = lines.pop(0).split(',')
+
+		for i in range(len(columns)):
+			columns[i] = '_'.join(columns[i].lower().split())
+
+		for line in lines:
+			record = dict()
+			line = line.split(',')
+			for i in range(len(line)):
+				record[columns[i]] = line[i]
+
+			record = dict((k,v) for k,v in record.items() if k in db.person.fields)
+			response.append(db.person.update_or_insert(db.person.id==record['id'], **record))
+
+	return dict(response=response)

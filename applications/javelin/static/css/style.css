@@ -76,3 +76,7 @@ table {
 	vertical-align: middle;
 	max-height: 100%;
 }
+
+.select2-offscreen {
+	display: none !important;
+}

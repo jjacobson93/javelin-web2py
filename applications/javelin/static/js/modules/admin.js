@@ -1,3 +1,63 @@
+function approveUser(id) {
+	$.ajax({
+		type: 'POST',
+		url: '/jadmin/call/json/approve_user',
+		data: {
+			'id' : id
+		},
+		dataType: 'json',
+		success: function(data) {
+			displaySuccess("User has been approved");
+			location.reload();
+		},
+		error: function() {
+			displayError("User could not be approved");
+		}
+	});
+}
+
+function disapproveUser(id) {
+	$.ajax({
+		type: 'POST',
+		url: '/jadmin/call/json/dispprove_user',
+		data: {
+			'id' : id
+		},
+		dataType: 'json',
+		success: function(data) {
+			displaySuccess("User has been disapproved");
+			setTimeout(location.reload(), 5000);
+		},
+		error: function() {
+			displayError("User could not be disapproved");	
+		}
+	});
+}
+
+function importFromCSV(csv_file) {
+	$.ajax({
+		type: 'POST',
+		url: '/jadmin/call/json/import_from_csv',
+		data: {
+			'csv_file': csv_file
+		},
+		success: function() {
+			$('#import-modal').modal('hide');
+			displaySuccess("Imported file.");
+			$('.fileupload').fileupload('clear');
+			$('.fileupload').fileupload('reset');
+		},
+		error: function() {
+			displayError("Could not upload file.", true);
+		}
+	});
+}
+
+function handleFile(event) {
+	var csv_file = event.target.result;
+	importFromCSV(csv_file);
+}
+
 $(function() {
 	$('#save-button').on('click', function(e) {
 		e.preventDefault();
@@ -16,25 +76,13 @@ $(function() {
 				data: 'names=' + JSON.stringify(data),
 				dataType: 'json',
 				success: function() {
-					$('#success-alert').html("<strong>Saved!</strong> The changes were saved.")
-					$('#success-alert').css('display', 'block');
+					displaySuccess("The changes were saved.");
 					setTimeout(function() {
-						$("#success-alert").fadeTo(500, 0).slideUp(500, function(){
-							$('#success-alert').css('display', 'none');
-							$('#success-alert').css('opacity', '');
-							location.reload();
-						});
-					}, 1000);
+					 	location.reload();
+					}, 5000);
 				},
 				error: function() {
-					$('#error-alert').html("<strong>Error!</strong> The changes could not be saved")
-					$('#error-alert').css('display', 'block');
-					setTimeout(function() {
-						$("#error-alert").fadeTo(500, 0).slideUp(500, function(){
-							$('#error-alert').css('display', 'none');
-							$('#error-alert').css('opacity', '');
-						});
-					}, 5000);
+					displayError("The changes could not be saved");
 				}
 			});
 		}
@@ -43,5 +91,23 @@ $(function() {
 	$('#add-user-button').on('click', function(e) {
 		e.preventDefault();
 		$('#add-user-modal').modal('show');
+	});
+
+	$('#import-from-csv-btn').on('click', function() {
+		$('#import-modal').modal('show');
+	});
+
+	$('.fileupload').on('change', function(e) {
+		$('#import-button').removeClass('disabled');
+		if (e.isTrigger) {
+			$('#import-button').addClass('disabled');
+		}
+	});
+
+	$('#import-button').on('click', function() {
+		var csv_file = document.getElementById('csv_file').files[0];
+		var reader = new FileReader();
+		reader.readAsText(csv_file, 'UTF-8');
+		reader.onload = handleFile;
 	});
 });

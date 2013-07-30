@@ -6,10 +6,6 @@ table #people-table {
 	font-size: 13px !important;
 }
 
-#people-table tbody > tr:nth-child(odd):not(:hover) > td {
-	background-color: rgb(240, 250, 255);
-}
-
 .btn i {
 	padding-right: 0px;
 }
@@ -18,14 +14,14 @@ form .row {
 	margin-left: 0px;
 }
 
+table tbody > tr:nth-child(odd):not(:hover) > td {
+	background-color: rgb(240, 250, 255) !important;
+}
+
 @media (max-width: 767px) {
 	#person-thumb {
 		margin: auto !important;
 	}
-}
-
-.select2-offscreen {
-	display: none !important;
 }
 </style>
 
@@ -35,18 +31,11 @@ form .row {
 	<a class="btn btn-primary disabled" id="prev-button" href="#">
 		<i class="icon-arrow-left"></i> Back
 	</a>
-	<a class="btn btn-success pull-right" id="add-button">
-		<i class="icon-plus"></i> Add
-	</a>
 	<a href="#" class="btn btn-primary pull-right disabled" id="save-button" data-loading-text="Saving..." style="margin-right: 10px">
 		<i class='icon-save'></i> Save
 	</a>
 </div>
 <hr>
-
-<!-- ALERTS -->
-
-<div class="alert-container"></div>
 
 <!-- MAIN CONTAINER -->
 
@@ -58,8 +47,22 @@ form .row {
 					<thead>
 						<tr>
 							<th>
+								<span class="pull-left"><h4>{{=modules_data['people']['labels']['cap']}}</h4></span>
 								<div class="datagrid-header-left">
-									<h4>{{=modules_data['people']['labels']['cap']}}</h4>
+									<div class="row-fluid">
+										<div class="select filter">
+											<button type="button" data-toggle="dropdown" class="btn dropdown-toggle">
+												<span class="dropdown-label"></span>
+												<span class="caret"></span>
+											</button>
+											<ul class="dropdown-menu">
+												<li data-value="all" data-selected="true"><a href="#">All</a></li>
+												<li data-value="freshmen"><a href="#">Freshmen</a></li>
+												<li data-value="leaders"><a href="#">Leaders</a></li>
+												<li data-value="non_leaders"><a href="#">Non-Leaders</a></li>
+											</ul>
+										</div>
+									</div>
 								</div>
 								<div class="datagrid-header-right">
 									<div class="input-append search datagrid-search" data-delay="300">
@@ -97,7 +100,7 @@ form .row {
 								<div class="grid-pager">
 									<button type="button" class="btn grid-prevpage"><i class="icon-chevron-left"></i></button>
 									<span>Page</span>
-									<select></select>
+									<select class="grid-page"></select>
 									<span>of <span class="grid-pages"></span></span>
 									<button type="button" class="btn grid-nextpage"><i class="icon-chevron-right"></i></button>
 								</div>
@@ -135,10 +138,16 @@ form .row {
 							</div>
 							<div class="span9" style="margin-left: 0" id="main-form">
 								<div class="row">
-									<div class="span3">
+									<div style="display: none">
 										<fieldset>
 											<label class="control-label" for="id">ID</label>
 											<input class="span12" type="text" id="id" placeholder="ID" disabled>
+										</fieldset>
+									</div>
+									<div class="span2" style="margin-left: 0">
+										<fieldset>
+											<label class="control-label" for="student_id">Student ID</label>
+											<input class="span12" type="text" id="student_id" placeholder="Student ID" disabled>
 										</fieldset>
 									</div>
 									<div class="span4">
@@ -158,23 +167,33 @@ form .row {
 											<label class="control-label" for="gender">Gender</label>
 											<select class="span12" id="gender">
 												<option></option>
-												<option>M</option>
-												<option>F</option>
+												<option value="M">M</option>
+												<option value="F">F</option>
 											</select>
+										</fieldset>
+									</div>
+									<div class="span1">
+										<fieldset>
+											<label class="control-label" for="leader">Leader</label>
+											<input type="checkbox" id="leader">
+											<!-- <select class="span12" id="leader">
+												<option value=true>Y</option>
+												<option value=false>N</option>
+											</select> -->
 										</fieldset>
 									</div>
 								</div>
 								<div class="row">
 									<div class="span3">
 										<fieldset>
-											<label class="control-label" for="phone">Cell Phone</label>
-											<input class="span12" type="text" id="phone" placeholder="Cell Phone" data-mask="999-999-9999">
+											<label class="control-label" for="home_phone">Home Phone</label>
+											<input class="span12" type="text" id="home_phone" placeholder="Home Phone" data-mask="999-999-9999">
 										</fieldset>
 									</div>
 									<div class="span3">
 										<fieldset>
-											<label class="control-label" for="home_phone">Home Phone</label>
-											<input class="span12" type="text" id="home_phone" placeholder="Home Phone" data-mask="999-999-9999">
+											<label class="control-label" for="cell_phone">Cell Phone</label>
+											<input class="span12" type="text" id="cell_phone" placeholder="Cell Phone" data-mask="999-999-9999">
 										</fieldset>
 									</div>
 									<div class="span6">
@@ -316,33 +335,9 @@ form .row {
 	</div>
 </div>
 
-{{if auth.has_membership('admin'):}}
-<div class="modal hide fade" id="import-modal">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h3>Import from CSV</h3>
-	</div>
-	<div class="modal-body">
-		<div class="fileupload fileupload-new" data-provides="fileupload">
-			<div class="input-append">
-				<div class="uneditable-input span3">
-					<i class="icon-file fileupload-exists"></i><span class="fileupload-preview"></span>
-				</div>
-				<span class="btn btn-file">
-					<span class="fileupload-new">Select file</span>
-					<span class="fileupload-exists">Change</span>
-					<input type="file" />
-				</span><a href="#" class="btn fileupload-exists" data-dismiss="fileupload">Remove</a>
-			</div>
-		</div>
-	</div>
-	<div class="modal-footer">
-		<a href="#" class="btn" data-dismiss="modal">Cancel</a>
-		<a href="#" class="btn btn-primary disabled" id="import-button">Import</a>
-	</div>
-</div>
-{{pass}}
-
+<script src="{{=URL('static','js/jquery.ui.widget.min.js')}}"></script>
+<script src="{{=URL('static','js/jquery-ui-1.9.2.custom.js')}}"></script>
+<script src="{{=URL('static','js/jquery-picklist.js')}}"></script>
 <script src="{{=URL('static', 'js/modules/people-datasource.js')}}"></script>
 <script src="{{=URL('static', 'js/modules/people.js')}}"></script>
 {{end}}

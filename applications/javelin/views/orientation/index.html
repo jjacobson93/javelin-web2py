@@ -1,0 +1,410 @@
+{{extend 'main.html'}}
+
+{{block center}}
+<style type="text/css">
+table tbody > tr:nth-child(odd):not(:hover) > td {
+	background-color: rgb(240, 250, 255) !important;
+}
+</style>
+
+<!-- NAV -->
+
+<!-- <div class="row-fluid" id="nav">
+	<a class="btn btn-primary disabled" id="prev-button" href="#">
+		<i class="icon-arrow-left"></i> Back
+	</a>
+</div>
+<hr> -->
+
+<!-- MAIN CONTAINER -->
+
+<div class="row-fluid">
+	<a class="btn disabled pull-left" id="prev-button" href="#">
+		<i class="icon-arrow-left"></i> Back
+	</a>
+	<ul class="nav nav-pills span5">
+		<li class="active"><a href="#attendance" data-toggle="tab"><i class="icon-check"></i>Attendance</a></li>
+		<li><a href="#crews" data-toggle="tab"><i class="icon-group"></i>Crews</a></li>
+		<li><a href="#forms" data-toggle="tab"><i class="icon-paste"></i>Forms/Labels</a></li>
+	</ul>
+	<div class="pull-right input-append" id="attendance-nav" style="line-height: 30px">
+		<span style="margin-right: 10px; font-size: 17px"><b>Quick Attendance</b></span>
+		<input class="input-medium" type="number" id="quick-att-input" style="margin-right: 0" readonly>
+		<button class="btn disabled" type="button" id="quick-att-btn">Submit</button>
+	</div>
+	<div class="pull-right" id="crew-nav" style="display: none">
+		<a class="btn btn-success pull-right" href="#" id="add-crew-btn">
+			<i class="icon-plus"></i>Add Crew
+		</a>
+	</div>
+</div>
+<div class="tab-content">
+
+	<!-- ATTENDANCE -->
+
+	<div class="tab-pane fade active in" id="attendance">
+		<div class="carousel slide" id="main-container" data-interval="false">
+			<div class="carousel-inner" style="overflow:visible">
+				
+				<div class="item active" id="events-div">
+					<div class="fuelux" style="height:100%;width:100%;margin-bottom:20px;">
+						<table id="events-table" class="table table-bordered table-striped table-hover datagrid">
+							<thead>
+								<tr>
+									<th>
+										<div class="datagrid-header-left">
+											<h4>Events</h4>
+										</div>
+										<div class="datagrid-header-right">
+											<div class="input-append search datagrid-search" data-delay="300">
+												<input type="text" id="search-field" class="input-medium" placeholder="Search">
+												<button class="btn">
+													<i class="icon-search"></i>
+												</button>
+											</div>
+										</div>
+									</th>
+								</tr>
+							</thead>
+
+							<tfoot>
+							<tr>
+								<th>
+									<div class="datagrid-footer-left" style="display:none;">
+										<div class="grid-controls">
+											<span>
+												<span class="grid-start"></span> -
+												<span class="grid-end"></span> of
+												<span class="grid-count"></span>
+											</span>
+											<select class="grid-pagesize" id="event-pagesize">
+												<option value="5">5</option>
+												<option value="10" selected="selected">10</option>
+												<option value="20">20</option>
+												<option value="50">50</option>
+												<option value="100">100</option>
+											</select>
+											<span>Per Page</span>
+										</div>
+									</div>
+									<div class="datagrid-footer-right" style="display:none">
+										<div class="grid-pager">
+											<button type="button" class="btn grid-prevpage"><i class="icon-chevron-left"></i></button>
+											<span>Page</span>
+											<select class="grid-page" id="event-page-select"></select>
+											<span>of <span class="grid-pages"></span></span>
+											<button type="button" class="btn grid-nextpage"><i class="icon-chevron-right"></i></button>
+										</div>
+									</div>
+								</th>
+							</tr>
+							</tfoot>
+						</table>
+					</div>
+				</div>
+
+				<div class="item" id="attendance-for-">
+
+					<div id="attendance-div" class="fuelux" style="height:100%;width:100%;margin-bottom:20px;">
+						<table id="attendance-table" class="table table-bordered table-striped table-hover datagrid">
+							<thead>
+								<tr>
+									<th>
+										<div class="datagrid-header-left">
+											<h4 id="att-event-title">Attendance</h4>
+										</div>
+										<div class="datagrid-header-right">
+											<div class="input-append search datagrid-search" data-delay="300">
+												<input type="text" id="search-field" class="input-medium" placeholder="Search">
+												<button class="btn">
+													<i class="icon-search"></i>
+												</button>
+											</div>
+										</div>
+									</th>
+								</tr>
+							</thead>
+
+							<tfoot>
+							<tr>
+								<th>
+									<div class="datagrid-footer-left" style="display:none;">
+										<div class="grid-controls">
+											<span>
+												<span class="grid-start"></span> -
+												<span class="grid-end"></span> of
+												<span class="grid-count"></span>
+											</span>
+											<select class="grid-pagesize" id="att-pagesize">
+												<option value="5">5</option>
+												<option value="10" selected="selected">10</option>
+												<option value="20">20</option>
+												<option value="50">50</option>
+												<option value="100">100</option>
+											</select>
+											<span>Per Page</span>
+										</div>
+									</div>
+									<div class="datagrid-footer-right" style="display:none">
+										<div class="grid-pager">
+											<button type="button" class="btn grid-prevpage"><i class="icon-chevron-left"></i></button>
+											<span>Page</span>
+											<select class="grid-page" id="att-page-select"></select>
+											<span>of <span class="grid-pages"></span></span>
+											<button type="button" class="btn grid-nextpage"><i class="icon-chevron-right"></i></button>
+										</div>
+									</div>
+								</th>
+							</tr>
+							</tfoot>
+						</table>
+					</div>
+
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<!-- CREWS -->
+
+	<div class="tab-pane fade in" id="crews">
+		<div class="carousel slide" id="crews-container" data-interval="false">
+			<div class="carousel-inner" style="overflow:visible">
+				
+				<div class="item active" id="crews-div">
+					<div class="fuelux" style="height:100%;width:100%;margin-bottom:20px;">
+						<table id="crews-table" class="table table-bordered table-striped table-hover datagrid">
+							<thead>
+								<tr>
+									<th>
+										<div class="datagrid-header-left">
+											<h4>Crews</h4>
+										</div>
+										<div class="datagrid-header-right">
+											<div class="input-append search datagrid-search" data-delay="300">
+												<input type="text" id="search-field" class="input-medium" placeholder="Search">
+												<button class="btn">
+													<i class="icon-search"></i>
+												</button>
+											</div>
+										</div>
+									</th>
+								</tr>
+							</thead>
+
+							<tfoot>
+							<tr>
+								<th>
+									<div class="datagrid-footer-left" style="display:none;">
+										<div class="grid-controls">
+											<span>
+												<span class="grid-start"></span> -
+												<span class="grid-end"></span> of
+												<span class="grid-count"></span>
+											</span>
+											<select class="grid-pagesize" id="crews-pagesize">
+												<option value="5">5</option>
+												<option value="10" selected="selected">10</option>
+												<option value="20">20</option>
+												<option value="50">50</option>
+												<option value="100">100</option>
+											</select>
+											<span>Per Page</span>
+										</div>
+									</div>
+									<div class="datagrid-footer-right" style="display:none">
+										<div class="grid-pager">
+											<button type="button" class="btn grid-prevpage"><i class="icon-chevron-left"></i></button>
+											<span>Page</span>
+											<select class="grid-page" id="crews-page-select"></select>
+											<span>of <span class="grid-pages"></span></span>
+											<button type="button" class="btn grid-nextpage"><i class="icon-chevron-right"></i></button>
+										</div>
+									</div>
+								</th>
+							</tr>
+							</tfoot>
+						</table>
+					</div>
+				</div>
+
+				<div class="item" id="crew-records-for-">
+					<div class="row-fluid">
+						<span style="margin-right: 10px"><b>Add Person: </b></span>
+						<div class="input-append" style="line-height: 30px; font-size: 10pt">
+							<input type="hidden" class="span4" id="add-person-select" style="margin-right: 0">
+							<button class="btn" type="button" id="add-person-btn">Add</button>
+						</div>
+					</div>
+					<div id="crew-records-div" class="fuelux" style="height:100%;width:100%;margin-bottom:20px;">
+						<table id="crew-records-table" class="table table-bordered table-striped table-hover datagrid">
+							<thead>
+								<tr>
+									<th>
+										<div class="datagrid-header-left">
+											<h4>Crew <span id="crew-number"></span></h4>
+										</div>
+										<div class="datagrid-header-right">
+											<div class="input-append search datagrid-search" data-delay="300">
+												<input type="text" id="search-field" class="input-medium" placeholder="Search">
+												<button class="btn">
+													<i class="icon-search"></i>
+												</button>
+											</div>
+										</div>
+									</th>
+								</tr>
+							</thead>
+
+							<tfoot>
+							<tr>
+								<th>
+									<div class="datagrid-footer-left" style="display:none;">
+										<div class="grid-controls">
+											<span>
+												<span class="grid-start"></span> -
+												<span class="grid-end"></span> of
+												<span class="grid-count"></span>
+											</span>
+											<select class="grid-pagesize" id="crew-rec-pagesize">
+												<option value="5">5</option>
+												<option value="10" selected="selected">10</option>
+												<option value="20">20</option>
+												<option value="50">50</option>
+												<option value="100">100</option>
+											</select>
+											<span>Per Page</span>
+										</div>
+									</div>
+									<div class="datagrid-footer-right" style="display:none">
+										<div class="grid-pager">
+											<button type="button" class="btn grid-prevpage"><i class="icon-chevron-left"></i></button>
+											<span>Page</span>
+											<select class="grid-page" id="crew-rec-page-select"></select>
+											<span>of <span class="grid-pages"></span></span>
+											<button type="button" class="btn grid-nextpage"><i class="icon-chevron-right"></i></button>
+										</div>
+									</div>
+								</th>
+							</tr>
+							</tfoot>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- FORMS & LABELS -->
+
+	<div class="tab-pane fade in" id="forms">
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="#nametags" data-toggle="tab">Nametags</a></li>
+			<li><a href="#attsheets" data-toggle="tab">Attendance Sheets</a></li>
+			<li><a href="#callhome" data-toggle="tab">Call Home Scripts</a></li>
+		</ul>
+
+		<div class="tab-content">
+			<div class="tab-pane fade active in" id="nametags">
+				<form>
+					<div class="row-fluid">
+						<div class="row-fluid span3" style="margin-left: 10px">
+							<label>Type</label>
+							<label class="radio inline">
+								<input type="radio" name="typeradios" id="type_freshmen" value="Freshmen" checked> Freshmen
+							</label>
+							<label class="radio inline">
+								<input type="radio" name="typeradios" id="type_leaders" value="Leaders"> Leaders
+							</label>
+						</div>
+						<div class="row-fluid span3">
+							<label for="event_name">Event Name</label>
+							<input type='text' placeholder="Event Name" id="event_name">
+						</div>
+					</div>
+				</form>
+				<h4>Preview</h4>
+				<div style="width:4in; height:2in; padding: 10px; margin-bottom: 20px; display:block; font-family:'times'; border: 1px solid">
+					<div style="float: left; margin-top: 10px; margin-left: 10px; width: auto">
+						<img src="/static/images/vc2emblem.png" style="height: 50px; width: 50px">
+					</div>
+					<div style="float: right; margin-top:10px; margin-right: 10px; width: auto">
+						<img src="/static/images/vc2emblem.png" style="height: 50px; width: 50px">
+					</div>
+					<div style="text-align: center"><b>{{=request.now.year}} <span id="event_name_text"></span></b></div>
+					<div style="text-align: center; margin-top: 10px"><b style="font-size: 24pt">First Name</b></div>
+					<div style="text-align: center; margin-top: 5px; font-size: 11pt">Last Name</div>
+					<div style="margin-top: 35px; font-size: 11pt">
+						<span>ID#: 10000</span><br>
+						<span>Crew#: 9</span><br>
+						<span>Crew Room: SS-2</span><br>
+						<span>W.E.F.S.K. Rotation: I</span><br>
+					</div>
+				</div>
+				<a href="#" class="btn" id="nametags-btn" data-loading-text="Loading...">Make Nametags</a>
+				<a href="#" class="btn" id="existing-nametags-btn" data-show-text="Show Existing Nametags" data-hide-text="Hide Existing Nametags" data-state="show">Show Existing Nametags</a>
+				<table class="table table-condensed" id="nametags-table" style="display:none">
+					<thead>
+						<th>Name</th>
+						<th>Actions</th>
+					</thead>
+					<tbody>
+						{{for file in existing_nametags:}}
+						<tr id="{{=file.id}}">
+							<td>{{=file.name}}</td>
+							<td><a class="btn" href="/download/{{=file.file}}">Download</a></td>
+						</tr>
+						{{pass}}
+					</tbody>
+				</table>
+			</div>
+
+			<div class="tab-pane fade in" id="attsheets">
+				<a href="#" class="btn">Make Attendance Sheets</a>
+			</div>
+
+			<div class="tab-pane fade in" id="callhome">
+				<a href="#" class="btn">Make Call Home Scripts</a>
+			</div>
+
+		</div>
+	</div>
+</div>
+
+<!-- MODALS -->
+
+<div class="modal hide fade" id="add-crew-modal">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		<h3>Add Crew</h3>
+	</div>
+	<div class="modal-body">
+		<form>
+			<fieldset>
+				<label class="control-label" for="inputRoom">Room</label>
+				<input type="text" id="inputRoom" placeholder="Room" />
+				<label class="control-label" for="inputWefsk">WEFSK Rotation</label>
+				<input type="text" id="inputWefsk" placeholder="WEFSK Rotation" />
+				<div class="row-fluid">
+					<label class="control-label">Add People</label>
+					<div class="input-append" style="line-height: 30px; font-size: 10pt">
+						<input type="hidden" class="span6" id="add-person-select-modal" style="margin-right: 0;">
+					</div>
+				</div>
+				<ul></ul>
+			</fieldset>
+		</form>
+	</div>
+	<div class="modal-footer">
+		<a href="#" class="btn" data-dismiss="modal">Cancel</a>
+		<a href="#" class="btn btn-primary" id="add-done-btn">Done</a>
+	</div>
+</div>
+
+<script src="{{=URL('static', 'js/modules/events_datasource.js') }}"></script>
+<script src="{{=URL('static', 'js/modules/attendance_datasource.js') }}"></script>
+<script src="{{=URL('static', 'js/modules/crew_datasource.js') }}"></script>
+<script src="{{=URL('static', 'js/modules/crewrecord_datasource.js') }}"></script>
+<script src="{{=URL('static', 'js/modules/orientation.js') }}"></script>
+{{end}}

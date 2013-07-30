@@ -1,0 +1,185 @@
+{{extend 'main.html'}}
+
+{{block center}}
+<link rel="stylesheet" type="text/css" href="{{=URL('static','css/fullcalendar.css')}}">
+<link rel="stylesheet" type="text/css" href="{{=URL('static','css/datetimepicker.css')}}">
+<style type='text/css'>
+	#calendar-div {
+		padding-bottom: 60px;
+	}
+
+	#header {
+		font-family: inherit;
+		font-size: 30px; /* 31.5px */
+		font-weight: bold;
+		/* padding-bottom: 10px; */
+	}
+
+	.fc-today {
+		background-color: rgb(238, 238, 238);
+		font-weight: bold;
+		color: rgb(27,121,243);
+	}
+
+	.fc-event {
+		background-color: #0e90d2;
+		background-image: -moz-linear-gradient(top, #149bdf, #0480be);
+		background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#149bdf), to(#0480be));
+		background-image: -webkit-linear-gradient(top, #149bdf, #0480be);
+		background-image: -o-linear-gradient(top, #149bdf, #0480be);
+		background-image: linear-gradient(to bottom, #149bdf, #0480be);
+		background-repeat: repeat-x;
+		filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff149bdf', endColorstr='#ff0480be', GradientType=0);
+		-webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+		-moz-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+		box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+		-webkit-box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		box-sizing: border-box;
+	}
+
+	.datetimepicker th.has-switch {
+		display: table-cell;
+	}
+
+	#inputFrom, #inputTo {
+		font-weight: bold;
+		cursor: pointer;
+	}
+</style>
+
+<!-- NAV -->
+
+<div class="row-fluid">
+	<div id="datepicker-5" data-date="12-02-2013" data-date-format="dd-mm-yyyy"></div>
+	<!-- <ul class="nav nav-pills span4" id="cal-tabs">
+		<li class="active">
+			<a href="#schedules"><i class="icon-time"></i>Schedules</a>
+		</li>
+		<li>
+			<a href="#events"><i class="icon-ticket"></i>Events</a>
+		</li>
+	</ul> -->
+	<a href="#" class="btn btn-success pull-right" id="add-event-btn">
+		<i class="icon-plus"></i>Add Event
+	</a>
+</div>
+
+<hr>
+
+<!-- CALENDAR -->
+
+<!-- <div class="tab-content" id="calendar-div">
+	<div class="tab-pane active" id="schedules">
+		<div id="schedule-calendar"></div>
+	</div> -->
+	<div class="tab-pane" id="events">
+		<div id="event-calendar"></div>
+	</div>
+<!-- </div> -->
+
+<!-- MODALS -->
+
+<div class="modal hide fade" id="edit-event-modal">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		<h4 id="event-title"></h4>
+		<!-- <span><b id="start-end">8:00am - 10:00am</b></span> -->
+	</div>
+	<div class="modal-body">
+		<div class="row-fluid">
+			<div class="row-fluid">
+				<fieldset class="span4">
+					<span><h5>From</h5></span>
+					<span id="start-time"></span>
+				</fieldset>
+				<fieldset class="span4">
+					<span><h5>To</h5></span>
+					<span id="end-time"></span>
+				</fieldset>
+				<fieldset class="span4">
+					<span><h5>All Day</h5></span>
+					<div class="switch" data-on-label="YES" data-off-label="NO" id="all-day-switch"><input type="checkbox"></div>
+				</fieldset>
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<a href="#" class="btn btn-danger pull-left" id="delete-event-btn">Delete Event</a>
+		<a href="#" class="btn btn-primary" data-dismiss="modal">Done</a>
+	</div>
+</div>
+
+<div class="modal hide fade" id="add-event-modal">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		<h4>Add Event</h4>
+	</div>
+	<div class="modal-body">
+		<form>
+			<div class="row-fluid">
+				<div class="row-fluid">
+					<div class="span12">
+						<fieldset>
+							<label class="control-label" for="inputTitle">Title</label>
+							<input class="span12" type="text" id="inputTitle" placeholder="Title">
+						</fieldset>
+					</div>
+				</div>
+				<div class="row-fluid">
+					<div class="span12">
+						<fieldset>
+							<label class="control-label" for="inputAllDay">All Day</label>
+							<div class="switch" data-on-label="YES" data-off-label="NO" id="inputAllDay"><input type="checkbox"></div>
+						</fieldset>
+					</div>
+				</div>
+				<div class="row-fluid">
+					<div class="span6">
+						<fieldset>
+							<label class="control-label" for="inputFrom">From</label>
+							<input class="btn span12" href="#" id="inputFrom" readonly>
+						</fieldset>
+					</div>
+					<div class="span6">
+						<fieldset>
+							<label class="control-label" for="inputTo">To</label>
+							<input class="btn span12" href="#" id="inputTo" readonly>
+						</fieldset>
+					</div>
+				</div>
+				<div class="row-fluid">
+					<div class="span12">
+						<fieldset>
+							<label class="control-label" for="inputNotes">Notes</label>
+							<textarea class="span12" id="inputNotes" rows="4" placeholder="Notes"></textarea>
+						</fieldset>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="modal-footer">
+		<a href="#" class="btn" data-dismiss="modal">Cancel</a>
+		<a href="#" class="btn btn-primary disabled" id="add-complete-btn">Add</a>
+	</div>
+</div>
+
+<div class="modal hide fade" id="delete-event-modal">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		<h4>Delete Event</h4>
+	</div>
+	<div class="modal-body">
+		<span>Are you sure you would like to delete <b id="event-to-delete"></b>?</span>
+	</div>
+	<div class="modal-footer">
+		<a href="#" class="btn" data-dismiss="modal">Cancel</a>
+		<a href="#" class="btn btn-danger" id="delete-confirm-btn">Delete</a>
+	</div>
+</div>
+
+<script src="{{=URL('static', 'js/fullcalendar.js') }}"></script>
+<script src="{{=URL('static', 'js/bootstrap-datetimepicker.js') }}"></script>
+<script src="{{=URL('static', 'js/modules/events.js') }}"></script>
+{{end}}

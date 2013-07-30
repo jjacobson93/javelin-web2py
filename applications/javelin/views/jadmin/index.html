@@ -6,6 +6,8 @@
 <ul class="nav nav-tabs">
 	<li class="active"><a href="#modules" data-toggle="tab"><i class="icon-puzzle-piece icon-large"></i>Modules</a></li>
 	<li><a href="#users" data-toggle="tab"><i class="icon-group icon-large"></i>Users</a></li>
+	<li><a href="#approval" data-toggle="tab"><i class="icon-thumbs-up-alt icon-large"></i>Approvals</a></li>
+	<li><a href="#import" data-toggle="tab"><i class="icon-arrow-down icon-large"></i>Import Data</a></li>
 </ul>
 
 <div class="tab-content">
@@ -52,6 +54,8 @@
 						<th>ID</th>
 						<th>Last Name</th>
 						<th>First Name</th>
+						<th>Username</th>
+						<th>Email</th>
 						<th>Admin</th>
 						<th>Active</th>
 					</tr>
@@ -62,14 +66,67 @@
 						<td>{{=user.id}}</td>
 						<td>{{=user.last_name}}</td>
 						<td>{{=user.first_name}}</td>
-						<td><div class="switch switch-small"><input type="checkbox" {{if auth.has_membership('admin', user.id):}}checked{{pass}}></td>
-						<td><div class="switch switch-small"><input type="checkbox" {{if user.active:}}checked{{pass}}></td>
+						<td>{{=user.username}}</td>
+						<td>{{=user.email}}</td>
+						<td><div class="switch switch-small"><input type="checkbox" {{if auth.has_membership('admin', user.id):}}checked{{pass}}></div></td>
+						<td><div class="switch switch-small"><input type="checkbox" {{if user.active:}}checked{{pass}}></div></td>
 					</tr>
 					{{pass}}
 				</tbody>
 			</table>
 		</div>
 		<!-- <a class="btn btn-success pull-right" href="#" id="add-user-button"><i class="icon-plus-sign"></i>Add User</a> -->
+	</div>
+
+	<!-- APPROVALS TAB -->
+	<div class="tab-pane fade" id="approval">
+		<div id="approval-div">
+			{{if len(approvals) > 0:}}
+			<table class="table table-striped" id="user-table" style="font-size: 14px !important">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Last Name</th>
+						<th>First Name</th>
+						<th>Username</th>
+						<th>Email</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{for user in approvals:}}
+					{{if user.registration_key:}}
+					<tr>
+						<td>{{=user.id}}</td>
+						<td>{{=user.last_name}}</td>
+						<td>{{=user.first_name}}</td>
+						<td>{{=user.username}}</td>
+						<td>{{=user.email}}</td>
+						<td>
+							<a href="javascript:approveUser({{=user.id}})" class="btn btn-success" style="margin-right: 10px">
+								<i class="icon-ok-circle"></i>Approve
+							</a>
+							<a href="javascript:disapproveUser({{=user.id}})" class="btn btn-danger">
+								<i class="icon-ban-circle"></i>Disapprove
+							</a>
+						</td>
+					</tr>
+					{{pass}}
+					{{pass}}
+				</tbody>
+			</table>
+			{{else:}}
+			<h2>No Approvals</h2>
+			{{pass}}
+		</div>
+		<!-- <a class="btn btn-success pull-right" href="#" id="add-user-button"><i class="icon-plus-sign"></i>Add User</a> -->
+	</div>
+
+	<!-- IMPORT TAB -->
+
+	<div class="tab-pane fade" id="import">
+		<h2>Import Data</h2>
+		<a href="#" class="btn" id="import-from-csv-btn">Import from CSV</a>
 	</div>
 
 </div>
@@ -97,6 +154,31 @@
 	</div>
 </div>
 
+<div class="modal hide fade" id="import-modal">
+	<form enctype="multipart/form-data" onsubmit="return false;" style="margin: 0"> 
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>Import from CSV</h3>
+		</div>
+		<div class="modal-body">
+			<div class="fileupload fileupload-new" data-provides="fileupload">
+				<div class="input-append">
+					<div class="uneditable-input span3">
+						<i class="icon-file fileupload-exists"></i><span class="fileupload-preview"></span>
+					</div>
+					<span class="btn btn-file">
+						<span class="fileupload-new">Select file</span>
+						<span class="fileupload-exists">Change</span>
+						<input type="file" name="csv_file" id="csv_file"/>
+					</span><a href="#" class="btn fileupload-exists" data-dismiss="fileupload">Remove</a>
+				</div>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<a href="#" class="btn" data-dismiss="modal">Cancel</a>
+			<input type="submit" class="btn btn-primary disabled" id="import-button" value="Import">
+		</div>
+	</form>
 </div>
 
 <!-- JAVASCRIPT -->

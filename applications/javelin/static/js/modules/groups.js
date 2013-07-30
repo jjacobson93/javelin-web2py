@@ -224,12 +224,16 @@ $(function() {
 		$('#groups-div .grid-pagesize').select2();
 		$('#groups-div .grid-pager select').select2({ placeholder: "1" });
 
-		var rowCount = $('#groups-table').find('tr').length;
-		if (rowCount == 1) {
-			$('#no-groups-alert').css("display", "block");
-		} else {
-			$('#no-groups-alert').css("display", "none");
-		}
+		$('#groups-table tbody td:last-child').each(function(index, el) {
+			var id = $(el).parent().attr('id');
+			$(this).html('<button class="btn btn-primary" id="edit-row-' + id + '">' +
+				'<i class="icon-edit"></i>Edit' +
+			'</button>' +
+			'<button class="btn btn-danger" id="delete-row-' + id + '" style="margin-left: 10px">' +
+				'<i class="icon-trash"></i>Delete' + 
+			'</button>')
+		});
+						
 	});
 
 	$('#records-table').on('loaded', function() {
@@ -263,29 +267,29 @@ $(function() {
 
 	$('#add-group-btn').on('click', function(e) {
 		if (!$(this).hasClass('disabled')) {
-			e.preventDefault();
+		// 	e.preventDefault();
 
-			$('#people-select').pickList();
-			$("#people-select").html("");
-			$("#people-select").pickList("destroy");
+		// 	$('#people-select').pickList();
+		// 	$("#people-select").html("");
+		// 	$("#people-select").pickList("destroy");
 
-			$.ajaxSetup( { "async": false } );
-			$.getJSON("/groups/call/json/get_people", function(data) {
-				$.each(data, function(i, entry) {
-					$("#people-select").append('<option value="' + entry.value + '">' + entry.label + "</option>");
-				});
-			});
-			$.ajaxSetup( { "async": true } );
+		// 	$.ajaxSetup( { "async": false } );
+		// 	$.getJSON("/groups/call/json/get_people", function(data) {
+		// 		$.each(data, function(i, entry) {
+		// 			$("#people-select").append('<option value="' + entry.value + '">' + entry.label + "</option>");
+		// 		});
+		// 	});
+		// 	$.ajaxSetup( { "async": true } );
 
-			$('#people-select').pickList({
-				sourceListLabel: "People",
-				targetListLabel: "Added",
-				addAllLabel: '<i class="icon-chevron-right" style="padding: 0"></i><i class="icon-chevron-right" style="padding: 0"></i>',
-				addLabel: '<i class="icon-chevron-right" style="padding: 0"></i>',
-				removeAllLabel: '<i class="icon-chevron-left" style="padding: 0"></i><i class="icon-chevron-left" style="padding: 0"></i>',
-				removeLabel: '<i class="icon-chevron-left" style="padding: 0"></i>',
-				sortAttribute: "label"
-			});
+		// 	$('#people-select').pickList({
+		// 		sourceListLabel: "People",
+		// 		targetListLabel: "Added",
+		// 		addAllLabel: '<i class="icon-chevron-right" style="padding: 0"></i><i class="icon-chevron-right" style="padding: 0"></i>',
+		// 		addLabel: '<i class="icon-chevron-right" style="padding: 0"></i>',
+		// 		removeAllLabel: '<i class="icon-chevron-left" style="padding: 0"></i><i class="icon-chevron-left" style="padding: 0"></i>',
+		// 		removeLabel: '<i class="icon-chevron-left" style="padding: 0"></i>',
+		// 		sortAttribute: "label"
+		// 	});
 
 			$('#add-group-modal').modal('show');
 		}
@@ -295,11 +299,11 @@ $(function() {
 		e.preventDefault();
 		var name = $('#inputName').val();
 		var description = $('#inputDescription').val();
-		var selected = $('#people-select').find(':selected');
+		// var selected = $('#people-select').find(':selected');
 		var values = [];
-		$.each(selected, function(i, entry) {
-			values.push(entry.value);
-		});
+		// $.each(selected, function(i, entry) {
+		// 	values.push(entry.value);
+		// });
 
 		addGroup(name, description, values);
 	});

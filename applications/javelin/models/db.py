@@ -19,7 +19,7 @@ track_changes(True)
 if not request.env.web2py_runtime_gae:
 	## if NOT running on Google App Engine use SQLite or other DB
 	# db = DAL('sqlite://storage.sqlite',pool_size=1,check_reserved=['all'],migrate=False)
-	db = DAL('postgres://postgres:p0stmast3r!@localhost/javelin', migrate=True)
+	db = DAL('postgres://postgres:p0stmast3r!@localhost/javelin')
 else:
 	## connect to Google BigTable (optional 'google:datastore://namespace')
 	db = DAL('google:datastore')
@@ -64,9 +64,16 @@ auth.define_tables(username=True, signature=False)
 
 ## configure email
 mail = auth.settings.mailer
-mail.settings.server = 'logging' or 'smtp.gmail.com:587'
+mail.settings.server = 'smtp.gmail.com:587'
 mail.settings.sender = 'vc2messager@gmail.com'
 mail.settings.login = 'vc2messager:srivijaya'
+
+current.javelin.mail = mail
+
+# Replace user, password, server and port in the connection string
+# Set port as 993 for SSL support
+# imapdb = DAL("imap://vc2messager:srivijaya@imap.gmail.com:993", pool_size=1)
+# imapdb.define_tables()
 
 ## configure auth policy
 auth.settings.registration_requires_verification = True
@@ -98,11 +105,17 @@ use_janrain(auth, filename='private/janrain.key')
 ## >>> for row in rows: print row.id, row.myfield
 #########################################################################
 
+db.define_table('crew',
+	Field('room', 'string'),
+	Field('wefsk', 'string'))
+
 db.define_table('person',
+	Field('student_id', 'integer', notnull=True, unique=True),
 	Field('last_name', 'string', notnull=True, required=True),
 	Field('first_name', 'string', notnull=True, required=True),
-	Field('phone', 'string'),
 	Field('home_phone', 'string'),
+	Field('cell_phone', 'string'),
+	Field('cell_provider', 'string'),
 	Field('gender', 'string'),
 	Field('email', 'string'),
 	Field('street', 'string'),
@@ -110,30 +123,40 @@ db.define_table('person',
 	Field('state', 'string'),
 	Field('zip_code', 'string'),
 	Field('notes', 'string'),
-	Field('pic', 'blob'))
+	Field('pic', 'blob'),
+	Field('crew', 'reference crew'),
+	Field('grade', 'integer'),
+	Field('leader', 'boolean', default=False))
 
 db.define_table('groups',
 	Field('name', 'string', notnull=True, required=True, unique=True),
 	Field('description', 'string'))
 
 db.define_table('group_rec',
-	Field('group_id', 'references groups', notnull=True, required=True),
-	Field('person_id', 'references person', notnull=True, required=True))
+	Field('group_id', 'reference groups', notnull=True, required=True),
+	Field('person_id', 'reference person', notnull=True, required=True))
 
-# db.define_table('events',
-# 	Field('title', 'string'),
-# 	Field('description', 'string'),
-# 	Field('start_time', 'time'),
-# 	Field('end_time', 'time'),
-# 	Field('allDay', 'boolean', default=False),
-# 	Field('recurring', 'boolean', default=False),`
-# 	Field('end_recur', 'time'))
+db.define_table('events',
+	Field('title', 'string'),
+	Field('notes', 'string'),
+	Field('start_time', 'integer'),
+	Field('end_time', 'integer'),
+	Field('allDay', 'boolean', default=False),
+	Field('recurring', 'boolean', default=False),
+	Field('end_recur', 'integer'))
+
+db.define_table('attendance',
+	Field('event_id', 'reference events', notnull=True, required=True),
+	Field('person_id', 'reference person', notnull=True, required=True),
+	Field('present', 'boolean', default=True))
 
 db.define_table('module_names',
 	Field('name', 'string', notnull=True, unique=True),
 	Field('label', 'string', notnull=True))
 
-
+db.define_table('file',
+	Field('name', 'string', notnull=True),
+	Field('file', 'upload', notnull=True))
 
 ## after defining tables, uncomment below to enable auditing
 # auth.enable_record_versioning(db)

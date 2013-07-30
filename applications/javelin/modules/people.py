@@ -13,9 +13,9 @@ __data__ = {'name' : 'people', 'label' : 'People', 'description' : 'Keep track o
 
 from globals import current
 
-default_inputs = ['id', 'last_name', 'first_name', 'gender',
-	'phone', 'home_phone', 'email', 'street', 'city', 
-	'state', 'zip_code', 'notes', 'pic']
+default_inputs = ['id', 'student_id', 'last_name', 'first_name', 'gender',
+	'cell_phone', 'home_phone', 'email', 'street', 'city', 
+	'state', 'zip_code', 'notes', 'pic', 'leader']
 
 def data(str_filter=None):
 	db = current.javelin.db
@@ -42,7 +42,7 @@ def load_form():
 		if field not in default_inputs:
 			name = str(' ').join([x.capitalize() for x in field.split('_')])
 
-			field = { 'span' : num, 'id' : field.name, 'name' : name }
+			field = { 'span' : num, 'id' : field, 'name' : name }
 
 			row.append(field)
 
@@ -54,6 +54,9 @@ def load_form():
 			if len(row) == 4:
 				form.append(row)
 				row = list()
+
+	if len(row) > 0:
+		form.append(row)
 
 	return form
 
@@ -74,8 +77,3 @@ def update_pic(id, pic):
 	response = db(db.person.id==id).update(pic=pic)
 
 	return dict(response=response)
-
-def import_from_csv(file, contains_ids=True):
-	import logging
-	logger = logging.getLogger('web2py.app.javelin')
-	logger.debug(file)

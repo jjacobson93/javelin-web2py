@@ -224,16 +224,17 @@ $(function() {
 		$('#groups-div .grid-pagesize').select2();
 		$('#groups-div .grid-pager select').select2({ placeholder: "1" });
 
-		$('#groups-table tbody td:last-child').each(function(index, el) {
-			var id = $(el).parent().attr('id');
-			$(this).html('<button class="btn btn-primary" id="edit-row-' + id + '">' +
-				'<i class="icon-edit"></i>Edit' +
-			'</button>' +
-			'<button class="btn btn-danger" id="delete-row-' + id + '" style="margin-left: 10px">' +
-				'<i class="icon-trash"></i>Delete' + 
-			'</button>')
-		});
-						
+		if ($('#groups-table tr').eq(1).find('td').html() != '0 items') {
+			$('#groups-table tbody td:last-child').each(function(index, el) {
+				var id = $(el).parent().attr('id');
+				$(this).html('<button class="btn btn-primary" id="edit-row-' + id + '">' +
+					'<i class="icon-edit"></i>Edit' +
+				'</button>' +
+				'<button class="btn btn-danger" id="delete-row-' + id + '" style="margin-left: 10px">' +
+					'<i class="icon-trash"></i>Delete' + 
+				'</button>')
+			});	
+		}
 	});
 
 	$('#records-table').on('loaded', function() {

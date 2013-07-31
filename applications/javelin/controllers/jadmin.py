@@ -61,6 +61,18 @@ def import_from_csv(csv_file):
 
 @auth.requires_login()
 @auth.requires_membership('admin')
+@service.json
+def import_from_query(csv_file):
+	"""Imports records into the database from a CSV file (in the form of the queries from VHS)
+
+	:param file: the file to be imported
+	:param contains_ids: a boolean value which specifies if the records have ids; default is True
+	:returns: a dictionary with a response, either a 0 or 1, depending on success
+	"""
+	return admin.import_from_query(csv_file)
+
+@auth.requires_login()
+@auth.requires_membership('admin')
 def call():
 	"""Call function used when calling a function from an HTTP request"""
 	return service()

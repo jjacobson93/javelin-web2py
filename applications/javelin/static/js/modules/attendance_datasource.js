@@ -38,17 +38,17 @@ AttendanceDataSource.prototype = {
 					// FILTERING
 					if (options.filter) {
 						data = _.filter(data, function (item) {
-							// switch(options.filter.value) {
-							// 	case 'lt5m':
-							// 		if(item.population < 5000000) return true;
-							// 		break;
-							// 	case 'gte5m':
-							// 		if(item.population >= 5000000) return true;
-							// 		break;
-							// 	default:
-							// 		return true;
-							// 		break;
-							// }
+							switch(options.filter.value) {
+								case 'leaders':
+									if(item.person_grade != 9 && item.leader) return true;
+									break;
+								case 'freshmen':
+									if(item.person_grade == 9) return true;
+									break;
+								default:
+									return true;
+									break;
+							}
 						});
 					}
 

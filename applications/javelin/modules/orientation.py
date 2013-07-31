@@ -24,8 +24,8 @@ def attendance_data(event_id):
 	# 	db.events.on(db.events.id==db.attendance.event_id)],
 	# 	orderby=db.person.id).as_list()
 
-	data = db().select(db.person.id, db.person.last_name, db.person.first_name,
-		db.attendance.present, db.attendance.event_id, db.events.title,
+	data = db((db.person.grade==9) | (db.person.leader==True)).select(db.person.id, db.person.last_name, db.person.first_name,
+		db.attendance.present, db.attendance.event_id, db.events.title, db.person.grade,
 		left=[db.attendance.on((db.person.id==db.attendance.person_id) & (db.attendance.event_id==event_id)),
 		db.events.on(db.events.id==db.attendance.event_id)],
 		orderby=db.person.id).as_list()

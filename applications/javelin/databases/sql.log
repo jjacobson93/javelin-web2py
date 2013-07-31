@@ -277,3 +277,27 @@ timestamp: 2013-07-27T08:31:13.142511
 ALTER TABLE person ADD leader CHAR(1);
 timestamp: 2013-07-27T08:31:13.145130
 ALTER TABLE person DROP COLUMN isleader;
+timestamp: 2013-07-30T04:20:54.887046
+CREATE TABLE teacher(
+    id SERIAL PRIMARY KEY,
+    teacher_id INTEGER NOT NULL UNIQUE,
+    teacher_name VARCHAR(512) NOT NULL
+);
+success!
+timestamp: 2013-07-30T04:36:29.412738
+CREATE TABLE course(
+    id SERIAL PRIMARY KEY,
+    course_id INTEGER NOT NULL UNIQUE,
+    code VARCHAR(512) NOT NULL,
+    title VARCHAR(512) NOT NULL,
+    period INTEGER NOT NULL,
+    teacher_id INTEGER REFERENCES teacher (id) ON DELETE CASCADE
+);
+success!
+timestamp: 2013-07-30T04:37:22.333981
+CREATE TABLE course_rec(
+    id SERIAL PRIMARY KEY,
+    course_id INTEGER REFERENCES course (id) ON DELETE CASCADE,
+    student_id INTEGER REFERENCES person (id) ON DELETE CASCADE
+);
+success!

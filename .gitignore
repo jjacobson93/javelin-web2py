@@ -7,3 +7,5 @@ logs/
 schema.sql
 applications/*/errors
 applications/*/sessions
+applications/*/databases
+*.table

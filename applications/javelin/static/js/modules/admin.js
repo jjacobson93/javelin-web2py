@@ -35,14 +35,16 @@ function disapproveUser(id) {
 }
 
 function importFromCSV(csv_file) {
+	$("#import-button").button('loading');
 	$.ajax({
 		type: 'POST',
-		url: '/jadmin/call/json/import_from_csv',
+		url: '/jadmin/call/json/import_from_query',
 		data: {
 			'csv_file': csv_file
 		},
 		success: function() {
 			$('#import-modal').modal('hide');
+			$("#import-button").button('reset');
 			displaySuccess("Imported file.");
 			$('.fileupload').fileupload('clear');
 			$('.fileupload').fileupload('reset');

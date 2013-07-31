@@ -277,16 +277,18 @@ $(function() {
 	$('#att-page-select').select2({placeholder: "1"});
 
 	$('#attendance-table').on('loaded', function() {
-		$(this).find('td:last-child').each(function(index, el) {
-			var id = $(el).parent().attr('id');
-			var present = ($(el).attr('data-value') == "true") ? true : false;
-			var checkbox = $('<div class="switch switch-small" id="present-check-' + id + 
-				'" data-on-label="YES" data-off-label="NO"><input type="checkbox"' + ((present) ? 'checked' : '') + '></div>');
-			
-			checkbox.find('input:checkbox').prop('checked', present);
-			$(el).html(checkbox);
-			checkbox.bootstrapSwitch();
-		});
+		if ($('#attendance-table tr').eq(1).find('td').html() != '0 items') {
+			$(this).find('td:last-child').each(function(index, el) {
+				var id = $(el).parent().attr('id');
+				var present = ($(el).attr('data-value') == "true") ? true : false;
+				var checkbox = $('<div class="switch switch-small" id="present-check-' + id + 
+					'" data-on-label="YES" data-off-label="NO"><input type="checkbox"' + ((present) ? 'checked' : '') + '></div>');
+				
+				checkbox.find('input:checkbox').prop('checked', present);
+				$(el).html(checkbox);
+				checkbox.bootstrapSwitch();
+			});
+		}
 	});
 
 	$('.nav li a').on('click', function() {

@@ -128,6 +128,21 @@ db.define_table('person',
 	Field('grade', 'integer'),
 	Field('leader', 'boolean', default=False))
 
+db.define_table('teacher',
+	Field('teacher_id', 'integer', notnull=True, unique=True),
+	Field('teacher_name', 'string', notnull=True))
+
+db.define_table('course',
+	Field('course_id', 'integer', notnull=True, unique=True),
+	Field('code', 'string', notnull=True),
+	Field('title', 'string', notnull=True),
+	Field('period', 'integer', notnull=True),
+	Field('teacher_id', 'reference teacher', notnull=True))
+
+db.define_table('course_rec',
+	Field('course_id', 'reference course', notnull=True),
+	Field('student_id', 'reference person', notnull=True))
+
 db.define_table('groups',
 	Field('name', 'string', notnull=True, required=True, unique=True),
 	Field('description', 'string'))

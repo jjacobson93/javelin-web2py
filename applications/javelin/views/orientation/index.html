@@ -110,9 +110,23 @@ table tbody > tr:nth-child(odd):not(:hover) > td {
 							<thead>
 								<tr>
 									<th>
+										<h4 class="pull-left" id="att-event-title">Attendance</h4>
 										<div class="datagrid-header-left">
-											<h4 id="att-event-title">Attendance</h4>
+											<div class="row-fluid">
+												<div class="select filter">
+													<button type="button" data-toggle="dropdown" class="btn dropdown-toggle">
+														<span class="dropdown-label"></span>
+														<span class="caret"></span>
+													</button>
+													<ul class="dropdown-menu">
+														<li data-value="all" data-selected="true"><a href="#">All</a></li>
+														<li data-value="freshmen"><a href="#">Freshmen</a></li>
+														<li data-value="leaders"><a href="#">Leaders</a></li>
+													</ul>
+												</div>
+											</div>
 										</div>
+
 										<div class="datagrid-header-right">
 											<div class="input-append search datagrid-search" data-delay="300">
 												<input type="text" id="search-field" class="input-medium" placeholder="Search">
@@ -242,8 +256,21 @@ table tbody > tr:nth-child(odd):not(:hover) > td {
 							<thead>
 								<tr>
 									<th>
+										<h4 class="pull-left">Crew <span id="crew-number"></span></h4>
 										<div class="datagrid-header-left">
-											<h4>Crew <span id="crew-number"></span></h4>
+											<div class="row-fluid">
+												<div class="select filter">
+													<button type="button" data-toggle="dropdown" class="btn dropdown-toggle">
+														<span class="dropdown-label"></span>
+														<span class="caret"></span>
+													</button>
+													<ul class="dropdown-menu">
+														<li data-value="all" data-selected="true"><a href="#">All</a></li>
+														<li data-value="freshmen"><a href="#">Freshmen</a></li>
+														<li data-value="leaders"><a href="#">Leaders</a></li>
+													</ul>
+												</div>
+											</div>
 										</div>
 										<div class="datagrid-header-right">
 											<div class="input-append search datagrid-search" data-delay="300">

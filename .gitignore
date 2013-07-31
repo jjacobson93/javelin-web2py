@@ -9,3 +9,4 @@ applications/*/errors
 applications/*/sessions
 applications/*/databases
 *.table
+*.log

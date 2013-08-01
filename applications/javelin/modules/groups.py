@@ -81,3 +81,19 @@ def get_people():
 		result.append({'value' : str(p['id']), 'label' : p['last_name'] + ", " + p['first_name']})
 	
 	return result
+
+def people_not_in_group(group_id, query):
+	db = current.javelin.db
+
+	people = [rec.person_id for rec in db(db.group_rec.group_id==group_id).select(db.group_rec.person_id)]
+
+	if not query:
+		return db(~(db.person.id.belongs(people)) & (db.person.leader==True)).select(
+			db.person.id, db.person.last_name, db.person.first_name, orderby=db.person.last_name).as_list()
+	else:
+		people = db(~(db.person.id.belongs(people)) & 
+			((db.person.last_name.contains(query)) | (db.person.first_name.contains(query))) &
+			(db.person.leader==True) ).select(
+			db.person.id, db.person.last_name, db.person.first_name, orderby=db.person.last_name).as_list()
+
+		return people

@@ -66,6 +66,33 @@ function loadRecordsTable(id) {
 
 	$('div[id^="records-for-"]').attr("id", "records-for-" + id);
 
+	$('#add-person-select').select2({
+		placeholder: "Add People",
+		id: function(person) { 
+			return person['id'];
+		},
+		multiple: true,
+		minimumInputLength: 3,
+		ajax: {
+			type: 'POST',
+			url: '/groups/call/json/people_not_in_group',
+			dataType: 'json',
+			quietMillis: 100,
+			data: function(term, page) {
+				return { group_id: id, query: term };
+			},
+			results: function(data, page) {
+				return { results: data };
+			}
+		},
+		formatResult: function(person) {
+			return person['last_name'] + ', ' + person['first_name'];
+		},
+		formatSelection: function(person) {
+			return person['last_name'] + ', ' + person['first_name'];
+		}
+	});
+
 	$('#records-table').datagrid('reload');
 
 	$('#rec-pagesize').select2('destroy');
@@ -113,8 +140,9 @@ function addPeopleToGroup(group_id, people) {
 			"multiple" : true
 		},
 		success: function() {
-			displaySuccess("The person has been added.");
+			$('#add-person-select').select2('val', '');
 			$('#records-table').datagrid('reload');
+			displaySuccess("The person/people has been added.");
 		},
 		error: function() {
 			displayError("Could not add to group. There was a server or database error.");

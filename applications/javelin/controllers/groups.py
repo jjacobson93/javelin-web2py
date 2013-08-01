@@ -64,8 +64,10 @@ def add_to_group(group_id, person_id=0, people=None, multiple=False):
 	"""
 	if multiple and people:
 		people = json.loads(people)
+		response = list()
 		for person_id in people:
-			return groups.add_to_group(person_id, group_id)
+			response.append(groups.add_to_group(person_id, group_id))
+		return dict(response=response)
 	else:
 		return groups.add_to_group(person_id, group_id)
 
@@ -111,6 +113,15 @@ def get_people():
 	:returns: a list of people
 	"""
 	return groups.get_people()
+
+@auth.requires_login()
+@service.json
+def people_not_in_group(group_id, query):
+	"""Gets a list of people not in a group
+
+	:returns: a list of people
+	"""
+	return groups.people_not_in_group(group_id, query)
 
 @auth.requires_login()
 def call():

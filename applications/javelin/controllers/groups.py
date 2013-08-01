@@ -55,7 +55,7 @@ def add_group(name, description, values):
 
 @auth.requires_login()
 @service.json
-def add_to_group(group_id, person_id=0, people=None multiple=False):
+def add_to_group(group_id, person_id=0, people=None, multiple=False):
 	"""Adds a person to the group
 
 	:param person_id: the id of the person

@@ -103,6 +103,25 @@ function addGroup(name, description, values) {
 	});
 }
 
+function addPeopleToGroup(group_id, people) {
+	$.ajax({
+		type: "POST",
+		url: "/groups/call/json/add_to_group",
+		data: {
+			"people" : JSON.stringify(people),
+			"group_id" : group_id,
+			"multiple" : true
+		},
+		success: function() {
+			displaySuccess("The person has been added.");
+			$('#records-table').datagrid('reload');
+		},
+		error: function() {
+			displayError("Could not add to group. There was a server or database error.");
+		}
+	});
+}
+
 function addPerson() {
 	var p_id = $('#people-type-id').val();
 	var g_id = $('div[id^="records-for-"]').attr("id").match(/[\d]+/);
@@ -369,7 +388,7 @@ $(function() {
 		$('#delete-person-modal').modal('show');
 	});
 
-	$('#add-person-btn').on('click', addPerson);
+	// $('#add-person-btn').on('click', addPerson);
 
 	$('#delete-done-btn').on('click', function() {
 		var id = $(this).attr('data-group');
@@ -380,6 +399,12 @@ $(function() {
 		var p_id = $(this).attr('data-person');
 		var g_id = $(this).attr('data-group');
 		deletePersonFromGroup(p_id, g_id);
+	});
+
+	$('#add-person-btn').on('click', function() {
+		var people = $('#add-person-select').select2('val');
+		var group_id = recordDataSource._group_id
+		addPeopleToGroup(group_id, people);
 	});
 });
 

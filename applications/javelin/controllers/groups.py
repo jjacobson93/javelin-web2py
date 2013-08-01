@@ -55,14 +55,19 @@ def add_group(name, description, values):
 
 @auth.requires_login()
 @service.json
-def add_to_group(person_id, group_id):
+def add_to_group(group_id, person_id=0, people=None multiple=False):
 	"""Adds a person to the group
 
 	:param person_id: the id of the person
 	:param group_id: the id of the group
 	:returns: a dictionary with the id of the record for the group
 	"""
-	return groups.add_to_group(person_id, group_id)
+	if multiple and people:
+		people = json.loads(people)
+		for person_id in people:
+			return groups.add_to_group(person_id, group_id)
+	else:
+		return groups.add_to_group(person_id, group_id)
 
 @auth.requires_login()
 @service.json

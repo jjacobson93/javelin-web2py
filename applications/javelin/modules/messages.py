@@ -24,7 +24,7 @@ class Providers(object):
 	@staticmethod
 	def contains(e):
 		if e.lower() in ('at&t', 'at & t', 'verizon',
-			'metro pcs', 'sprint pcs', 'sprint', 
+			'metro pcs', 'metro-pcs', 'sprint pcs', 'sprint', 
 			't-mobile', 't mobile'):
 			return True
 		else:
@@ -36,7 +36,7 @@ class Providers(object):
 			return Providers.ATT
 		elif e.lower() in ('verizon'):
 			return Providers.VERIZON
-		elif e.lower() in ('metro pcs'):
+		elif e.lower() in ('metro pcs', 'metro-pcs'):
 			return Providers.METRO_PCS
 		elif e.lower() in ('sprint pcs', 'sprint'):
 			return Providers.SPRINT

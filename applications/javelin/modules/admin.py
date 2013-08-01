@@ -61,7 +61,7 @@ def import_from_query(csv_file, leaders):
 
 	if not leaders:
 
-		lines = csv_file.rstrip().splitlines()
+		lines = list(csv.reader(StringIO.StringIO(csv_file), skipinitialspace=True))
 
 		# INSERT STUDENTS
 
@@ -69,11 +69,10 @@ def import_from_query(csv_file, leaders):
 		teacher_ids = list()
 		course_ids = list()
 
-		columns = lines.pop(0).split(',')
+		columns = lines.pop(0)
 
-		for i in range(1,len(lines)):
+		for line in lines:
 			record = dict()
-			line = lines[i].rstrip().split(',')
 
 			student_id = line[0]
 			teacher_id = line[13]
@@ -99,20 +98,25 @@ def import_from_query(csv_file, leaders):
 					'teacher_id':line[13],
 					'teacher_name':line[14]})
 
-			if course_id and course_id not in course_ids:
+			if course_id and teacher_id and course_id not in course_ids:
 				course_ids.append(course_id)
-				db.course.update_or_insert(db.course.course_id==course_id, **{
-					'course_id':line[15],
-					'code':line[10],
-					'title':line[11],
-					'period':line[12],
-					'teacher_id':db(db.teacher.teacher_id==line[13]).select(db.teacher.id).first().id})
+				teacher = db(db.teacher.teacher_id==teacher_id).select(db.teacher.id).first()
+				if teacher:
+					db.course.update_or_insert(db.course.course_id==course_id, **{
+						'course_id':line[15],
+						'code':line[10],
+						'title':line[11],
+						'period':line[12],
+						'teacher_id':teacher.id})
 
 			if course_id and student_id:
-				db.course_rec.update_or_insert((db.course_rec.course_id==course_id) & 
-					(db.course_rec.student_id==student_id), 
-					course_id=db(db.course.course_id==course_id).select(db.course.id).first().id, 
-					student_id=db(db.person.student_id==student_id).select(db.person.id).first().id)
+				course = db(db.course.course_id==course_id).select().first()
+				student = db(db.person.student_id==student_id).select().first()
+				if course and student:
+					db.course_rec.update_or_insert((db.course_rec.course_id==course.id) & 
+						(db.course_rec.student_id==student.id), 
+						course_id=course.id, 
+						student_id=student.id)
 
 		return dict(response=True)
 		

@@ -30,6 +30,14 @@ def data(str_filter=None):
 
 	return people
 
+def leaders(query):
+	db = current.javelin.db
+
+	people = [{'id':'all_leaders', 'last_name':'All Leaders', 'first_name' : ''}] + db((db.person.leader==True) 
+		& ((db.person.last_name.contains(query)) | (db.person.first_name.contains(query))) ).select(
+			db.person.id, db.person.last_name, db.person.first_name, orderby=db.person.id).as_list()
+	return people
+
 def load_form():
 	db = current.javelin.db
 

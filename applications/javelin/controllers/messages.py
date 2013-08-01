@@ -15,8 +15,7 @@ def index():
 	:returns: a dictionary to pass to the view with the list of modules_enabled and the active module ('messages')
 	"""
 	modules_data = get_module_data()
-	people = db((db.person.grade!=9) & (db.person.leader==True)).select(db.person.id, db.person.student_id, db.person.last_name, db.person.first_name)
-	return dict(modules_enabled=modules_enabled, modules_data=modules_data, active_module='messages', people=people)
+	return dict(modules_enabled=modules_enabled, modules_data=modules_data, active_module='messages')
 
 @auth.requires_login()
 @service.json

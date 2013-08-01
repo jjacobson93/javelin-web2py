@@ -68,6 +68,13 @@ GroupDataSource.prototype = {
 
 					if (self._formatter) self._formatter(data);
 
+					$.each(data, function(i) {
+						$.each(data[i], function(j) {
+							if (data[i][j] === null)
+								data[i][j] = '';
+						});
+					});
+
 					callback({ data: data, start: start, end: end, count: count, pages: pages, page: page });
 
 				}, this._delay);

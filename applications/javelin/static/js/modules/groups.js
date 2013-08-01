@@ -227,22 +227,26 @@ $(function() {
 		if ($('#groups-table tr').eq(1).find('td').html() != '0 items') {
 			$('#groups-table tbody td:last-child').each(function(index, el) {
 				var id = $(el).parent().attr('id');
-				$(this).html('<button class="btn btn-primary" id="edit-row-' + id + '">' +
+				$(this).html('<button class="btn btn-small btn-primary" id="edit-row-' + id + '">' +
 					'<i class="icon-edit"></i>Edit' +
 				'</button>' +
-				'<button class="btn btn-danger" id="delete-row-' + id + '" style="margin-left: 10px">' +
+				'<button class="btn btn-small btn-danger" id="delete-row-' + id + '" style="margin-left: 10px">' +
 					'<i class="icon-trash"></i>Delete' + 
-				'</button>')
+				'</button>');
 			});	
 		}
 	});
 
 	$('#records-table').on('loaded', function() {
-		var rowCount = $('#record-table').find('tr').length;
-		if (rowCount == 1) {
-			$('#no-rows-alert').css("display", "block");
-		} else {
-			$('#no-rows-alert').css("display", "none");
+		if ($('#records-table tr').eq(1).find('td').html() != '0 items') {
+			$('#records-table tbody td:last-child').each(function(index, el) {
+				var id = $(el).parent().attr('id');
+				$(this).html('<button class="btn btn-small btn-primary" id="view-row-' + id + '">' +
+					'<i class="icon-eye-open"></i>View' +
+					'</button>' +
+					'<button class="btn btn-small btn-danger" id="delete-row-' + id + '" style="margin-left: 10px">' +
+					'<i class="icon-trash"></i>Delete' + '</button>');
+			});
 		}
 	})
 

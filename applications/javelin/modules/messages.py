@@ -72,5 +72,20 @@ def send_sms(message, to):
 
 	if len(bcc) < 100:
 		mail.send(to=mail.settings.sender, bcc=bcc, subject='', message=message)
+	else:
+		small_lists = list()
+		curr = list()
+		count = 0
+		while len(bcc) > 0:
+			if count < 50:
+				curr.append(bcc.pop(0))
+			else:
+				small_lists.append(curr)
+				curr = list()
+				curr.append(bcc.pop(0))
+				count = 0
+			count += 1
+		for l in small_lists:
+			mail.send(to=mail.settings.sender, bcc=l, subject='', message=message)
 
 	return dict(response='Sending messages')

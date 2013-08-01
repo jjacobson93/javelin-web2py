@@ -2,6 +2,12 @@
 
 {{block center}}
 
+<style type="text/css">
+	.select2-container {
+		margin-left: 0 !important;
+	}
+</style>
+
 <ul class="nav nav-pills">
 	<li class="active"><a href="#sms" data-toggle="tab"><i class="icon-comment"></i>SMS Messaging</a></li>
 </ul>
@@ -13,12 +19,7 @@
 			<div class="row-fluid span5" style="margin-left: 0">
 				<div class="row-fluid" style="margin-bottom: 20px">
 					<label class="control-label" for="to_select">To</label>
-					<select id="to_select">
-						<option value="all_leaders">All Leaders</option>
-						{{for p in people:}}
-						<option value="{{=p.id}}">{{=p.last_name}}, {{=p.first_name}}</option>
-						{{pass}}
-					</select>
+					<input class="span6" type="hidden" id="to_select">
 				</div>
 				<div class="row-fluid">
 					<label class="control-label" for="message">Message</label>

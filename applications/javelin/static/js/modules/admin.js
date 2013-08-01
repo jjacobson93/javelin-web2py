@@ -36,11 +36,13 @@ function disapproveUser(id) {
 
 function importFromCSV(csv_file) {
 	$("#import-button").button('loading');
+	var leader_check = $("#leader_check").prop('checked');
 	$.ajax({
 		type: 'POST',
 		url: '/jadmin/call/json/import_from_query',
 		data: {
-			'csv_file': csv_file
+			'csv_file': csv_file,
+			'leaders': leader_check
 		},
 		success: function() {
 			$('#import-modal').modal('hide');

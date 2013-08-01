@@ -65,8 +65,8 @@ auth.define_tables(username=True, signature=False)
 ## configure email
 mail = auth.settings.mailer
 mail.settings.server = 'smtp.gmail.com:587'
-mail.settings.sender = 'vc2messager@gmail.com'
-mail.settings.login = 'vc2messager:srivijaya'
+mail.settings.sender = 'vintagecrushercrew@gmail.com'
+mail.settings.login = 'vintagecrushercrew:srivijaya'
 
 current.javelin.mail = mail
 

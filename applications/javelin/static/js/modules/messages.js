@@ -1,5 +1,28 @@
 $(function() {
-	$('#to_select').select2();
+	$('#to_select').select2({
+		placeholder: "To",
+		id: function(person) {
+			return person['id'];
+		},
+		ajax: {
+			type: 'POST',
+			url: '/people/call/json/leaders',
+			dataType: 'json',
+			quietMillis: 100,
+			data: function(term, page) {
+				return { query: term };
+			},
+			results: function(data, page) {
+				return { results: data };
+			}
+		},
+		formatResult: function(person) {
+			return person['last_name'] + ', ' + person['first_name'];
+		},
+		formatSelection: function(person) {
+			return person['last_name'] + ', ' + person['first_name'];
+		}
+	});
 
 	$('#message').on('keyup', function() {
 		var count = $(this).val().length;

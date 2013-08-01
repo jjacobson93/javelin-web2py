@@ -29,6 +29,16 @@ def data(str_filter=None):
 
 @auth.requires_login()
 @service.json
+def leaders(query=None):
+	"""Loads the data for people who are a leader
+
+	:param query: an optional string filter
+	:returns: a list of people
+	"""
+	return people.leaders(query)
+
+@auth.requires_login()
+@service.json
 def record(id):
 	"""Loads a single record
 

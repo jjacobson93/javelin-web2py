@@ -73,16 +73,6 @@ GroupRecDataSource.prototype = {
 
 					if (self._formatter) self._formatter(data);
 
-					$(data).each(function(index) {
-						data[index]['actions'] = 
-							'<button class="btn btn-primary" id="view-row-' + data[index]['id'] + '">' +
-								'<i class="icon-eye-open"></i>View' +
-							'</button>' +
-							'<button class="btn btn-danger" id="delete-row-' + data[index]['id'] + '" style="margin-left: 10px">' +
-								'<i class="icon-trash"></i>Delete' + 
-							'</button>';
-					});
-
 					callback({ data: data, start: start, end: end, count: count, pages: pages, page: page });
 
 				}, this._delay);

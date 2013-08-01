@@ -47,78 +47,173 @@ def import_from_csv(csv_file, contains_ids):
 
 	return dict(response=response)
 
-def import_from_query(csv_file):
+def import_from_query(csv_file, leaders):
+	import csv
+	import StringIO
+
 	db = current.javelin.db
 
 	def phone_format(n):
-		return format(int(n[:-1]), ",").replace(",", "-") + n[-1]
+		try:
+			return format(int(n[:-1]), ",").replace(",", "-") + n[-1]
+		except:
+			return None
 
-	lines = csv_file.rstrip().splitlines()
+	if not leaders:
 
-	# INSERT STUDENTS
+		lines = csv_file.rstrip().splitlines()
 
-	ids = list()
+		# INSERT STUDENTS
 
-	columns = lines.pop(0).split(',')
-	for i in range(len(columns)):
-		columns[i] = '_'.join(columns[i].lower().split())
+		student_ids = list()
+		teacher_ids = list()
+		course_ids = list()
 
-	for i in range(1,len(lines)):
-		record = dict()
-		line = lines[i].rstrip().split(',')
-		for i in range(len(line)):
-			record[columns[i]] = line[i]
+		columns = lines.pop(0).split(',')
 
-		record = dict((k,v) for k,v in record.items() if k in db.person.fields)
-		if record.get('cell_phone', None):
-			record['cell_phone'] = phone_format(record['cell_phone'])
-		if record.get('home_phone', None):
-			record['home_phone'] = phone_format(record['home_phone'])
-			
-		if record['student_id'] and record['student_id'] not in ids:
-			ids.append(record['student_id'])
-			db.person.update_or_insert(db.person.student_id==record['student_id'], **record)
+		for i in range(1,len(lines)):
+			record = dict()
+			line = lines[i].rstrip().split(',')
 
-	# INSERT TEACHERS
+			student_id = line[0]
+			teacher_id = line[13]
+			course_id = line[15]
 
-	ids = list()
-	lines.pop(0)
-	for line in lines:
-		line = line.rstrip().split(',')
-		currid = line[13]
-		if currid and currid not in ids:
-			ids.append(currid)
-			db.teacher.update_or_insert(db.teacher.teacher_id==currid, **{
-				'teacher_id':line[13],
-				'teacher_name':line[14]})
+			if student_id and student_id not in student_ids:
+				student_ids.append(student_id)
 
-	# INSERT COURSES
+				for i in range(len(line)):
+					record[columns[i]] = line[i]
 
-	ids = list()
-	lines.pop(0)
-	for line in lines:
-		line = line.rstrip().split(',')
-		currid = line[15]
-		if currid and currid not in ids:
-			ids.append(currid)
-			db.course.update_or_insert(db.course.course_id==currid, **{
-				'course_id':line[15],
-				'code':line[10],
-				'title':line[11],
-				'period':line[12],
-				'teacher_id':db(db.teacher.teacher_id==line[13]).select(db.teacher.id).first().id})
+				record = dict((k,v) for k,v in record.items() if k in db.person.fields)
+				if record.get('cell_phone', None):
+					record['cell_phone'] = phone_format(record['cell_phone'])
+				if record.get('home_phone', None):
+					record['home_phone'] = phone_format(record['home_phone'])
 
-	# INSERT COURSE_RECS
+				db.person.update_or_insert(db.person.student_id==student_id, **record)
 
-	for line in lines:
-		line = line.rstrip().split(',')
-		course_id = line[15]
-		student_id = line[0]
-		if course_id and student_id:
-			db.course_rec.update_or_insert((db.course_rec.course_id==course_id) & 
-				(db.course_rec.student_id==student_id), 
-				course_id=db(db.course.course_id==course_id).select(db.course.id).first().id, 
-				student_id=db(db.person.student_id==student_id).select(db.person.id).first().id)
+			if teacher_id and teacher_id not in teacher_ids:
+				teacher_ids.append(teacher_id)
+				db.teacher.update_or_insert(db.teacher.teacher_id==teacher_id, **{
+					'teacher_id':line[13],
+					'teacher_name':line[14]})
 
-	return dict(response=True)
+			if course_id and course_id not in course_ids:
+				course_ids.append(course_id)
+				db.course.update_or_insert(db.course.course_id==course_id, **{
+					'course_id':line[15],
+					'code':line[10],
+					'title':line[11],
+					'period':line[12],
+					'teacher_id':db(db.teacher.teacher_id==line[13]).select(db.teacher.id).first().id})
+
+			if course_id and student_id:
+				db.course_rec.update_or_insert((db.course_rec.course_id==course_id) & 
+					(db.course_rec.student_id==student_id), 
+					course_id=db(db.course.course_id==course_id).select(db.course.id).first().id, 
+					student_id=db(db.person.student_id==student_id).select(db.person.id).first().id)
+
+		return dict(response=True)
+		
+	else:
+		errors = list()
+		lines = list(csv.reader(StringIO.StringIO(csv_file), skipinitialspace=True))
+
+		columns = lines.pop(0)
+
+		short_tasks = {
+			'Team Sacrifice (Must have a car and willingness to work later than others)' : 'Team Sacrifice',
+			"Peer Support (Must be enrolled in Mr. Ward's Psychology or Peer Support class)" : 'Peer Support',
+			"Tutor/Study Buddy (Academic credits are available for this option)" : 'Tutor/Study Buddy',
+			"Database Manager (Must know Excel, Mail merge, and other technologies)" : 'Database Manager',
+			"Facebook Maintenance (You are responsible for up keeping on our page. Must be a FB addict)" : "Facebook Maintenance",
+			"Fundraising Team" : "Fundraising Team",
+			"TAs (Work with freshmen and Mr. Varni, Mr. Ward, or Mrs. Housley during the school day (Academic credits are available for this option)": "TAs",
+			"Posters & Propaganda" : "Posters & Propaganda",
+			"Public Outreach (Attend Parent Night, Back-to-School, other public events)" : 'Public Outreach',
+			"ASB Support (Those enrolled in 4th period Leadership class should check this option, but others are welcome as well)" : "ASB Support",
+			"L.O.C.s (Loyal Order of the Crushers. Attend home athletic and extracurricular events)": "L.O.C.s",
+			"Dirty 30 (Explain various aspects of high school culture to freshmen on Orientation Day afternoon)" : "Dirty 30",
+			"Set-up (Room Mapping) and Clean-up (Orientation Day only)": "Set-up and Clean-up",
+			"Homecoming Parade (Dress up and ride on our float! Easy!)" : "Homecoming Parade",
+			"Security/Safety (Helps keep freshmen in line; works with Peer Support on Orientation Day)": "Security/Safety",
+			"Food Prep & Clean-up (Orientation Day only)": "Food Prep & Clean-up",
+			"Fashion (Make costumes for House Hotties and Homecoming Parade)" : "Fashion",
+			'Burgundy Beauties and Golden Guns (Formerly "House Hotties")' : "Burgundy Beauties and Golden Guns",
+			"Audio-Visual (Responsible for music and videos during Orientation)" : "Audio-Visual",
+			"A-Team (Alumni only)": "A-Team"
+		}
+
+		task_teams = [task.name for task in db().select(db.groups.name)]
+
+		for line in lines:
+			record = dict()
+
+			for i in range(len(line)):
+				if columns[i] == 'last_name' or columns[i] == 'first_name':
+					line[i] = line[i].capitalize()
+
+				record[columns[i]] = line[i]
+
+			record = dict((k,v) for k,v in record.items() if k in db.person.fields)
+
+			if record.get('cell_phone', None):
+				record['cell_phone'] = phone_format(record['cell_phone'])
+
+			try:
+				person = db((db.person.last_name==record['last_name']) & 
+					(db.person.first_name==record['first_name'])).select(db.person.ALL).first()
+				if person:
+					person_id = person.id
+
+					db(db.person.id==person_id).update(**record)
+					db(db.person.id==person_id).update(leader=True)
+
+					aTasks = line[columns.index('a_tasks')].split(',')
+					bTasks = line[columns.index('b_tasks')].split(',')
+					cTasks = line[columns.index('c_tasks')].split(',')
+
+					tasks_to_add = list()
+					for task in aTasks:
+						if task not in task_teams and task in short_tasks.values():
+							task_id = db.groups.insert(name=task)
+							tasks_to_add.append(task_id)
+							task_teams.append(task)
+						elif task in task_teams and task in short_tasks.values():
+							task_row = db(db.groups.name==task).select().first()
+							if task_row:
+								task_id = task_row.id
+								tasks_to_add.append(task_id)
+
+
+					for task in bTasks:
+						if task not in task_teams and task in short_tasks.values():
+							task_id = db.groups.insert(name=task)
+							tasks_to_add.append(task_id)
+							task_teams.append(task)
+						elif task in task_teams and task in short_tasks.values():
+							task_row = db(db.groups.name==task).select().first()
+							if task_row:
+								task_id = task_row.id
+								tasks_to_add.append(task_id)
+
+					for task in cTasks:
+						if task not in task_teams and task in short_tasks.values():
+							task_id = db.groups.insert(name=task)
+							tasks_to_add.append(task_id)
+							task_teams.append(task)
+						elif task in task_teams and task in short_tasks.values():
+							task_row = db(db.groups.name==task).select().first()
+							if task_row:
+								task_id = task_row.id
+								tasks_to_add.append(task_id)
+
+					for task in tasks_to_add:
+						if not db((db.group_rec.group_id==task_id) & (db.group_rec.person_id==person_id)).select().first():
+							db.group_rec.insert(group_id=task_id, person_id=person_id)
+			except:
+				errors.append(record['last_name'] + ", " + record['first_name'])
+
+		return dict(errors=errors)
 	

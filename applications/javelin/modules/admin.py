@@ -61,7 +61,10 @@ def import_from_query(csv_file, leaders):
 
 	if not leaders:
 
-		lines = list(csv.reader(StringIO.StringIO(csv_file), skipinitialspace=True))
+		file_string = StringIO.StringIO(csv_file)
+		lines = list(csv.reader(file_string, skipinitialspace=True))
+		del file_string
+		del csv_file
 
 		# INSERT STUDENTS
 
@@ -71,8 +74,10 @@ def import_from_query(csv_file, leaders):
 
 		columns = lines.pop(0)
 
-		for line in lines:
+		while len(lines) > 0:
 			record = dict()
+
+			line = lines.pop(0)
 
 			student_id = line[0]
 			teacher_id = line[13]
@@ -117,6 +122,10 @@ def import_from_query(csv_file, leaders):
 						(db.course_rec.student_id==student.id), 
 						course_id=course.id, 
 						student_id=student.id)
+
+			db.commit()
+			del record
+			del line
 
 		return dict(response=True)
 		

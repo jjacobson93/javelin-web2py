@@ -1,5 +1,6 @@
 var attDataSource;
 var crewRecDataSource;
+var isMovePopoverVisible = false;
 
 $(function() {
 
@@ -43,6 +44,11 @@ $(function() {
 			{
 				property: 'id',
 				label: 'ID',
+				sortable: true
+			},
+			{
+				property: 'person_student_id',
+				label: 'Student ID',
 				sortable: true
 			},
 			{
@@ -108,6 +114,11 @@ $(function() {
 				property: 'first_name',
 				label: 'First Name',
 				sortable: true
+			},
+			{
+				property: 'actions',
+				label: 'Actions',
+				sortable: false
 			}
 		],
 		crew_id: '0'
@@ -116,6 +127,36 @@ $(function() {
 	$('#crew-records-table').datagrid({
 		dataSource: crewRecDataSource,
 		stretchHeight: true
+	});
+
+	$('#crew-records-table').on('loaded', function() {
+		if ($('#crew-records-table tr').eq(1).find('td').html() != '0 items') {
+			$('#crew-records-table tbody td:last-child').each(function(index, el) {
+				var id = $(el).parent().attr('id');
+				$(this).html('<button class="btn btn-small btn-primary" id="crew-move-person' + id + '">' +
+					'<i class="icon-signout"></i>Move' +
+					'</button>' +
+					'<button class="btn btn-small btn-danger" id="crew-remove-person-' + id + '" style="margin-left: 10px">' +
+					'<i class="icon-trash"></i>Remove' + '</button>');
+				$(this).find('button[id^="crew-move-person"]').popover({
+					trigger:'manual', 
+					html: true,
+					placement: 'bottom',
+					content: function() {
+						return '<input type="text" class="span2" id="change-crew-select" style="margin-right: 0">';
+					}
+				}).on('click', function(e) {
+					var person_id = $(this).attr("id").match(/[\d]+/);
+					var current_crew = crewRecDataSource._crew_id;
+					$('button[id^="crew-move-person"]').not(this).popover('hide');
+					$(this).popover('toggle');
+				});
+			});
+		}
+	});
+
+	$('#crew-records-table').on('click', 'td button[id^="crew-remove-person"]', function() {
+		var person_id = $(this).attr("id").match(/[\d]+/);
 	});
 
 	$(document).on('mouseleave', '.carousel', function() {
@@ -189,6 +230,7 @@ $(function() {
 	$('#crews-container').on('slide', function() {
 		$(this).find('.carousel-inner').css('overflow', 'hidden');
 	});
+
 	
 	$('#prev-button').on('click', function(e) {
 		if($(this).hasClass('disabled')) {
@@ -242,11 +284,11 @@ $(function() {
 	});
 
 	$('#quick-att-btn').on('click', function() {
-		var person_id = $('#quick-att-input').val();
+		var student_id = $('#quick-att-input').val();
 		var event_id = $('div[id^="attendance-for-"]').attr("id").match(/[\d]+/)[0];
 		$('#quick-att-input').val('');
 		$('#quick-att-btn').addClass('disabled');
-		quickAttendance(person_id, event_id);
+		quickAttendance(student_id, event_id, true, true);
 	});
 
 	$('#quick-att-input').tooltip({'trigger':'manual', 'title': 'Please choose an event', 'placement': 'bottom'});
@@ -258,17 +300,6 @@ $(function() {
 
 	$('#quick-att-input').on('mouseleave', function() {
 		$(this).tooltip('hide');
-	});
-
-	$('div.switch[id^="present-check"]').on('click', function (e, data) {
-		// var person_id = $(data.el).attr("id").match(/[\d]+/)[0];
-		// var event_id = $('div[id^="attendance-for-"]').attr("id").match(/[\d]+/)[0];
-		// var present = data.value;
-		// quickAttendance(person_id, event_id, present);
-	});
-
-	$('#attendance-table').on('click', 'tr td:last-child', function() {
-		$(this).find('input:checkbox').prop('checked', true);
 	});
 
 	$('#event-pagesize').select2();
@@ -286,7 +317,12 @@ $(function() {
 				
 				checkbox.find('input:checkbox').prop('checked', present);
 				$(el).html(checkbox);
-				checkbox.bootstrapSwitch();
+				checkbox.bootstrapSwitch().on('switch-change', function(e, data) {
+					var event_id = attDataSource._event_id;
+					var person_id = $(data.el).parent().parent().parent().parent().attr("id");
+					var present = data.value;
+					quickAttendance(person_id, event_id, present, false);
+				});
 			});
 		}
 	});
@@ -329,6 +365,11 @@ $(function() {
 		var val = $(this).val();
 		$('#event_name_text').html(val);
 	});
+
+	$('#crews-pagesize').select2();
+	$('#crews-page-select').select2({placeholder: "1"});
+	$('#crew-rec-pagesize').select2();
+	$('#crew-rec-page-select').select2({placeholder: "1"});
 
 	$('#add-crew-btn').on('click', function() {
 		$('#add-person-select-modal').select2({
@@ -375,6 +416,11 @@ $(function() {
 		addPeopleToCrew(crew_id, people);
 	});
 
+	$(document).on('click', function() {
+		if (!$(e.target).is('.popup-marker, .popover-title, .popover-content')) {
+			$('.popup-marker').popover('hide');
+		}
+	});
 });
 
 function loadRecord(event_id, event_title) {
@@ -396,27 +442,39 @@ function loadCrewRecord(crew_id) {
 	loadPeopleForTypeahead();
 }
 
-function quickAttendance(person_id, event_id, present) {
-	if (!present)
-		present = true;
+function quickAttendance(person_id, event_id, present, isStudentID) {
+	if (!isStudentID) {
+		var data = {
+			'person_id': person_id,
+			'event_id': event_id,
+			'present': present
+		}
+	} else {
+		var data = {
+			'student_id': person_id,
+			'event_id': event_id,
+			'present': present
+		}
+	}
 
 	$.ajax({
 		type: 'POST',
 		url: '/orientation/call/json/quick_attendance',
-		data: {
-			'person_id': person_id,
-			'event_id': event_id,
-			'present': present
-		},
+		data: data,
 		dataType: 'json',
+		success: function(data) {
+			if (data.error) {
+				displayError('Could not take attendance for ' + ((isStudentID) ? student_id : person_id) + '.');
+			}
+		},
 		error: function() {
-			displayError('Could not take attendance for ' + person_id + '.');
+			displayError('Could not take attendance for ' + ((isStudentID) ? student_id : person_id) + '.');
 		}
 	});
 }
 
 function reloadAttendance() {
-	if ($('.carousel-inner .item:last').hasClass('active') && $('.nav-pills li.active a').attr('href') == "#attendance" ) {
+	if ($('#main-container .carousel-inner .item:last').hasClass('active') && $('.nav-pills li.active a').attr('href') == "#attendance") {
 		$('#attendance-table').datagrid('seamlessReload');
 	}
 }
@@ -515,5 +573,11 @@ function loadPeopleForTypeahead() {
 		formatSelection: function(person) {
 			return person['last_name'] + ', ' + person['first_name'];
 		}
+	});
+}
+
+function hideMovePopovers() {
+	$('button[id^="crew-move-person"]').each(function() {
+		$(this).popover('hide');
 	});
 }

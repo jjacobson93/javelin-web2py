@@ -1,3 +1,5 @@
+var tableIsInit = false;
+
 function loadRecord(id) {
 	$.ajax({
 		type: "POST",
@@ -49,6 +51,8 @@ function saveChanges(toPrev) {
 			values[eid] = $(e).val();
 		else if (eid == "id")
 			id = $(e).val();
+		else if ($(e).val() == "" || $(e).val() == null)
+			values[eid] = null;
 	});
 
 	$.ajax({
@@ -149,8 +153,13 @@ $(function() {
 		stretchHeight: true
 	});
 
-	$('select.grid-pagesize').select2();
-	$('select.grid-page').select2({placeholder: "1"});
+	$('#people-table').on('loaded', function() {
+		if (!tableIsInit) {
+			tableIsInit = true;
+			$('#people-pagesize').select2();
+			$('#people-page-select').select2({placeholder: "1"});
+		}
+	});
 
 	$('#people-div').height($(window).height()*.6);
 

@@ -74,15 +74,6 @@ AttendanceDataSource.prototype = {
 
 					$(data).each(function(index) {
 						data[index]['attendance_present'] = (data[index]['attendance_present']) ? true : false;
-
-					// 	console.log(present);
-					// // 	var checkbox = $('<div/>').append(
-					// // 		'<div class="switch switch-small" id="present-check-' + 
-					// // 		data[index]['id'] + 
-					// // 		'" data-on-label="YES" data-off-label="NO"><input type="checkbox"></div>');
-
-					// // 	checkbox.find('input:checkbox').prop('checked', present);
-					// // 	data[index]['attendance_present'] = checkbox.html();
 					});
 
 					callback({ data: data, start: start, end: end, count: count, pages: pages, page: page });
@@ -90,7 +81,7 @@ AttendanceDataSource.prototype = {
 				}, this._delay);
 			},
 			error: function() {
-				displayError("<strong>Error!</strong> Could not retrieve records.");
+				displayError("Could not retrieve records.");
 				callback({ data: [], start: 0, end: 0, count: 0, pages: 0, page: 0 });
 			}
 		});

@@ -1,3 +1,4 @@
+var groupsTableIsInit = false;
 var recordDataSource;
 
 function initGroupTable() {
@@ -23,9 +24,6 @@ function initGroupTable() {
 		}),
 		stretchHeight: true
 	});
-
-	$('#group-pagesize').select2();
-	$('#group-page-select').select2();
 }
 
 function initRecordsTable() {
@@ -265,11 +263,11 @@ $(function() {
 	$('#records-div').height($(window).height()*.6);
 
 	$('#groups-table').on('loaded', function() {
-		$('#groups-div .grid-pagesize').select2('destroy');
-		$('#groups-div .grid-pager select').select2('destroy');
-
-		$('#groups-div .grid-pagesize').select2();
-		$('#groups-div .grid-pager select').select2({ placeholder: "1" });
+		if (!groupsTableIsInit) {
+			groupsTableIsInit = true;
+			$('#group-pagesize').select2();
+			$('#group-page-select').select2({ placeholder: "1" });
+		}
 
 		if ($('#groups-table tr').eq(1).find('td').html() != '0 items') {
 			$('#groups-table tbody td:last-child').each(function(index, el) {

@@ -25,8 +25,8 @@ def attendance_data(event_id):
 
 @auth.requires_login()
 @service.json
-def quick_attendance(person_id, event_id, present=True):
-	return orientation.quick_attendance(person_id, event_id, present)
+def quick_attendance(event_id, person_id=None, student_id=None, present=True):
+	return orientation.quick_attendance(person_id, student_id, event_id, present)
 
 @auth.requires_login()
 @service.json
@@ -57,6 +57,16 @@ def people_not_in_crew(id, query):
 @service.json
 def add_people_to_crew(id, people):
 	return orientation.add_people_to_crew(id, json.loads(people))
+
+@auth.requires_login()
+@service.json
+def remove_crew(person_id):
+	return orientation.remove_crew(person_id)
+
+@auth.requires_login()
+@service.json
+def move_to_crew(id, person_id):
+	return orientation.move_to_crew(id, person_id)
 
 @auth.requires_login()
 def call():

@@ -17,8 +17,9 @@ from applications.javelin.private.utils import flattenDict
 def attendance_data(event_id):
 	db = current.javelin.db
 
-	data = db((db.person.grade==9) | (db.person.leader==True)).select(db.person.id, db.person.last_name, db.person.first_name,
-		db.attendance.present, db.attendance.event_id, db.events.title, db.person.grade, db.person.leader,
+	data = db((db.person.grade==9) | (db.person.leader==True)).select(db.person.id, db.person.student_id, db.person.last_name, 
+		db.person.first_name, db.attendance.present, db.attendance.event_id, 
+		db.events.title, db.person.grade, db.person.leader,
 		left=[db.attendance.on((db.person.id==db.attendance.person_id) & (db.attendance.event_id==event_id)),
 		db.events.on(db.events.id==db.attendance.event_id)],
 		orderby=db.person.id).as_list()
@@ -27,11 +28,19 @@ def attendance_data(event_id):
 
 	return data
 
-def quick_attendance(person_id, event_id, present):
+def quick_attendance(person_id, student_id, event_id, present):
 	db = current.javelin.db
 
-	response = db.attendance.update_or_insert((db.attendance.person_id==person_id) & (db.attendance.event_id==event_id),
-		person_id=person_id, event_id=event_id, present=present)
+	if person_id:
+		response = db.attendance.update_or_insert((db.attendance.person_id==person_id) & (db.attendance.event_id==event_id),
+			person_id=person_id, event_id=event_id, present=present)
+	elif student_id:
+		person = db(db.person.student_id==student_id).select().first()
+		if person:
+			response = db.attendance.update_or_insert((db.attendance.person_id==person.id) & (db.attendance.event_id==event_id),
+				person_id=person.id, event_id=event_id, present=present)
+		else:
+			return dict(error=True)
 
 	return dict(response=response)
 
@@ -185,6 +194,18 @@ def add_people_to_crew(id, people):
 	for p_id in people:
 		response.append(db(db.person.id==p_id).update(crew=id))
 
+	return dict(response=response)
+
+def remove_crew(person_id):
+	db = current.javelin.db
+
+	response = db(db.person.id==person_id).update(crew=None)
+	return dict(response=response)
+
+def move_to_crew(id, person_id):
+	db = current.javelin.bdb
+
+	response = db(db.person.id==person_id).update(crew=id)
 	return dict(response=response)
 
 def people_not_in_crew(id, query):

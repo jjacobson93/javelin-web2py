@@ -50,7 +50,6 @@ $.fn.datagrid.Constructor.prototype.seamlessReload = function () {
 		});
 
 		self.$pageinput.select2('val', data.page);
-		// self.$pageinput.val(data.page);
 		self.$pageslabel.text(data.pages);
 		self.$countlabel.text(data.count + ' ' + itemdesc);
 		self.$startlabel.text(data.start);
@@ -66,7 +65,8 @@ $.fn.datagrid.Constructor.prototype.seamlessReload = function () {
 				var isSame = true;
 				newRow += '<tr' + ((data.data[index]['id']) ? ' id="' + data.data[index]['id'] + '"' : '') + '>';
 				$.each(self.columns, function (index2, column) {
-					newRow += '<td data-value="' + String(data.data[column.property]) + '">' + data.data[column.property] + '</td>';
+					console.log(column.property);
+					newRow += '<td data-value="' + String(data.data[index][column.property]) + '">' + data.data[index][column.property] + '</td>';
 					if ($(row).find('td').eq(index2).attr("data-value") != String(data.data[index][column.property])) {
 						if (isSame)
 							isSame = false;
@@ -76,6 +76,7 @@ $.fn.datagrid.Constructor.prototype.seamlessReload = function () {
 
 				if (!isSame) {
 					var id = $(newRow).attr('id');
+					console.log(newRow);
 					$('#' + id).html($(newRow).html());
 				}
 			}
@@ -107,7 +108,6 @@ $.fn.datagrid.Constructor.prototype.renderData = function () {
 		});
 
 		self.$pageinput.select2('val', data.page);
-		// self.$pageinput.val(data.page);
 		self.$pageslabel.text(data.pages);
 		self.$countlabel.text(data.count + ' ' + itemdesc);
 		self.$startlabel.text(data.start);

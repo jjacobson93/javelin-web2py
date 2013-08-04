@@ -68,7 +68,10 @@ def make_labels(event_name, type, filename='labels'):
 
 	elements = list()
 
-	people = db().select(db.person.ALL).as_list()
+	if type == 'type_leader':
+		people = db(db.person.leader==True).select(db.person.ALL, orderby=[db.person.last_name, db.person.first_name]).as_list()
+	else:
+		people = db(db.person.grade==9).select(db.person.ALL, orderby=[db.person.last_name, db.person.first_name]).as_list()
 
 	centerStyle = ParagraphStyle(name='Center', alignment=TA_CENTER)
 	leftStyle = ParagraphStyle(name='Left', alignment=TA_LEFT)
@@ -105,7 +108,7 @@ def make_labels(event_name, type, filename='labels'):
 		label.append(lastName)
 		label.append(Spacer(1,20))
 
-		label.append(Paragraph("<font face='Times-Roman' size=11>ID#: {}</font>".format(person['id']), leftStyle))
+		label.append(Paragraph("<font face='Times-Roman' size=11>ID#: {}</font>".format(person['student_id']), leftStyle))
 		label.append(Paragraph("<font face='Times-Roman' size=11>Crew #: {}</font>".format(0), leftStyle))
 		label.append(Paragraph("<font face='Times-Roman' size=11>Crew Room: {}</font>".format('N/A'), leftStyle))
 		label.append(Paragraph("<font face='Times-Roman' size=11>W.E.F.S.K. Rotation: {}</font>".format('N/A'), leftStyle))

@@ -173,5 +173,20 @@ db.define_table('file',
 	Field('name', 'string', notnull=True),
 	Field('file', 'upload', notnull=True))
 
+db.define_table('study_buddy',
+	Field('person_id', db.person, notnull=True, 
+		required=True, label="Student", 
+		requires=IS_IN_SET([
+			(p.id, p.last_name + ", " + p.first_name) 
+			for p in db(db.person.leader==True).select(db.person.ALL, orderby=[db.person.last_name, db.person.first_name])]
+		)),
+	Field('days', 'string', notnull=True, required=True, requires=IS_IN_SET(["Tuesday", "Thursday", "Both"])),
+	Field('semester', 'string', notnull=True, required=True, requires=IS_IN_SET(["Fall", "Spring", "Both"])),
+	Field('lunch', 'string', notnull=True, required=True, requires=IS_IN_SET(["Yes", "No"]), label="Mon/Wed/Fri Lunch?"),
+	Field('sport_season', 'list:string', notnull=True, required=True, default=None, requires=IS_IN_SET([None, "Fall", "Winter", "Spring", "Summer"], multiple=True)),
+	Field('nickname', 'string', notnull=True, required=True),
+	Field('grad_year', 'integer', notnull=True, required=True),
+	Field('second_language', 'string'))
+
 ## after defining tables, uncomment below to enable auditing
 # auth.enable_record_versioning(db)

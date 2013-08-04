@@ -5,5 +5,5 @@
 ## Customize your APP title, subtitle and menus here
 #########################################################################
 
-response.logo = A('Javelin',_class="brand",_href="/")
+response.logo = A('Javelin',_class="brand",_href='/forms')
 response.title = request.application.replace('_',' ').title()

@@ -81,3 +81,17 @@ auth.settings.registration_requires_approval = True
 auth.settings.reset_password_requires_verification = True
 auth.settings.register_fields=['first_name', 'last_name', 'email', 'username', 'password']
 auth.settings.profile_fields=['first_name', 'last_name', 'email', 'username']
+
+user_agent = request.user_agent()
+
+db.define_table('ticket',
+	Field('description', 'string', notnull=True, required=True),
+	Field('steps', 'text', notnull=True, required=True, default="", label='Steps to reproduce'),
+	Field('type', 'string', notnull=True, required=True, requires=IS_IN_SET(["enhancement", "minor", "major", "critical"])),
+	Field('created_on', 'datetime', notnull=True, default=request.now, required=True, writable=False),
+	Field('user_id', 'reference auth_user', default=auth.user.id if auth.user else None, notnull=True, writable=False, readable=False),
+	Field('client_ip', 'string', default=request.client, notnull=True, required=True, writable=False, readable=False),
+	Field('user_agent', 'string', notnull=True, required=True, default=str(user_agent.browser.name + " (" + user_agent.browser.version + ")"), writable=False, readable=False),
+	Field('os', 'string', notnull=True, required=True, default=str(user_agent.flavor.name + " " + user_agent.flavor.version), writable=False, readable=False),
+	Field('approved', 'boolean', notnull=True, default=False, writable=False, readable=False),
+	Field('fixed', 'boolean', notnull=True, default=False, writable=False, readable=False))

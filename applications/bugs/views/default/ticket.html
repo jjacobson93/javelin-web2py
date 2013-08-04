@@ -1,0 +1,51 @@
+{{extend 'layout.html'}}
+
+{{block center}}
+{{if ticket:}}
+<h1>Ticket <i class="icon-ticket"></i></h1>
+<table class="table table-striped">
+	<tr>
+		<td style="width: 25%"><b>Ticket ID:</b></td>
+		<td>{{=ticket.id}}</td>
+	</tr>
+	<tr>
+		<td><b>Description:</b></td>
+		<td>{{=ticket.description}}</td>
+	</tr>
+	<tr>
+		<td><b>Type:</b></td>
+		<td>{{=ticket.type}}</td>
+	</tr>
+	<tr>
+		<td><b>Created On:</b></td>
+		<td>{{=ticket.created_on}}</td>
+	</tr>
+	<tr>
+		<td><b>Steps:</b></td>
+		<td><textarea rows="10" readonly>{{=ticket.steps}}</textarea></td>
+	</tr>
+	<tr>
+		<td><b>User:</b></td>
+		<td>{{=db(db.auth_user.id==ticket.user_id).select().first().username}}</td>
+	</tr>
+	<tr>
+		<td><b>User Agent:</b></td>
+		<td>{{=ticket.user_agent}}</td>
+	</tr>
+	<tr>
+		<td><b>Client IP:</b></td>
+		<td>{{=ticket.client_ip}}</td>
+	</tr>
+	<tr>
+		<td><b>User OS:</b></td>
+		<td>{{=ticket.os}}</td>
+	</tr>
+	<tr>
+		<td><b>Approved?</b>:</td>
+		<td>{{='Yes' if ticket.approved else 'No'}}</td>
+	</tr>
+</table>
+{{else:}}
+
+{{pass}}
+{{end}}

@@ -15,7 +15,41 @@ def index():
 	if you need a simple wiki simple replace the two lines below with:
 	return auth.wiki()
 	"""
-	return dict()
+	submissions = db(db.ticket.user_id==auth.user.id).select()
+	all_tickets = db(db.ticket.id>0).select()
+	return dict(submissions=submissions, all_tickets=all_tickets)
+
+@auth.requires_login()
+def new_ticket():
+	form = SQLFORM(db.ticket)
+	if form.process(next=URL(a='bugs', c='default', f='index')).accepted:
+		response.flash = 'The ticket has been submitted!'
+	elif form.errors:
+		response.flash = 'There are errors in the form'
+	return dict(form=form)
+
+@auth.requires_login()
+@auth.requires_membership('admin')
+def ticket():
+	id = request.vars.id
+	if id:
+		ticket = db(db.ticket.id==id).select().first()
+		if ticket and ticket.user_id == auth.user.id:
+			return dict(ticket=ticket)
+
+	return dict(ticket=None)
+
+@auth.requires_login()
+@auth.requires_membership('admin')
+def approve():
+	id = request.vars.id
+	if id:
+		ticket = db(db.ticket.id==id).select().first()
+		if ticket:
+			db(db.ticket.id==id).update(approved=True)
+			return True
+
+	return False
 
 def user():
 	"""

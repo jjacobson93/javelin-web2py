@@ -14,7 +14,47 @@ def index():
 	if you need a simple wiki simple replace the two lines below with:
 	return auth.wiki()
 	"""
-	return dict()
+	forms = db().select(db.form.ALL)
+	return dict(forms=forms)
+
+def view():
+	id = request.vars.id
+	data = db(db.form.uuid==id).select(db.form.ALL).first()
+	if data:
+		form = SQLFORM(db[data.db_table])
+		if form.process().accepted:
+			response.flash = 'Form has been submitted!'
+		elif form.errors:
+			response.flash = 'There are errors in the form'
+		return dict(form=form)
+	else:
+		return dict(form="Could not find form")
+
+def verify():
+	id = request.vars.id
+	form = FORM(TR(
+		LABEL('Verification Code:'), 
+		INPUT(_name='verification', requires=IS_NOT_EMPTY())),
+	INPUT(_type='submit'))
+
+	if form.process().accepted:
+		f = db(db.form.id==id).select().first()
+		if f and form.vars.verification == f.verification_code:
+			redirect(URL('view?id='+f.uuid))
+		
+		response.flash = "Verifcation code is incorrect"
+
+	return dict(form=form)
+
+@auth.requires_login()
+@auth.requires_membership('admin')
+def create_form():
+	form = SQLFORM(db.form)
+	if form.process().accepted:
+		response.flash = 'Form accepted'
+	elif form.errors:
+		response.flash = 'There are errors in the form'
+	return dict(form=form)
 
 def user():
 	"""

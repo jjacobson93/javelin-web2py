@@ -377,8 +377,9 @@ $(function() {
 
 	$('#nametags-btn').on('click', function() {
 		var type = $('input[name="typeradios"]:checked').val();
+		var event_name = $('#event_name').val();
 		$(this).button('loading');
-		makeNametags(type);
+		makeNametags(type, event_name);
 	});
 
 	$('#existing-nametags-btn').on('click', function() {
@@ -513,12 +514,12 @@ function reloadAttendance() {
 	}
 }
 
-function makeNametags(type) {
+function makeNametags(type, event_name) {
 	$.ajax({
 		type: 'POST',
 		url: '/orientation/call/json/make_labels',
 		data: {
-			'event_name': 'Freshmen Orientation',
+			'event_name': event_name,
 			'type': type
 		},
 		dataType: 'json',

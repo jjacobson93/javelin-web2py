@@ -9,8 +9,9 @@
 ## be redirected to HTTPS, uncomment the line below:
 # request.requires_https()
 
+import uuid
 import logging
-logger = logging.getLogger('web2py.app.bugs')
+logger = logging.getLogger('web2py.app.forms')
 logger.setLevel(logging.DEBUG)
 
 from gluon.custom_import import track_changes
@@ -81,3 +82,101 @@ auth.settings.registration_requires_approval = True
 auth.settings.reset_password_requires_verification = True
 auth.settings.register_fields=['first_name', 'last_name', 'email', 'username', 'password']
 auth.settings.profile_fields=['first_name', 'last_name', 'email', 'username']
+
+db.define_table('crew',
+	Field('room', 'string'),
+	Field('wefsk', 'string'), migrate=False)
+
+db.define_table('person',
+	Field('student_id', 'integer', notnull=True, unique=True),
+	Field('last_name', 'string', notnull=True, required=True),
+	Field('first_name', 'string', notnull=True, required=True),
+	Field('home_phone', 'string'),
+	Field('cell_phone', 'string'),
+	Field('cell_provider', 'string'),
+	Field('gender', 'string'),
+	Field('email', 'string'),
+	Field('street', 'string'),
+	Field('city', 'string'),
+	Field('state', 'string'),
+	Field('zip_code', 'string'),
+	Field('notes', 'string'),
+	Field('pic', 'blob'),
+	Field('crew', 'reference crew'),
+	Field('grade', 'integer'),
+	Field('leader', 'boolean', default=False), migrate=False)
+
+db.define_table('teacher',
+	Field('teacher_id', 'integer', notnull=True, unique=True),
+	Field('teacher_name', 'string', notnull=True), migrate=False)
+
+db.define_table('course',
+	Field('course_id', 'integer', notnull=True, unique=True),
+	Field('code', 'string', notnull=True),
+	Field('title', 'string', notnull=True),
+	Field('period', 'integer', notnull=True),
+	Field('teacher_id', 'reference teacher', notnull=True), migrate=False)
+
+db.define_table('course_rec',
+	Field('course_id', 'reference course', notnull=True),
+	Field('student_id', 'reference person', notnull=True), migrate=False)
+
+db.define_table('groups',
+	Field('name', 'string', notnull=True, required=True, unique=True),
+	Field('description', 'string'), migrate=False)
+
+db.define_table('group_rec',
+	Field('group_id', 'reference groups', notnull=True, required=True),
+	Field('person_id', 'reference person', notnull=True, required=True), migrate=False)
+
+db.define_table('events',
+	Field('title', 'string'),
+	Field('notes', 'string'),
+	Field('start_time', 'integer'),
+	Field('end_time', 'integer'),
+	Field('allDay', 'boolean', default=False),
+	Field('recurring', 'boolean', default=False),
+	Field('end_recur', 'integer'), migrate=False)
+
+db.define_table('attendance',
+	Field('event_id', 'reference events', notnull=True, required=True),
+	Field('person_id', 'reference person', notnull=True, required=True),
+	Field('present', 'boolean', default=True), migrate=False)
+
+db.define_table('module_names',
+	Field('name', 'string', notnull=True, unique=True),
+	Field('label', 'string', notnull=True), migrate=False)
+
+db.define_table('file',
+	Field('name', 'string', notnull=True),
+	Field('file', 'upload', notnull=True), migrate=False)
+
+class_list = [None, 'Pre-Algebra', 'Algebra I', 'Algebra II', 
+	'Geometry', 'Pre-Calculus', 'Geography', 'World History',
+	'U.S. History', "Gov't/Econ", 'English/Writing', 'Biology',
+	'Chemistry', 'Physics', 'AVID', 'French', 'German', 'Spanish'
+	'Sign Language']
+
+db.define_table('study_buddy',
+	Field('person_id', db.person, notnull=True, 
+		required=True, label="Student", 
+		requires=IS_IN_SET([
+			(p.id, p.last_name + ", " + p.first_name) 
+			for p in db(db.person.leader==True).select(db.person.ALL, orderby=[db.person.last_name, db.person.first_name])]
+		)),
+	Field('days', 'string', notnull=True, required=True, requires=IS_IN_SET(["Tuesday", "Thursday", "Both"])),
+	Field('semester', 'string', notnull=True, required=True, requires=IS_IN_SET(["Fall", "Spring", "Both"])),
+	Field('lunch', 'string', notnull=True, required=True, requires=IS_IN_SET(["Yes", "No"]), label="Mon/Wed/Fri Lunch?"),
+	Field('sport_season', 'list:string', notnull=True, required=True, default=[None], requires=IS_IN_SET([None, "Fall", "Winter", "Spring", "Summer"], multiple=True)),
+	Field('academic_subjects', 'list:string', notnull=True, required=True, default=[None], requires=IS_IN_SET(class_list, multiple=True)),
+	Field('nickname', 'string', notnull=True, required=True),
+	Field('grad_year', 'integer', notnull=True, required=True),
+	Field('second_language', 'string'), migrate=False)
+
+db.define_table('form',
+	Field('name', 'string', notnull=True, required=True),
+	Field('description', 'string', notnull=True, required=True),
+	Field('created', 'datetime', default=request.now, writable=False),
+	Field('verification_code', 'string', notnull=True, required=True),
+	Field('uuid', 'string', notnull=True, default=uuid.uuid4(), writable=False, readable=False),
+	Field('db_table', 'string', notnull=True, required=True, label='Table', requires=IS_IN_SET(filter(lambda k: 'auth' not in k, db.tables))))

@@ -54,7 +54,8 @@ def send_sms(message, to):
 	bcc = list()
 	if to == 'all_leaders':
 		people = db((db.person.grade != 9) & (db.person.leader==True)).select(
-			db.person.id, db.person.student_id, db.person.cell_phone, db.person.cell_provider)
+			db.person.id, db.person.student_id, db.person.cell_phone, 
+			db.person.cell_provider, db.person.email)
 
 		for person in people:
 			if person.cell_phone and person.cell_provider and Providers.contains(person.cell_provider):

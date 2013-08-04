@@ -35,8 +35,8 @@ def make_labels(event_name, type, filename='labels'):
 
 @auth.requires_login()
 @service.json
-def crews():
-	return orientation.crews()
+def crews(id=None):
+	return orientation.crews(id)
 
 @auth.requires_login()
 @service.json

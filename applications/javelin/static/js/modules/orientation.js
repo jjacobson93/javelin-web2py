@@ -1,6 +1,7 @@
 var attDataSource;
 var crewRecDataSource;
 var isMovePopoverVisible = false;
+var clickedAway = false;
 
 $(function() {
 
@@ -141,22 +142,53 @@ $(function() {
 				$(this).find('button[id^="crew-move-person"]').popover({
 					trigger:'manual', 
 					html: true,
-					placement: 'bottom',
+					placement: 'left',
 					content: function() {
-						return '<input type="text" class="span2" id="change-crew-select" style="margin-right: 0">';
+						return $('<div><input type="hidden" id="change-crew-select" style="width: 100%"></div>');
 					}
 				}).on('click', function(e) {
 					var person_id = $(this).attr("id").match(/[\d]+/);
 					var current_crew = crewRecDataSource._crew_id;
 					$('button[id^="crew-move-person"]').not(this).popover('hide');
 					$(this).popover('toggle');
+					$('input#change-crew-select').attr('data-person', person_id);
+					$('input#change-crew-select').select2({
+						placeholder: "Select Crew",
+						id: function(crew) { 
+							return crew['id'];
+						},
+						ajax: {
+							type: 'POST',
+							url: '/orientation/call/json/crews',
+							dataType: 'json',
+							quietMillis: 100,
+							data: function(term) {
+								return { id: term }
+							},
+							results: function(data, page) {
+								return { results: data };
+							}
+						},
+						formatResult: function(crew) {
+							return "Crew " + crew['id'];
+						},
+						formatSelection: function(crew) {
+							return "Crew " + crew['id'];
+						}
+					}).on('change', function(e) {
+						var val = e.val;
+						var person_id = $('input#change-crew-select').attr('data-person');
+						changeToCrew(val, person_id);
+					});
 				});
 			});
 		}
 	});
 
 	$('#crew-records-table').on('click', 'td button[id^="crew-remove-person"]', function() {
-		var person_id = $(this).attr("id").match(/[\d]+/);
+		// var person_id = $(this).attr("id").match(/[\d]+/)[0];
+		var person_id = $(this).parent().parent().attr('id');
+		removeFromCrew(person_id);
 	});
 
 	$(document).on('mouseleave', '.carousel', function() {
@@ -416,9 +448,11 @@ $(function() {
 		addPeopleToCrew(crew_id, people);
 	});
 
-	$(document).on('click', function() {
-		if (!$(e.target).is('.popup-marker, .popover-title, .popover-content')) {
-			$('.popup-marker').popover('hide');
+	$(document).on('click', function(e) {
+		if (!$(e.target).is('button[id^="crew-move-person"], .popover-title, ' + 
+			'.popover-content, .popover-content *, .select2-drop, .select2-drop input, ' +
+			'.select2-drop')) {
+			$('button[id^="crew-move-person"]').popover('hide');
 		}
 	});
 });
@@ -546,6 +580,41 @@ function addPeopleToCrew(id, people) {
 	});
 }
 
+function removeFromCrew(person_id) {
+	$.ajax({
+		type: "POST",
+		url: "/orientation/call/json/remove_crew",
+		data: {
+			'person_id': person_id
+		},
+		success: function() {
+			$('#crew-records-table').datagrid('reload');
+			displaySuccess("Removed from crew.");
+		},
+		error: function() {
+			displayError("Could not remove person from crew.");
+		}
+	});
+}
+
+function changeToCrew(crew_id, person_id) {
+	$.ajax({
+		type: "POST",
+		url: "/orientation/call/json/move_to_crew",
+		data: {
+			'person_id': person_id,
+			'id': crew_id
+		},
+		success: function() {
+			$('#crew-records-table').datagrid('reload');
+			displaySuccess("Moved to Crew " + crew_id + ".");
+		},
+		error: function() {
+			displayError("Could not move to Crew " + crew_id + ".");
+		}
+	});
+}
+
 function loadPeopleForTypeahead() {
 	var crew_id = crewRecDataSource._crew_id
 	$('#add-person-select').select2({
@@ -573,11 +642,5 @@ function loadPeopleForTypeahead() {
 		formatSelection: function(person) {
 			return person['last_name'] + ', ' + person['first_name'];
 		}
-	});
-}
-
-function hideMovePopovers() {
-	$('button[id^="crew-move-person"]').each(function() {
-		$(this).popover('hide');
 	});
 }

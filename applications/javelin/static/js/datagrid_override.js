@@ -65,7 +65,6 @@ $.fn.datagrid.Constructor.prototype.seamlessReload = function () {
 				var isSame = true;
 				newRow += '<tr' + ((data.data[index]['id']) ? ' id="' + data.data[index]['id'] + '"' : '') + '>';
 				$.each(self.columns, function (index2, column) {
-					console.log(column.property);
 					newRow += '<td data-value="' + String(data.data[index][column.property]) + '">' + data.data[index][column.property] + '</td>';
 					if ($(row).find('td').eq(index2).attr("data-value") != String(data.data[index][column.property])) {
 						if (isSame)
@@ -76,7 +75,6 @@ $.fn.datagrid.Constructor.prototype.seamlessReload = function () {
 
 				if (!isSame) {
 					var id = $(newRow).attr('id');
-					console.log(newRow);
 					$('#' + id).html($(newRow).html());
 				}
 			}

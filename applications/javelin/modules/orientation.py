@@ -163,10 +163,17 @@ def make_labels(event_name, type, filename='labels'):
 
 	return dict(filename=db_file)
 
-def crews():
+def crews(id=None):
 	db = current.javelin.db
 
-	crews = db().select(db.crew.ALL).as_list()
+	if id:
+		try:
+			id = int(id)
+			crews = db(db.crew.id==id).select(db.crew.ALL).as_list()
+		except:
+			crews = []
+	else:
+		crews = db().select(db.crew.ALL).as_list()
 
 	return crews
 
@@ -203,9 +210,9 @@ def remove_crew(person_id):
 	return dict(response=response)
 
 def move_to_crew(id, person_id):
-	db = current.javelin.bdb
+	db = current.javelin.db
 
-	response = db(db.person.id==person_id).update(crew=id)
+	response = db(db.person.id==person_id).update(crew=int(id))
 	return dict(response=response)
 
 def people_not_in_crew(id, query):

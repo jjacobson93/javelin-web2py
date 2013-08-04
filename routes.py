@@ -38,12 +38,12 @@ routers = dict(
 		default_controller='default',
 		controllers='DEFAULT',
 		default_function='index',
-	) #,
-	# javelin=dict(
-	# 	default_function='index',
-	# 	functions=['index','user','profile', 'download','call','data','error']
-	# )
-
+		domains = {
+			'javelinwebapp.com' : 'javelin',
+			'bugs.javelinwebapp.com' : 'bugs',
+			'forms.javelinwebapp.com' : 'forms'
+		}
+	)
 )
 
 BASE = ''  # optonal prefix for incoming URLs

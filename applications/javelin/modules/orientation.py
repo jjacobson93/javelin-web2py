@@ -68,7 +68,7 @@ def make_labels(event_name, type, filename='labels'):
 
 	elements = list()
 
-	if type == 'type_leader':
+	if type == 'leaders':
 		people = db(db.person.leader==True).select(db.person.ALL, orderby=[db.person.last_name, db.person.first_name]).as_list()
 	else:
 		people = db(db.person.grade==9).select(db.person.ALL, orderby=[db.person.last_name, db.person.first_name]).as_list()

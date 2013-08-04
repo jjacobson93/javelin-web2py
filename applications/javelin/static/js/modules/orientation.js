@@ -376,7 +376,7 @@ $(function() {
 	});
 
 	$('#nametags-btn').on('click', function() {
-		var type = $('input[name="typeradios"]:checked').val();
+		var type = $('input[name="typeradios"]:checked').val().toLowerCase();
 		var event_name = $('#event_name').val();
 		$(this).button('loading');
 		makeNametags(type, event_name);

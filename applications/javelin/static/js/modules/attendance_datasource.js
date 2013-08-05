@@ -40,7 +40,7 @@ AttendanceDataSource.prototype = {
 						data = _.filter(data, function (item) {
 							switch(options.filter.value) {
 								case 'leaders':
-									if(item.person_grade != 9 && item.leader) return true;
+									if(item.person_grade != 9 && item.person_leader) return true;
 									break;
 								case 'freshmen':
 									if(item.person_grade == 9) return true;

@@ -550,6 +550,7 @@ function addCrew(room, wefsk, people) {
 			if (!data.exists) {
 				$('#inputRoom').val("");
 				$('#inputWefsk').val("");
+				$("#add-person-select-modal").select2("val", "");
 				$('#add-crew-modal').modal('hide');
 				displaySuccess("The crew has been added");
 

@@ -91,6 +91,8 @@ function loadRecordsTable(id) {
 		}
 	});
 
+	$('.select2-search-field input').css('width', '100%');
+
 	$('#records-table').datagrid('reload');
 
 	$('#rec-pagesize').select2('destroy');

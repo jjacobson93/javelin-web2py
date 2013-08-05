@@ -232,3 +232,58 @@ def people_not_in_crew(id, query):
 				((db.person.last_name.contains(query)) | 
 					(db.person.first_name.contains(query))))).select(
 			db.person.id, db.person.last_name, db.person.first_name).as_list()
+
+def organize_crews(desiredsize=10, minsize=7, maxsize=13):
+	db = current.javelin.db
+	
+	courses = db(db.course.code.belongs('EN228', 'EN135', 'EN137', 'NN316V', 'NN329')).select(db.course.ALL)
+	
+	crew_index = 1
+	num_crews = 0
+
+	in_crews = list()
+
+	temp_list = list()
+
+	for course in courses:
+		students = [s for s in db(db.course_rec.course_id==course.id,).select(db.person.ALL,
+			join=db.person.on(db.course_rec.student_id==db.person.id))]
+
+
+		num_crews = int(round(len(students), -1)/desiredsize)
+		if num_crews == 0 and len(students) >= minsize:
+			num_crews = 1
+		elif (num_crews == 0 or num_crews == 1) and len(students) < minsize:
+			while students:
+				student = students.pop(0)
+				temp_list.append(student)
+
+		if num_crews != 0:
+			while students:
+				for i in range(num_crews):
+					student = students.pop(0)
+					if student.id not in in_crews: 
+						crew = db(db.crew.id==int(crew_index + i)).select().first()
+						if not crew:
+							crew_id = db.crew.insert(room='N/A', wefsk='N/A')
+						else:
+							crew_id = crew.id
+						student.crew = crew_id
+						student.update_record()
+						in_crews.append(student.id)
+						if not students:
+							break
+			crew_index += num_crews
+
+	while temp_list:
+		person = temp_list.pop(0)
+		if person.id not in in_crews: 
+			count = db.crew.id.count()
+			min_crew = db(db.person.grade==9).select(db.crew.id, count, 
+				join=db.person.on(db.person.crew==db.crew.id),
+				groupby=db.crew.id,
+				orderby=count).first()
+			person.crew = min_crew.crew.id
+			person.update_record()
+
+	return True

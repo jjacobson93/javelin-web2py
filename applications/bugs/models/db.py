@@ -20,6 +20,7 @@ if not request.env.web2py_runtime_gae:
 	## if NOT running on Google App Engine use SQLite or other DB
 	# db = DAL('sqlite://storage.sqlite',pool_size=1,check_reserved=['all'],migrate=False)
 	db = DAL('postgres://postgres:p0stmast3r!@localhost/javelin')
+	session.connect(request, response, db=db, masterapp='javelin')
 else:
 	## connect to Google BigTable (optional 'google:datastore://namespace')
 	db = DAL('google:datastore')
@@ -81,6 +82,7 @@ auth.settings.registration_requires_approval = True
 auth.settings.reset_password_requires_verification = True
 auth.settings.register_fields=['first_name', 'last_name', 'email', 'username', 'password']
 auth.settings.profile_fields=['first_name', 'last_name', 'email', 'username']
+auth.settings.hmac_key = Auth.get_or_create_key('auth.key')
 
 user_agent = request.user_agent()
 

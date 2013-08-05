@@ -43,10 +43,8 @@ function saveChanges(toPrev) {
 	var values = {};
 	$('#main-form input, #main-form select').each(function(i, e) {
 		var eid = $(e).attr('id');
-		if ($(e).attr('type') == 'checkbox' && $(e).val() == 'on')
-			values[eid] = true;
-		else if ($(e).attr('type') == 'checkbox' && $(e).val() == 'off')
-			values[eid] = false;
+		if ($(e).attr('type') == 'checkbox')
+			values[eid] = $(e).prop('checked');
 		else if ($(e).val() != "" && eid != 'id')
 			values[eid] = $(e).val();
 		else if (eid == "id")

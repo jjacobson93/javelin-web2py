@@ -1,12 +1,12 @@
 $(function() {
 	$('#to_select').select2({
 		placeholder: "To",
-		id: function(person) {
-			return person['id'];
+		id: function(record) {
+			return record['id'];
 		},
 		ajax: {
 			type: 'POST',
-			url: '/people/call/json/leaders',
+			url: '/messages/call/json/get_recipients',
 			dataType: 'json',
 			quietMillis: 100,
 			data: function(term, page) {
@@ -16,11 +16,29 @@ $(function() {
 				return { results: data };
 			}
 		},
-		formatResult: function(person) {
-			return person['last_name'] + ', ' + person['first_name'];
+		formatResult: function(record, container, query, escapeMarkup) {
+			var markup=[]; 
+
+			if (!record['text']) {
+				if (record['first_name'])
+					window.Select2.util.markMatch(record['last_name'] + ', ' + record['first_name'], query.term, markup, escapeMarkup); 
+				else
+					window.Select2.util.markMatch(record['last_name'], query.term, markup, escapeMarkup); 
+			} else {
+				window.Select2.util.markMatch(record['text'], query.term, markup, escapeMarkup); ;
+			}
+
+			return markup.join("")
 		},
-		formatSelection: function(person) {
-			return person['last_name'] + ', ' + person['first_name'];
+		formatSelection: function(record) {
+			if (!record['text']) {
+				if (record['first_name']) 
+					return record['last_name'] + ', ' + record['first_name'];
+				else
+					return record['last_name'];
+			} else {
+				return record['text'];
+			}
 		}
 	});
 

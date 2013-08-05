@@ -12,6 +12,7 @@ __data__ = {'name' : 'people', 'label' : 'People', 'description' : 'Keep track o
 	'icon' : 'user', 'u-icon' : u'\uf007', 'required' : True}
 
 from globals import current
+from applications.javelin.private.utils import flattenDict
 
 default_inputs = ['id', 'student_id', 'last_name', 'first_name', 'gender',
 	'cell_phone', 'home_phone', 'email', 'street', 'city', 
@@ -26,8 +27,9 @@ def data(str_filter=None):
 			(db.person.first_name.contains(str_filter)) |
 			(db.person.id.contains(str_filter))).as_list()
 	else:
-		people = db().select(db.person.ALL, orderby=db.person.id).as_list()
+		people = db().select(db.person.ALL, db.crew.room, left=db.crew.on(db.person.crew==db.crew.id), orderby=db.person.id).as_list()
 
+	people = [dict((k[-1],v) for k,v in flattenDict(d).items()) for d in people]
 	return people
 
 def leaders(query):
@@ -76,7 +78,7 @@ def record(id):
 
 def update_record(id, values):
 	db = current.javelin.db
-	response = db(db.person.id==id).update(**values) # person.update().where(person.c.id==id).values(values).execute()
+	response = db(db.person.id==id).update(**dict((k,v) for k,v in values.items() if k in db.person.fields)) # person.update().where(person.c.id==id).values(values).execute()
 
 	return dict(response=response)
 

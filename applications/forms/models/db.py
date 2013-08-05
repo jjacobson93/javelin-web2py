@@ -21,6 +21,7 @@ if not request.env.web2py_runtime_gae:
 	## if NOT running on Google App Engine use SQLite or other DB
 	# db = DAL('sqlite://storage.sqlite',pool_size=1,check_reserved=['all'],migrate=False)
 	db = DAL('postgres://postgres:p0stmast3r!@localhost/javelin')
+	session.connect(request, response, db=db, masterapp='javelin')
 else:
 	## connect to Google BigTable (optional 'google:datastore://namespace')
 	db = DAL('google:datastore')
@@ -82,6 +83,7 @@ auth.settings.registration_requires_approval = True
 auth.settings.reset_password_requires_verification = True
 auth.settings.register_fields=['first_name', 'last_name', 'email', 'username', 'password']
 auth.settings.profile_fields=['first_name', 'last_name', 'email', 'username']
+auth.settings.hmac_key = Auth.get_or_create_key('auth.key')
 
 db.define_table('crew',
 	Field('room', 'string'),
@@ -154,7 +156,7 @@ db.define_table('file',
 class_list = [None, 'Pre-Algebra', 'Algebra I', 'Algebra II', 
 	'Geometry', 'Pre-Calculus', 'Geography', 'World History',
 	'U.S. History', "Gov't/Econ", 'English/Writing', 'Biology',
-	'Chemistry', 'Physics', 'AVID', 'French', 'German', 'Spanish'
+	'Chemistry', 'Physics', 'AVID', 'French', 'German', 'Spanish',
 	'Sign Language']
 
 db.define_table('study_buddy',
@@ -167,8 +169,8 @@ db.define_table('study_buddy',
 	Field('days', 'string', notnull=True, required=True, requires=IS_IN_SET(["Tuesday", "Thursday", "Both"])),
 	Field('semester', 'string', notnull=True, required=True, requires=IS_IN_SET(["Fall", "Spring", "Both"])),
 	Field('lunch', 'string', notnull=True, required=True, requires=IS_IN_SET(["Yes", "No"]), label="Mon/Wed/Fri Lunch?"),
-	Field('sport_season', 'list:string', notnull=True, required=True, default=[None], requires=IS_IN_SET([None, "Fall", "Winter", "Spring", "Summer"], multiple=True)),
-	Field('academic_subjects', 'list:string', notnull=True, required=True, default=[None], requires=IS_IN_SET(class_list, multiple=True)),
+	Field('sport_season', 'list:string', notnull=True, required=True, default=[None], requires=IS_IN_SET([None, "Fall", "Winter", "Spring", "Summer"], multiple=True), widget=SQLFORM.widgets.checkboxes.widget),
+	Field('academic_subjects', 'list:string', notnull=True, required=True, default=[None], requires=IS_IN_SET(class_list, multiple=True), widget=SQLFORM.widgets.checkboxes.widget),
 	Field('nickname', 'string', notnull=True, required=True),
 	Field('grad_year', 'integer', notnull=True, required=True),
 	Field('second_language', 'string'), migrate=False)

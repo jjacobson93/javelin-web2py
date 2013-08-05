@@ -432,6 +432,8 @@ $(function() {
 			}
 		});
 
+		$('.select2-search-field input').css('width', '100%');
+
 		$('#add-crew-modal').modal('show');
 	});
 
@@ -644,4 +646,5 @@ function loadPeopleForTypeahead() {
 			return person['last_name'] + ', ' + person['first_name'];
 		}
 	});
+	$('.select2-search-field input').css('width', '100%');
 }

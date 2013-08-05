@@ -45,9 +45,35 @@ class Providers(object):
 		else:
 			return None
 
-
+def get_recipients(query):
+	db = current.javelin.db
+	if query:
+		leaders = db((db.person.leader==True) 
+				& ((db.person.last_name.contains(query)) | 
+					(db.person.first_name.contains(query))) ).select(
+				db.person.id, db.person.last_name, db.person.first_name, 
+				orderby=db.person.id).as_list()
+		people = [{'text': 'All', 'children':[{'id':'all_leaders', 'last_name':'All Leaders', 'first_name' : ''}]}] +\
+			[{'text': 'Task Teams', 'children': [{'id':'task_team_' + str(g.id), 
+			  'last_name': g.name,
+			  'first_name':''} 
+				for g in db(db.groups.name.contains(query)).select(db.groups.ALL, orderby=db.groups.name)]}] +\
+			[{'text': 'Leaders', 'children':leaders}]
+	else:
+		leaders = db((db.person.leader==True)).select(
+			db.person.id, db.person.last_name, 
+			db.person.first_name, orderby=db.person.id).as_list()
+		people = [{'text': 'All', 'children':[{'id':'all_leaders', 'last_name':'All Leaders', 'first_name' : ''}]}] +\
+			[{'text': 'Task Teams', 'children': [{'id':'task_team_' + str(g.id), 
+			  'last_name': g.name,
+			  'first_name':''} 
+				for g in db().select(db.groups.ALL, orderby=db.groups.name)]}] +\
+			[{'text': 'Leaders', 'children':leaders}]
+	
+	return people
 
 def send_sms(message, to):
+	import re
 	db = current.javelin.db
 	mail = current.javelin.mail
 
@@ -63,6 +89,17 @@ def send_sms(message, to):
 			elif person.email:
 				bcc.append(person.email)
 
+	elif to.startswith('task_team'):
+		people = db(db.group_rec.group_id==int(re.findall(r'\d+', to)[0])).select(
+			db.person.id, db.person.student_id, db.person.cell_phone, 
+			db.person.cell_provider, db.person.email,
+			join=db.person.on(db.person.id==db.group_rec.person_id))
+
+		for person in people:
+			if person.cell_phone and person.cell_provider and Providers.contains(person.cell_provider):
+				bcc.append(sms_email(person.cell_phone, Providers.get(person.cell_provider)))
+			elif person.email:
+				bcc.append(person.email)
 	else:
 		person = db(db.person.id==to).select().first()
 

@@ -15,7 +15,7 @@ def index():
 	:returns: a dictionary to pass to the view with the list of modules_enabled, the active module ('people') and a dynamic form
 	"""
 	modules_data = get_module_data()
-	return dict(modules_enabled=modules_enabled, active_module='people', form=people.load_form(), modules_data=modules_data)
+	return dict(modules_enabled=modules_enabled, active_module='people', modules_data=modules_data)
 
 @auth.requires_login()
 @service.json

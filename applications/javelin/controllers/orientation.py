@@ -69,6 +69,11 @@ def move_to_crew(id, person_id):
 	return orientation.move_to_crew(id, person_id)
 
 @auth.requires_login()
+@service.json
+def organize_crews():
+	return orientation.organize_crews()
+
+@auth.requires_login()
 def call():
 	"""Call function used when calling a function from an HTTP request"""
 	return service()

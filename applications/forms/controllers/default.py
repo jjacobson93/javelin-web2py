@@ -26,9 +26,9 @@ def view():
 			response.flash = 'Form has been submitted!'
 		elif form.errors:
 			response.flash = 'There are errors in the form'
-		return dict(form=form)
+		return dict(form=form, name=data.name)
 	else:
-		return dict(form="Could not find form")
+		return dict(form="Could not find form", name='')
 
 def verify():
 	id = request.vars.id

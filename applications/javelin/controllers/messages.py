@@ -23,6 +23,11 @@ def send_sms(message, to='all_leaders'):
 	return messages.send_sms(message, to)
 
 @auth.requires_login()
+@service.json
+def get_recipients(query=None):
+	return messages.get_recipients(query)
+
+@auth.requires_login()
 def call():
 	"""Call function used when calling a function from an HTTP request"""
 	return service()

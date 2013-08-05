@@ -176,10 +176,6 @@ table tbody > tr:nth-child(odd):not(:hover) > td {
 										<fieldset>
 											<label class="control-label" for="leader">Leader</label>
 											<input type="checkbox" id="leader">
-											<!-- <select class="span12" id="leader">
-												<option value=true>Y</option>
-												<option value=false>N</option>
-											</select> -->
 										</fieldset>
 									</div>
 								</div>
@@ -196,7 +192,13 @@ table tbody > tr:nth-child(odd):not(:hover) > td {
 											<input class="span12" type="text" id="cell_phone" placeholder="Cell Phone" data-mask="999-999-9999">
 										</fieldset>
 									</div>
-									<div class="span6">
+									<div class="span2">
+										<fieldset>
+											<label class="control-label" for="cell_provider">Cell Provider</label>
+											<input class="span12" type="text" id="cell_provider" placeholder="Cell Provider">
+										</fieldset>
+									</div>
+									<div class="span4">
 										<fieldset>
 											<label class="control-label" for="email">Email</label>
 											<input class="span12" type="text" id="email" placeholder="Email">
@@ -229,19 +231,31 @@ table tbody > tr:nth-child(odd):not(:hover) > td {
 										</fieldset>
 									</div>
 								</div>
-								<!-- DYNAMIC FORM -->
-								{{for row in form:}}
 								<div class="row">
-									{{for field in row:}}
-									<div class="span{{=field['span']}}">
+									<div class="span4">
 										<fieldset>
-											<label class="control-label" for="{{=field['id']}}">{{=field['name']}}</label>
-											<input class="span12" type="text" id="{{=field['id']}}" placeholder="{{=field['name']}}">
+											<label class="control-label" for="crew">Crew</label>
+											<input class="span12" type="number" id='crew' placeholder="Crew">
 										</fieldset>
 									</div>
-									{{pass}}
+									<div class="span4">
+										<fieldset>
+											<label class="control-label" for="room">Crew Room</label>
+											<input class="span12" type="text" id="room" placeholder="Crew Room" readonly>
+										</fieldset>
+									</div>
+									<div class="span4">
+										<fieldset>
+											<label class="control-label" for="grade">Grade</label>
+											<select id="grade">
+												<option value="9">9</option>
+												<option value="10">10</option>
+												<option value="11">11</option>
+												<option value="12">12</option>
+											</select>
+										</fieldset>
+									</div>
 								</div>
-								{{pass}}
 							</div>
 						</div>
 					</form>

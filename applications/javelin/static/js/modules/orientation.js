@@ -242,8 +242,10 @@ $(function() {
 		// row was clicked
 		if ($(this).html() !== "0 items") {
 			var crew_id = $(this).parent().attr("id");
-			
-			loadCrewRecord(crew_id);
+			var room = $(this).parent().find('td').eq(1).attr('data-value');
+			var wefsk = $(this).parent().find('td').eq(2).attr('data-value');
+
+			loadCrewRecord(crew_id, room, wefsk);
 			
 			$('#crews-container').carousel('next');
 			$('#crews-container').carousel('pause');
@@ -456,6 +458,12 @@ $(function() {
 		addPeopleToCrew(crew_id, people);
 	});
 
+	$('#update-room-btn').on('click', function() {
+		var room = $('#crew-room-field').val();
+		var wefsk = $('#crew-wefsk-field').val();
+		updateRoom(room, wefsk);
+	});
+
 	$(document).on('click', function(e) {
 		if (!$(e.target).is('button[id^="crew-move-person"], .popover-title, ' + 
 			'.popover-content, .popover-content *, .select2-drop, .select2-drop input, ' +
@@ -474,11 +482,13 @@ function loadRecord(event_id, event_title) {
 	$('#attendance-table').datagrid('reload');
 }
 
-function loadCrewRecord(crew_id) {
+function loadCrewRecord(crew_id, room, wefsk) {
 	crewRecDataSource._crew_id = crew_id;
 
 	$('div[id^="crew-records-for"]').attr("id", "crew-" + crew_id);
 	$('#crew-number').html(crew_id);
+	$('#crew-room-field').val(room);
+	$('#crew-wefsk-field').val(wefsk);
 
 	$('#crew-records-table').datagrid('reload');
 	loadPeopleForTypeahead();
@@ -620,6 +630,25 @@ function changeToCrew(crew_id, person_id) {
 		},
 		error: function() {
 			displayError("Could not move to Crew " + crew_id + ".");
+		}
+	});
+}
+
+function updateRoom(room, wefsk) {
+	var id = crewRecDataSource._crew_id;
+	$.ajax({
+		type: "POST",
+		url: '/orientation/call/json/update_room',
+		data: {
+			'id': id,
+			'room' : room,
+			'wefsk': wefsk
+		},
+		success: function() {
+			displaySuccess('Room and WEFSK Rotation updated.');
+		},
+		error: function() {
+			displaySuccess('Could not update Room and WEFSK Rotation.');
 		}
 	});
 }

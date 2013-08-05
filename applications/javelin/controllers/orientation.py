@@ -70,6 +70,11 @@ def move_to_crew(id, person_id):
 
 @auth.requires_login()
 @service.json
+def update_room(id, room, wefsk):
+	return orientation.update_room(id, room, wefsk)
+
+@auth.requires_login()
+@service.json
 def organize_crews():
 	return orientation.organize_crews()
 

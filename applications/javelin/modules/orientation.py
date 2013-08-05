@@ -229,6 +229,12 @@ def move_to_crew(id, person_id):
 	response = db(db.person.id==person_id).update(crew=int(id))
 	return dict(response=response)
 
+def update_room(id, room, wefsk):
+	db = current.javelin.db
+
+	response = db(db.crew.id==id).update(room=room, wefsk=wefsk)
+	return dict(response=response)
+
 def people_not_in_crew(id, query):
 	db = current.javelin.db
 	if id != 0:

@@ -16,6 +16,11 @@ function initGroupTable() {
 					sortable: true
 				},
 				{
+					property: 'count',
+					label: 'Count',
+					sortable: true
+				},
+				{
 					property: 'actions',
 					label: 'Actions',
 					sortable: false

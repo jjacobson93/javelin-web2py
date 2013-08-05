@@ -93,6 +93,11 @@ $(function() {
 					property: 'wefsk',
 					label: 'W.E.F.S.K Rotation',
 					sortable: true
+				},
+				{
+					property: 'count',
+					label: 'Count',
+					sortable: true
 				}
 			]
 		}),

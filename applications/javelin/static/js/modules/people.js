@@ -142,8 +142,8 @@ $(function() {
 					sortable: true
 				},
 				{
-					property: 'home_phone',
-					label: 'Home Phone',
+					property: 'crew',
+					label: 'Crew',
 					sortable: true
 				}
 			]

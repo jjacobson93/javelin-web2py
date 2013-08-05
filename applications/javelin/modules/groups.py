@@ -12,16 +12,29 @@ __data__ = {'name' : 'groups', 'label' : 'Groups', 'description' : 'Create group
 	'icon' : 'book', 'u-icon' : u'\uf02d', 'required' : True}
 
 from globals import current
+from applications.javelin.private.utils import flattenDict
 
 def data():
 	db = current.javelin.db
-	groups = db().select(db.groups.ALL, orderby=db.groups.name).as_list()
+	count = db.person.id.count()
+	groups = db().select(
+		db.groups.ALL, count.with_alias('count'),
+		left=[db.group_rec.on(db.groups.id==db.group_rec.group_id), 
+			db.person.on(db.person.id==db.group_rec.person_id)],
+		groupby=db.groups.id,
+		orderby=db.groups.name).as_list()
+
+	groups = [dict((k[-1],v) for k,v in flattenDict(d).items()) for d in groups]
 	
 	return groups
 
 def records(id):
 	db = current.javelin.db
-	result = db(db.group_rec.group_id==id).select(db.person.id, db.person.last_name, db.person.first_name, join=db.person.on(db.person.id==db.group_rec.person_id)).as_list()
+	result = db(db.group_rec.group_id==id).select(
+		db.person.id, 
+		db.person.last_name, 
+		db.person.first_name, 
+		join=db.person.on(db.person.id==db.group_rec.person_id)).as_list()
 	
 	return result
 

@@ -172,11 +172,22 @@ def crews(id=None):
 	if id:
 		try:
 			id = int(id)
-			crews = db(db.crew.id==id).select(db.crew.ALL).as_list()
+			count = db.person.id.count()
+			crews = db(db.crew.id==id).select(
+				db.crew.ALL, count.with_alias('count'), 
+				left=db.person.on(db.person.crew==db.crew.id),
+				groupby=db.crew.id, 
+				orderby=db.crew.id).as_list()
 		except:
 			crews = []
 	else:
-		crews = db().select(db.crew.ALL).as_list()
+		count = db.person.id.count()
+		crews = db().select(
+			db.crew.ALL, count.with_alias('count'), 
+			left=db.person.on(db.person.crew==db.crew.id),
+			groupby=db.crew.id, 
+			orderby=db.crew.id).as_list()
+		crews = [dict((k[-1],v) for k,v in flattenDict(d).items()) for d in crews]
 
 	return crews
 

@@ -54,7 +54,7 @@ def data(start, end):
 
 		event_list = [dict(('start', v) if k=='start_time' else (('end', v) if k=='end_time' else (k,v)) for k, v in d.items()) for d in event_list]
 	else:
-		event_list = db().select(db.events.ALL).as_list()
+		event_list = db().select(db.events.ALL, orderby=~db.events.start_time).as_list()
 
 	return event_list
 

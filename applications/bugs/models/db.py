@@ -82,7 +82,7 @@ auth.settings.registration_requires_approval = True
 auth.settings.reset_password_requires_verification = True
 auth.settings.register_fields=['first_name', 'last_name', 'email', 'username', 'password']
 auth.settings.profile_fields=['first_name', 'last_name', 'email', 'username']
-auth.settings.hmac_key = Auth.get_or_create_key('auth.key')
+auth.settings.hmac_key = "sha512:93b42428-33e2-4c1d-bfa0-2de193983bd8"
 
 user_agent = request.user_agent()
 

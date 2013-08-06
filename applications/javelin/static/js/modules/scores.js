@@ -1,3 +1,4 @@
+var paused = false;
 var columns = ['id', 'leaders', 'score'];
 
 function reloadLiveTable() {
@@ -6,6 +7,7 @@ function reloadLiveTable() {
 		url: '/scores/call/json/data',
 		dataType: 'json',
 		cache: false,
+		async: false,
 		success: function(data) {
 			$.each(data, function(i,e) {
 				var allSame = true;
@@ -86,6 +88,8 @@ function reloadLiveTable() {
 }
 
 function updateAIM(id, aim) {
+	// console.log("ID: " + id + "   AIM: " + aim);
+	paused = true;
 	$.ajax({
 		type: 'POST',
 		url: '/scores/call/json/update_score',
@@ -93,7 +97,16 @@ function updateAIM(id, aim) {
 			'id': id,
 			'score': aim
 		},
-		dataType: 'json'
+		cache: false,
+		async: false,
+		dataType: 'json',
+		success: function() {
+			// console.log("SUCCESS");
+			paused = false;
+		},
+		error: function(e) {
+			console.log("Oops");
+		}
 	});
 }
 
@@ -104,12 +117,8 @@ $(function() {
 		$(this).select('selectByValue', val);
 	});
 
-	// $('.fuelux .select[id^="aim_select"]').on('click', function() {
-	// 	console.log('clicked');
-	// });
-
-	$('.fuelux .select[id^="aim_select"]').on('changed', function(event, data) {
-		var cell = $(this).parent().parent();
+	$(document).on('changed', '.select[id^="aim_select"]', function(event, data) {
+		var cell = $(event.target).parent().parent();
 		var row = cell.parent();
 		var id = $(row).attr('data-id');
 		var aim = data.value;
@@ -131,7 +140,7 @@ $(function() {
 
 	setInterval(function() {
 		var open = $('.open');
-		if (!open.length)
+		if (!open.length && !paused)
 			reloadLiveTable();
 	}, 4000);
 });

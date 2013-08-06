@@ -112,13 +112,13 @@ $(function() {
 		var cell = $(this).parent().parent();
 		var row = cell.parent();
 		var id = $(row).attr('data-id');
-		var aim = (data.value=='None') ? null : data.value;
+		var aim = data.value;
 		row.removeAttr('class');
 		if (data.value == 'A') {
 			row.addClass('success');
 			cell.attr('data-value', '3');
 		} else if (data.value == 'I') {
-			row.addClass('info');
+			row.addClass('warning');
 			cell.attr('data-value', '2');
 		} else if (data.value == 'M') {
 			row.addClass('error');

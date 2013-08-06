@@ -19,7 +19,7 @@ function approveUser(id) {
 function disapproveUser(id) {
 	$.ajax({
 		type: 'POST',
-		url: '/jadmin/call/json/dispprove_user',
+		url: '/jadmin/call/json/disapprove_user',
 		data: {
 			'id' : id
 		},

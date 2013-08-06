@@ -198,5 +198,9 @@ db.define_table('study_buddy',
 	Field('grad_year', 'integer', notnull=True, required=True),
 	Field('second_language', 'string'))
 
+db.define_table('score',
+	Field('crew_id', 'reference crew', notnull=True),
+	Field('score', 'string', notnull=True))
+
 ## after defining tables, uncomment below to enable auditing
 # auth.enable_record_versioning(db)

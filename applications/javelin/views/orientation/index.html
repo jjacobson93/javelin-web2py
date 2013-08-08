@@ -336,6 +336,7 @@ table tbody > tr:nth-child(odd):not(:hover) > td {
 			<li class="active"><a href="#nametags" data-toggle="tab">Nametags</a></li>
 			<li><a href="#attsheets" data-toggle="tab">Attendance Sheets</a></li>
 			<li><a href="#callhome" data-toggle="tab">Call Home Scripts</a></li>
+			<li><a href="#docs" data-toggle="tab">Existing Documents</a></li>
 		</ul>
 
 		<div class="tab-content">
@@ -376,8 +377,18 @@ table tbody > tr:nth-child(odd):not(:hover) > td {
 					</div>
 				</div>
 				<a href="#" class="btn" id="nametags-btn" data-loading-text="Loading...">Make Nametags</a>
-				<a href="#" class="btn" id="existing-nametags-btn" data-show-text="Show Existing Nametags" data-hide-text="Hide Existing Nametags" data-state="show">Show Existing Nametags</a>
-				<table class="table table-condensed" id="nametags-table" style="display:none">
+			</div>
+
+			<div class="tab-pane fade in" id="attsheets">
+				<a href="#" class="btn" id="att-sheets-btn"  data-loading-text="Loading...">Make Attendance Sheets</a>
+			</div>
+
+			<div class="tab-pane fade in" id="callhome">
+				<a href="#" class="btn" id="callhome-btn" data-loading-text="Loading...">Make Call Home Scripts</a>
+			</div>
+
+			<div class="tab-pane fade in" id="docs">
+				<table class="table table-condensed" id="nametags-table">
 					<thead>
 						<th>Name</th>
 						<th>Actions</th>
@@ -391,14 +402,6 @@ table tbody > tr:nth-child(odd):not(:hover) > td {
 						{{pass}}
 					</tbody>
 				</table>
-			</div>
-
-			<div class="tab-pane fade in" id="attsheets">
-				<a href="#" class="btn">Make Attendance Sheets</a>
-			</div>
-
-			<div class="tab-pane fade in" id="callhome">
-				<a href="#" class="btn">Make Call Home Scripts</a>
 			</div>
 
 		</div>

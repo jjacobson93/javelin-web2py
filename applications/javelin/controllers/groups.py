@@ -13,6 +13,7 @@ import logging
 logger = logging.getLogger('web2py.app.javelin')
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 def index():
 	"""Loads the index page for the 'Groups' controller
 
@@ -22,6 +23,7 @@ def index():
 	return dict(modules_enabled=modules_enabled, active_module='groups', labels=modules_data['groups']['labels'], modules_data=modules_data)
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 @service.json
 def data():
 	"""Loads the data for groups
@@ -31,6 +33,7 @@ def data():
 	return groups.data()
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 @service.json
 def records(id):
 	"""Loads the records for the group
@@ -41,6 +44,7 @@ def records(id):
 	return groups.records(id)
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 @service.json
 def add_group(name, description, values): 
 	"""Adds a group
@@ -54,6 +58,7 @@ def add_group(name, description, values):
 	return groups.add_group(name, description, json.loads(values))
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 @service.json
 def add_to_group(group_id, person_id=0, people=None, multiple=False):
 	"""Adds a person to the group
@@ -72,6 +77,7 @@ def add_to_group(group_id, person_id=0, people=None, multiple=False):
 		return groups.add_to_group(person_id, group_id)
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 @service.json
 def delete_group(id):
 	"""Deletes a group
@@ -82,6 +88,7 @@ def delete_group(id):
 	return groups.delete_group(id)
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 @service.json
 def delete_from_group(person_id, group_id):	
 	"""Deletes a person from the group
@@ -93,6 +100,7 @@ def delete_from_group(person_id, group_id):
 	return groups.delete_from_group(person_id, group_id)
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 @service.json
 def edit_group(id, name, description):
 	"""Edits a group
@@ -106,6 +114,7 @@ def edit_group(id, name, description):
 	return groups.edit_group(id, name, description)
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 @service.json
 def get_people():
 	"""Gets a list of people
@@ -115,6 +124,7 @@ def get_people():
 	return groups.get_people()
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 @service.json
 def people_not_in_group(group_id, query):
 	"""Gets a list of people not in a group
@@ -124,6 +134,7 @@ def people_not_in_group(group_id, query):
 	return groups.people_not_in_group(group_id, query)
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 def call():
 	"""Call function used when calling a function from an HTTP request"""
 	return service()

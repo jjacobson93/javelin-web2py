@@ -9,6 +9,7 @@ from gluon.tools import Service
 service = Service(globals())
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 def index():
 	"""Loads the index page for the 'Scores' controller
 
@@ -18,10 +19,12 @@ def index():
 	return dict(modules_enabled=modules_enabled, active_module='scores', modules_data=modules_data, crews=data())
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 def table():
 	return dict(crews=data())
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 @service.json
 def data():
 	result = [dict([('id',id), 
@@ -36,12 +39,14 @@ def data():
 	return result
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 @service.json
 def update_score(id, score):
 	response = db.score.update_or_insert(db.score.crew_id==id, crew_id=id, score=score)
 	return dict(response=response)
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 def call():
 	"""Call function used when calling a function from an HTTP request"""
 	return service()

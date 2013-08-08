@@ -9,6 +9,7 @@ from gluon.tools import Service
 service = Service(globals())
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 def index():
 	"""Loads the index page for the 'Messages' controller
 
@@ -18,16 +19,19 @@ def index():
 	return dict(modules_enabled=modules_enabled, modules_data=modules_data, active_module='messages')
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 @service.json
 def send_sms(message, to='all_leaders'):
 	return messages.send_sms(message, to)
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 @service.json
 def get_recipients(query=None):
 	return messages.get_recipients(query)
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 def call():
 	"""Call function used when calling a function from an HTTP request"""
 	return service()

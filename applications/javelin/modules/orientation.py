@@ -12,7 +12,7 @@ __data__ = {'name' : 'orientation', 'label' : 'Orientation', 'description' : 'Th
 	'icon' : 'compass', 'u-icon' : u'\uf14e', 'required' : True}
 
 from globals import current
-from applications.javelin.private.utils import flattenDict
+from applications.javelin.private.utils import flattenDict, cached
 
 def attendance_data(event_id):
 	db = current.javelin.db
@@ -69,9 +69,13 @@ def make_labels(event_name, type, filename='labels'):
 	elements = list()
 
 	if type == 'leaders':
-		people = db(db.person.leader==True).select(db.person.ALL, orderby=[db.person.last_name, db.person.first_name]).as_list()
+		people = db(db.person.leader==True).select(
+			db.person.ALL, db.crew.room, db.crew.wefsk,
+			orderby=[db.person.last_name, db.person.first_name])
 	else:
-		people = db(db.person.grade==9).select(db.person.ALL, orderby=[db.person.last_name, db.person.first_name]).as_list()
+		people = db(db.person.grade==9).select(
+			db.person.ALL, db.crew.room, db.crew.wefsk,
+			orderby=[db.person.last_name, db.person.first_name])
 
 	centerStyle = ParagraphStyle(name='Center', alignment=TA_CENTER)
 	leftStyle = ParagraphStyle(name='Left', alignment=TA_LEFT)
@@ -79,7 +83,65 @@ def make_labels(event_name, type, filename='labels'):
 	label_num = 0
 	row_num = 0
 	labels = list()
-	for person in people:
+
+	rotations = {
+		'A' : {
+			'I' : 'E1',
+			'II' : 'P21',
+			'III' : 'SS1',
+			'IV' : 'M1',
+			'V' : 'P15'
+		},
+		'B' : {
+			'I' : 'E2',
+			'II' : 'P23',
+			'III' : 'SS3',
+			'IV' : 'M2',
+			'V' : 'P16'
+		},
+		'C' : {
+			'I' : 'E3',
+			'II' : 'P24',
+			'III' : 'SS4',
+			'IV' : 'M3',
+			'V' : 'P17'
+		},
+		'D' : {
+			'I' : 'E4',
+			'II' : 'P25',
+			'III' : 'SS5',
+			'IV' : 'M4',
+			'V' : 'P18'
+		},
+		'E' : {
+			'I' : 'E5',
+			'II' : 'P26',
+			'III' : 'SS6',
+			'IV' : 'M5',
+			'V' : 'P19'
+		}
+	}
+
+	nums = { 1 : 'I', 2 : 'II', 3 : 'III', 4 : 'IV', 5 : 'V' }
+
+	@cached
+	def room(station, s):
+		return rotations[station][nums[s]]
+
+	def rotation(station, letter):
+		r = list()
+		if letter == 'I': s = 1
+		elif letter == 'II': s = 2
+		elif letter == 'III': s = 3
+		elif letter == 'IV': s = 4
+		elif letter == 'V': s = 5
+
+		for n in range(5):
+			r.append(room(station, s))
+			s = s%5 + 1
+		return r
+
+	for row in people:
 		
 		label = list()
 
@@ -100,18 +162,21 @@ def make_labels(event_name, type, filename='labels'):
 		label.append(header)
 		label.append(Spacer(1,11))
 
-		firstName = Paragraph("<font face='Times-Bold' size=18>{}</font>".format(person['first_name']), centerStyle)
+		firstName = Paragraph("<font face='Times-Bold' size=18>{}</font>".format(row.person.first_name), centerStyle)
 		label.append(firstName)
 		label.append(Spacer(1, 11))
 
-		lastName = Paragraph("<font face='Times-Roman' size=11>{}</font>".format(person['last_name']), centerStyle)
+		lastName = Paragraph("<font face='Times-Roman' size=11>{}</font>".format(row.person.last_name), centerStyle)
 		label.append(lastName)
 		label.append(Spacer(1,20))
 
-		label.append(Paragraph("<font face='Times-Roman' size=11>ID#: {}</font>".format(person['student_id']), leftStyle))
-		label.append(Paragraph("<font face='Times-Roman' size=11>Crew #: {}</font>".format(0), leftStyle))
-		label.append(Paragraph("<font face='Times-Roman' size=11>Crew Room: {}</font>".format('N/A'), leftStyle))
-		label.append(Paragraph("<font face='Times-Roman' size=11>W.E.F.S.K. Rotation: {}</font>".format('N/A'), leftStyle))
+		rooms = rotation(row.crew.wefsk.split('-')[0], row.crew.wefsk.split('-')[1])
+
+		label.append(Paragraph("<font face='Times-Roman' size=11>ID#: {}</font>".format(row.person.student_id), leftStyle))
+		label.append(Paragraph("<font face='Times-Roman' size=11>Crew #: {}</font>".format(row.crew.crew), leftStyle))
+		label.append(Paragraph("<font face='Times-Roman' size=11>Crew Room: {}</font>".format(row.crew.room), leftStyle))
+		label.append(Paragraph("<font face='Times-Roman' size=11>W.E.F.S.K. Rotation: " +\
+			"{} -> {} -> {} -> {} -> {}</font>".format(*rooms), leftStyle))
 
 		labels.append(label)
 

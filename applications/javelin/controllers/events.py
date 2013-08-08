@@ -9,6 +9,7 @@ from gluon.tools import Service
 service = Service(globals())
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 def index():
 	"""Loads the index page for the 'Events' controller
 
@@ -18,6 +19,7 @@ def index():
 	return dict(modules_enabled=modules_enabled, modules_data=modules_data, active_module='events')
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 @service.json
 def data(start=None, end=None, _=None):
 	"""Loads the event data
@@ -29,6 +31,7 @@ def data(start=None, end=None, _=None):
 	return events.data(start, end)
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 @service.json
 def add_event(title, start, end, notes=None, allDay=False, recurring=False, end_recur=None):
 	"""Adds an event
@@ -42,6 +45,7 @@ def add_event(title, start, end, notes=None, allDay=False, recurring=False, end_
 	return events.add_event(title, start, end, notes, allDay, recurring, end_recur)
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 @service.json
 def delete_event(id):
 	"""Deletes an event
@@ -52,6 +56,7 @@ def delete_event(id):
 	return events.delete_event(id)
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 def call():
 	"""Call function used when calling a function from an HTTP request"""
 	return service()

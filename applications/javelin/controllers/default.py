@@ -9,6 +9,7 @@ from gluon.tools import Service
 service = Service(globals())
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 def index():
 	"""
 	example action using the internationalization operator T and flash
@@ -21,6 +22,12 @@ def index():
 	return dict(modules_enabled=modules_enabled, active_module='None', modules_data=modules_data)
 
 @auth.requires_login()
+@auth.requires_membership('peer_support')
+def peer_support():
+	pass
+
+@auth.requires_login()
+@auth.requires_membership('standard')
 def query():
 	results = db((db.person.grade==9) & 
 			(db.course.code.belongs('EN228', 'EN135', 'EN137'))).select(
@@ -49,6 +56,7 @@ def user():
 	return dict(form=auth())
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 @cache.action()
 def download():
 	"""
@@ -58,6 +66,7 @@ def download():
 	return response.download(request, db)
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 def call():
 	"""
 	exposes services. for example:

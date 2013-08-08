@@ -26,3 +26,14 @@ def flattenDict(dictionary, keyReducer=add, keyLift=_tuple, init=()):
 			]
 		)
 	return dict(_flattenIter(dictionary.items()))
+
+def cached(f):
+	memo = {}
+	def wrapper(*args):
+		if args in memo:
+			return memo[args]
+		else:
+			rv = f(*args)
+			memo[args] = rv
+			return rv
+  	return wrapper

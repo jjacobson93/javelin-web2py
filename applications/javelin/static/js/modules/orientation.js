@@ -389,17 +389,25 @@ $(function() {
 		makeNametags(type, event_name);
 	});
 
-	$('#existing-nametags-btn').on('click', function() {
-		if ($(this).attr('data-state') == 'show') {
-			$(this).button('hide');
-			$(this).attr('data-state', 'hide');
-			$('#nametags-table').slideDown(500).css('display', 'block');
-		} else {
-			$(this).button('show');
-			$(this).attr('data-state', 'show');
-			$('#nametags-table').css('display', 'none');
-		}
+	$('#att-sheets-btn').on('click', function() {
+		makeAttSheets();
 	});
+
+	$('#callhome-btn').on('click', function() {
+		makeCallHomes();
+	});
+
+	// $('#existing-nametags-btn').on('click', function() {
+	// 	if ($(this).attr('data-state') == 'show') {
+	// 		$(this).button('hide');
+	// 		$(this).attr('data-state', 'hide');
+	// 		$('#nametags-table').slideDown(500).css('display', 'block');
+	// 	} else {
+	// 		$(this).button('show');
+	// 		$(this).attr('data-state', 'show');
+	// 		$('#nametags-table').css('display', 'none');
+	// 	}
+	// });
 
 	$('#event_name').on('keyup', function() {
 		var val = $(this).val();
@@ -548,6 +556,48 @@ function makeNametags(type, event_name) {
 		},
 		error: function() {
 			displayError("Could not create nametags.");
+		}
+	});
+}
+
+function makeAttSheets() {
+	$('#att-sheets-btn').button('loading');
+	$.ajax({
+		type: 'POST',
+		url: '/orientation/call/json/attendance_sheet',
+		data: {
+			'kind': 'crew_freshmen',
+		},
+		dataType: 'json',
+		success: function(data) {
+			$('#att-sheets-btn').button('reset');
+			displaySuccess("Created attendance sheets. Downloading them now.");
+			var filename = data['filename'];
+			window.location.href = '/download/' + filename; 
+		},
+		error: function() {
+			displayError("Could not create attendance sheets.");
+		}
+	});
+}
+
+function makeCallHomes() {
+	$('#callhome-btn').button('loading');
+	$.ajax({
+		type: 'POST',
+		url: '/orientation/call/json/attendance_sheet',
+		data: {
+			'kind': 'call_homes',
+		},
+		dataType: 'json',
+		success: function(data) {
+			$('#callhome-btn').button('reset');
+			displaySuccess("Created call homes. Downloading them now.");
+			var filename = data['filename'];
+			window.location.href = '/download/' + filename; 
+		},
+		error: function() {
+			displayError("Could not create call homes.");
 		}
 	});
 }

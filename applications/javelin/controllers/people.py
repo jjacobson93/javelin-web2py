@@ -9,6 +9,7 @@ from gluon.tools import Service
 service = Service(globals())
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 def index():
 	"""Loads the index page for the 'People' controller
 
@@ -18,6 +19,7 @@ def index():
 	return dict(modules_enabled=modules_enabled, active_module='people', modules_data=modules_data)
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 @service.json
 def data(str_filter=None):
 	"""Loads the data for people with an optional filter
@@ -28,6 +30,7 @@ def data(str_filter=None):
 	return people.data(str_filter)
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 @service.json
 def leaders(query=None):
 	"""Loads the data for people who are a leader
@@ -38,6 +41,7 @@ def leaders(query=None):
 	return people.leaders(query)
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 @service.json
 def record(id):
 	"""Loads a single record
@@ -48,6 +52,7 @@ def record(id):
 	return people.record(id)
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 @service.json
 def update_record(id, values):
 	"""Updates a record
@@ -58,6 +63,7 @@ def update_record(id, values):
 	return people.update_record(id, json.loads(values))
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 @service.json
 def update_pic(id, pic):
 	"""Updates a picture on a record
@@ -69,6 +75,7 @@ def update_pic(id, pic):
 	return people.update_pic(id, pic)
 
 @auth.requires_login()
+@auth.requires_membership('standard')
 def call():
 	"""Call function used when calling a function from an HTTP request"""
 	return service()

@@ -30,6 +30,7 @@ def data():
 		for id, leaders, score in
 		db.executesql("SELECT crew.id, array_agg(person.first_name || ' ' || person.last_name) " +\
 		"AS leaders, score.score FROM crew LEFT JOIN person ON person.crew = crew.id " +\
+		"AND person.leader = 'T' " +\
 		"LEFT JOIN score ON score.crew_id = crew.id " +\
 		"GROUP BY crew.id, score.score ORDER BY crew.id;")]
 	return result

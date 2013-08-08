@@ -20,6 +20,17 @@ def index():
 	modules_data = get_module_data()
 	return dict(modules_enabled=modules_enabled, active_module='None', modules_data=modules_data)
 
+@auth.requires_login()
+def query():
+	results = db((db.person.grade==9) & 
+			(db.course.code.belongs('EN228', 'EN135', 'EN137'))).select(
+		db.person.id, db.person.crew, db.course.title, db.teacher.teacher_name, db.course.period,
+		left=[db.course_rec.on(db.person.id==db.course_rec.student_id),
+			db.course.on(db.course.id==db.course_rec.course_id),
+			db.teacher.on(db.teacher.id==db.course.teacher_id)],
+		orderby=[db.person.crew, db.person.id])
+	return dict(results=results)
+
 def user():
 	"""
 	exposes:

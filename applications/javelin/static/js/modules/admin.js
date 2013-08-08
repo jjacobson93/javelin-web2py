@@ -114,4 +114,22 @@ $(function() {
 		reader.readAsText(csv_file, 'UTF-8');
 		reader.onload = handleFile;
 	});
+
+	$('#organize-btn').on('click', function() {
+		$('#organize-btn').button('loading');
+		$.ajax({
+			type: 'POST',
+			url: '/orientation/call/json/organize_crews',
+			data: {
+				'desiredsize' : 12
+			},
+			success: function() {
+				$('#organize-btn').button('reset');
+				displaySuccess('Crews have been organized!');
+			},
+			error: function() {
+				displayError('Could not organize crews.');
+			}
+		});
+	});
 });

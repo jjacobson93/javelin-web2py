@@ -33,79 +33,98 @@ def quick_attendance(event_id, person_id=None, student_id=None, present=True):
 def make_labels(event_name, type, filename='labels'):
 	return orientation.make_labels(event_name, type, filename)
 
-# @auth.requires_login()
-# @service.json
-# def attendance_sheet(kind):
-# 	import tempfile
-# 	import time
-# 	from pyfpdf import FPDF, HTMLMixin
+@auth.requires_login()
+@service.json
+def attendance_sheet(kind):
+	import StringIO
+	import time
+	import cgi
 
-# 	class PDF(FPDF, HTMLMixin):
-# 		pass
+	from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, Image, Spacer
+	from reportlab.platypus.flowables import PageBreak
+	from reportlab.lib.styles import ParagraphStyle
+	from reportlab.lib.enums import TA_CENTER, TA_LEFT
+	from reportlab.lib.pagesizes import letter, inch
+	from reportlab.lib import colors
 
-# 	io = None
-# 	if kind == str(1): # Task Teams
-# 		title = 'task_team_attendance'
-# 		pages = list()
-# 		# page_temp = """<h2>{}</h2>
-# 		# 	<table border="1" width="100%>
-# 		# 		<thead>
-# 		# 			<tr>
-# 		# 				<th width="10%">Student ID</th>
-# 		# 				<th width="40%">Last Name</th>
-# 		# 				<th width="40%">First Name</th>
-# 		# 				<th width="10%>Cell Phone</th>
-# 		# 			</tr>
-# 		# 		</thead>
-# 		# 		<tbody>
-# 		# 			{}
-# 		# 		</tbody>
-# 		# 	</table>"""
+	io = StringIO.StringIO()
+	rightleftMargin = 45
+	topbottomMargin = 73 
+	width, height = letter
 
-# 		page_temp = """<h2>{}</h2><table border="0" align="center" width="50%">
-# 		<thead><tr><th width="30%">Header 1</th><th width="70%">header 2</th></tr></thead>
-# 		<tbody>
-# 		<tr><td>cell 1</td><td>cell 2</td></tr>
-# 		<tr><td>cell 2</td><td>cell 3</td></tr>
-# 		</tbody>
-# 		</table>
-# 		"""
+	doc = SimpleDocTemplate(io, pagesize=letter,
+			rightMargin=rightleftMargin, 
+			leftMargin=rightleftMargin, 
+			topMargin=topbottomMargin, 
+			bottomMargin=topbottomMargin)
 
-# 		teams = db().select(db.groups.ALL)
-# 		for t in teams:
-# 			tbody = list()
-# 			students = db(db.group_rec.group_id==t.id).select(db.person.ALL,
-# 				join=db.person.on(db.group_rec.person_id==db.person.id),
-# 				orderby=[db.person.last_name, db.person.first_name])
-# 			if students:
-# 				for s in students:
-# 					tbody.append("<tr><td>{}</td>" +\
-# 						"<td>{}</td><td>{}</td>" +\
-# 						"<td>{}</td></tr>".format(s.student_id, 
-# 							s.last_name, s.first_name, s.cell_phone))
+	elements = list()
 
-# 				pages.append(page_temp.format(t.name))
+	centerStyle = ParagraphStyle(name='Center', alignment=TA_CENTER)
+	leftStyle = ParagraphStyle(name='Left', alignment=TA_LEFT)
+	tableStyle = TableStyle([
+		('VALIGN',(0,0),(-1,-1),'MIDDLE'),
+		('GRID', (0,0), (-1,-1), 1, colors.black),
+		('FONT', (0, 0), (-1, 0), 'Helvetica-Bold'),
+		('FONT', (0, 1), (-1, -1), 'Helvetica')])
 
-# 		pdf = PDF()
-# 		for p in pages:
-# 			pdf.add_page()
-# 			pdf.write_html(p)
+	if kind == 'task_teams': # Task Teams
+		title = 'task_team_attendance'
+	
+		teams = db().select(db.groups.ALL)
+		for t in teams:
+			students = db().select(db.person.ALL, join=db.person.on(db.person.id==db.group_rec.person_id))
 
-# 		temp = tempfile.NamedTemporaryFile(delete=True)
-# 		pdf.output(temp, 'F')
-# 		temp.file.seek(0)
+			elements.append(Paragraph("<font face='Helvetica-Bold' size=16>{}</font>".format(cgi.escape(t.name)), leftStyle))
+			elements.append(Spacer(1, 16))
+			rows = [['Present?', 'ID', 'Last Name', 'First Name', 'Cell Phone']] +\
+				   [['', s.student_id, s.last_name, s.first_name, s.cell_phone] for s in students]
+			table = Table(rows, colWidths=[(width - (rightleftMargin*2))*.1,
+				(width - (rightleftMargin*2))*.1, (width - (rightleftMargin*2))*.30, 
+				(width - (rightleftMargin*2))*.30, (width - (rightleftMargin*2))*.2], 
+				rowHeights=[.5*inch]*(len(students) + 1))
+			table.setStyle(tableStyle)
+			elements.append(table)
+			elements.append(Spacer(1, 16))
+			elements.append(Paragraph("<font face='Helvetica-Oblique' size=12>Notes:</font>", leftStyle))
+			elements.append(PageBreak())
 
-# 	f = temp.file.read()
-# 	temp.close()
-# 	return f
+	elif kind == 'crew_freshmen':
+		title = 'crew_freshmen_attendance'
 
-# 	# filename = "{}_{}.pdf".format(title, int(time.time()))
+		crews = db().select(db.crew.ALL)
+		for c in crews:
+			freshmen = db((db.person.grade==9) & (db.person.crew==c.id)).select(db.person.ALL)
+			elements.append(Paragraph("<font face='Helvetica-Bold' size=16>Attendance " +\
+				" - Crew: {}, Room: {}, WEFSK: {}</font>".format(
+					c.id, c.room, c.wefsk), leftStyle))
+			elements.append(Spacer(1, 16))
+			rows = [['Present?', 'ID', 'Sex', 'Last Name', 'First Name']] +\
+				   [['', s.student_id, s.gender, s.last_name, s.first_name] for s in students]
+			table = Table(rows, colWidths=[(width - (rightleftMargin*2))*.1,
+				(width - (rightleftMargin*2))*.1, (width - (rightleftMargin*2))*.1, 
+				(width - (rightleftMargin*2))*.35, (width - (rightleftMargin*2))*.35], 
+				rowHeights=[.5*inch]*(len(students) + 1))
+			table.setStyle(tableStyle)
+			elements.append(table)
+			elements.append(Spacer(1,16))
+			elements.append(Paragraph("<font face='Helvetica-Oblique' size=12>Notes:</font>", leftStyle))
+			elements.append(PageBreak())
 
-# 	# file_id = db.file.insert(name=filename, file=db.file.file.store(io, filename))
+	if kind and elements:
+		doc.build(elements)
 
-# 	# db_file = db.file(file_id).file
+		io.seek(0)
 
-# 	# return dict(filename=db_file)
+		filename = "{}_{}.pdf".format(title, int(time.time()))
+
+		file_id = db.file.insert(name=filename, file=db.file.file.store(io, filename))
+
+		db_file = db.file(file_id).file
+
+		return dict(filename=db_file)
+
+	return dict(error=True)
 
 @auth.requires_login()
 @service.json

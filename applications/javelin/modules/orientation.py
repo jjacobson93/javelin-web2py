@@ -253,7 +253,7 @@ def people_not_in_crew(id, query):
 def organize_crews(desiredsize=10, minsize=7, maxsize=13):
 	db = current.javelin.db
 	
-	courses = db(db.course.code.belongs('EN228', 'EN135', 'EN137', 'NN316V', 'NN329')).select(db.course.ALL)
+	courses = db(db.course.code.belongs('EN228', 'EN135', 'EN137')).select(db.course.ALL)
 	
 	crew_index = 1
 	num_crews = 0
@@ -265,7 +265,6 @@ def organize_crews(desiredsize=10, minsize=7, maxsize=13):
 	for course in courses:
 		students = [s for s in db(db.course_rec.course_id==course.id,).select(db.person.ALL,
 			join=db.person.on(db.course_rec.student_id==db.person.id))]
-
 
 		num_crews = int(round(len(students), -1)/desiredsize)
 		if num_crews == 0 and len(students) >= minsize:

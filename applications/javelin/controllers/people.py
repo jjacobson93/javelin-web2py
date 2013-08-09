@@ -54,6 +54,18 @@ def record(id):
 @auth.requires_login()
 @auth.requires_membership('standard')
 @service.json
+def schedule(id):
+	return db(db.person.id==id).select(
+			db.course_rec.course_id, db.course.period, 
+			db.course.title, db.teacher.teacher_name,
+			join=[db.person.on(db.course_rec.student_id==db.person.id),
+				db.course.on(db.course_rec.course_id==db.course.id),
+				db.teacher.on(db.course.teacher_id==db.teacher.id)],
+			orderby=db.course.period)
+
+@auth.requires_login()
+@auth.requires_membership('standard')
+@service.json
 def update_record(id, values):
 	"""Updates a record
 

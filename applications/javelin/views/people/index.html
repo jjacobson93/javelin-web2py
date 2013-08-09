@@ -114,8 +114,9 @@ table tbody > tr:nth-child(odd):not(:hover) > td {
 		<div class="item" id="person-pane">
 			<ul class="nav nav-pills">
 				<li class="active"><a href="#info" data-toggle="tab">Info</a></li>
-				<li><a href="#notes" data-toggle="tab">Notes</a></li>
-				<li><a href="#docs" data-toggle="tab">Docs</a></li>
+				<li><a href="#notestab" data-toggle="tab">Notes</a></li>
+				<li><a href="#schedule" data-toggle="tab">Schedule</a></li>
+				<!-- <li><a href="#docs" data-toggle="tab">Docs</a></li> -->
 				<!-- <li><a href="#groups" data-toggle="tab">Groups</a></li> -->
 				<!-- <li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -261,15 +262,26 @@ table tbody > tr:nth-child(odd):not(:hover) > td {
 						</div>
 					</form>
 				</div>
-				<div class="tab-pane fade" id="notes">
-					<!-- <legend>Notes</legend> -->
+				<div class="tab-pane fade" id="notestab">
 					<form>
-						<textarea class="span11" id="inputNotes" rows="10"></textarea>
+						<textarea class="span11" id="notes" rows="10"></textarea>
 					</form>
 				</div>
 				<div class="tab-pane fade" id="groups">
 					<legend>Task Teams</legend>
 					<div id="groups-div"></div>
+				</div>
+				<div class="tab-pane fade" id="schedule">
+					<table class="table table-striped" id="schedule-table">
+						<thead>
+							<tr>
+								<th>Period</th>
+								<th>Class Title</th>
+								<th>Teacher</th>
+							</tr>
+						</thead>
+						<tbody></tbody>
+					</table>
 				</div>
 			</div>
 			<!-- <div class="form-actions">

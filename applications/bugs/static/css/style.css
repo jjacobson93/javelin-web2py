@@ -80,3 +80,7 @@ table {
 .select2-offscreen {
 	display: none !important;
 }
+
+th {
+	border-right: none;
+}

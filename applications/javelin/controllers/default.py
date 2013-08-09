@@ -22,11 +22,6 @@ def index():
 	return dict(modules_enabled=modules_enabled, active_module='None', modules_data=modules_data)
 
 @auth.requires_login()
-@auth.requires_membership('peer_support')
-def peer_support():
-	pass
-
-@auth.requires_login()
 @auth.requires_membership('standard')
 def query():
 	results = db((db.person.grade==9) & 

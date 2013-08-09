@@ -1,0 +1,59 @@
+{{extend 'main.html'}}
+
+<textarea rows="10" readonly>{{=issue.steps}}</textarea>
+<th>Student Name</th>
+<th>Peer Support Student</th>
+<th>Need Follow Up?</th>
+<th>Refer to PS?</th>
+<th>Actions</th>
+
+{{block content}}
+{{if issue:}}
+<a class="btn btn-primary" href="{{=URL('peersupport', 'index')}}"><i class="icon-arrow-left"></i>Back</a>
+<h1>Issue #{{=issue.student_issue.id}} <i class="icon-warning-sign"></i></h1>
+<table class="table table-striped">
+	<tr>
+		<td style="width: 20%"><b>Date</b></td>
+		<td>{{=issue.student_issue.timestamp}}</td>
+	</tr>
+	<tr>
+		<td><b>Crew #</b></td>
+		<td>{{=issue.crew.id}}</td>
+	</tr>
+	<tr>
+		<td><b>Room #</b></td>
+		<td>{{=issue.crew.room if issue.crew.room else 'None'}}</td>
+	</tr>
+	<tr>
+		<td><b>Student Name</b></td>
+		<td>{{=' '.join([issue.student.first_name, issue.student.last_name])}}</td>
+	</tr>
+	<tr>
+		<td><b>Peer Support Student</b></td>
+		<td>{{=' '.join([issue.peer_support.first_name, issue.peer_support.last_name])}}</td>
+	</tr>
+	<tr>
+		<td><b>Need Follow Up?</b></td>
+		<td>{{='Yes' if issue.student_issue.need_follow_up else 'No'}}</td>
+	</tr>
+	<tr>
+		<td><b>Refer to PS?</b></td>
+		<td>{{='Yes' if issue.student_issue.refer else 'No'}}</td>
+	</tr>
+	<tr>
+		<td><b>Summary of Concern</b></td>
+		<td><textarea rows="10" readonly>{{=issue.student_issue.summary}}</textarea></td>
+	</tr>
+	<tr>
+		<td><b>Result of Campus Walk</b></td>
+		<td><textarea rows="10" readonly>{{=issue.student_issue.result}}</textarea></td>
+	</tr>
+	<tr>
+		<td><b>Follow Up</b></td>
+		<td><textarea rows="10" readonly>{{=issue.student_issue.follow_up}}</textarea></td>
+	</tr>
+</table>
+{{else:}}
+<div class="alert alert-danger"><h3>Error Loading Issue! Issue might be corrupted or not exist.</h3></div>
+{{pass}}
+{{end}}

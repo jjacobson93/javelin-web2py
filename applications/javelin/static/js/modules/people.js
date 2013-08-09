@@ -36,12 +36,38 @@ function loadRecord(id) {
 			$('#person-pic').text("No picture");
 		}
 	});
+
+	loadSchedule(id);
+}
+
+function loadSchedule(id) {
+	$.ajax({
+		type: 'POST',
+		url: '/people/call/json/schedule',
+		data: {
+			'id': id
+		},
+		dataType: 'json',
+		success: function(data) {
+			console.log(data);
+			var tbody = $('<tbody/>');
+			$.each(data, function(i,row) {
+				tbody.append($('<tr><td>' + row.course.period + '</td>' + 
+				'<td>' + row.course.title + '</td>' +
+				'<td>' + row.teacher.teacher_name + '</td></tr>'));
+			});
+			$('#schedule-table tbody').replaceWith(tbody);
+		},
+		error: function() {
+			displayError('Could not load student schedule.');
+		}
+	});
 }
 
 function saveChanges(toPrev) {
 	var id;
 	var values = {};
-	$('#main-form input, #main-form select').each(function(i, e) {
+	$('#main-form input, #main-form select, #notestab textarea').each(function(i, e) {
 		var eid = $(e).attr('id');
 		if ($(e).attr('type') == 'checkbox')
 			values[eid] = $(e).prop('checked');

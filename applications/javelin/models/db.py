@@ -202,5 +202,28 @@ db.define_table('score',
 	Field('crew_id', 'reference crew', notnull=True),
 	Field('score', 'string', notnull=True))
 
+db.define_table('student_issue',
+	Field('person_id', 'reference person', notnull=True, label="Student",
+		required=True, requires=IS_IN_SET([
+			(p.id, p.last_name + ", " + p.first_name)
+			for p in db().select(
+				db.person.id, db.person.last_name, db.person.first_name,
+				orderby=[db.person.last_name, db.person.first_name])])),
+	Field('ps_id', 'reference person', notnull=True, label="Peer Support Student",
+		required=True, requires=IS_IN_SET([
+			(p.id, p.last_name + ", " + p.first_name)
+			for p in db().select(
+				db.person.id, db.person.last_name, db.person.first_name,
+				join=[db.group_rec.on(db.person.id==db.group_rec.person_id),
+					db.groups.on((db.groups.id==db.group_rec.group_id) & (db.groups.name=='Peer Support'))],
+				orderby=[db.person.last_name, db.person.first_name])])),
+	Field('summary', 'text', label="Summary of Concern", notnull=True, required=True),
+	Field('result', 'text', label="Result of Campus Walk— How did this person respond?", notnull=True, required=True),
+	Field('need_follow_up', 'boolean', label="Need for follow up visit?", default=False, notnull=True, required=True),
+	Field('follow_up', 'text', label="Follow Up Notes", default=None),
+	Field('refer', 'boolean', label="Refer to Peer Support? (should PS check in with this student?)", default=False, notnull=True, required=True),
+	Field('timestamp', 'datetime', default=request.now, writable=False),
+	Field('updated', 'datetime', default=None, update=request.now, writable=False))
+
 ## after defining tables, uncomment below to enable auditing
 # auth.enable_record_versioning(db)

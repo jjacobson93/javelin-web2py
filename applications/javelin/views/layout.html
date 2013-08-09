@@ -78,9 +78,11 @@
 		<div class="flash">{{=response.flash or ''}}</div>
 		<div class="navbar-inner">
 			<div class="container-fluid">
+				{{if auth.has_membership('standard'):}}
 				<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
 					<span><b>Menu</b></span>
 				</button>
+				{{pass}}
 				{{is_mobile=request.user_agent().is_mobile}}
 				{{=response.logo or ''}}
 				<ul class="nav pull-right">

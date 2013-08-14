@@ -9,10 +9,13 @@
 </div>
 <ul class="nav nav-pills">
 	<li class="active"><a href="#issues" data-toggle="tab">All Issues</a></li>
+	{{if auth.has_membership('standard') or auth.has_membership('admin'):}}
+	<li><a href="#reports" data-toggle="tab">Reports</a></li>
+	{{pass}}
 </ul>
 
-<div class="tab-content">
-	<div class="tab-pane active fade in" id="submitted">
+<div class="tab-content" style="overflow: initial">
+	<div class="tab-pane active fade in" id="issues">
 		{{if issues:}}
 		<table class="table table-striped sortable table-mobile">
 			<thead>
@@ -20,8 +23,6 @@
 					<th>Issue ID</th>
 					<th>Date Created</th>
 					<th>Date Updated</th>
-					<th>Crew #</th>
-					<th>Room #</th>
 					<th>Student Name</th>
 					<th>Peer Support Student</th>
 					<th>Need Follow Up?</th>
@@ -35,15 +36,28 @@
 					<td>{{=i.student_issue.id}}</td>
 					<td>{{=i.student_issue.timestamp}}</td>
 					<td>{{=i.student_issue.updated}}</td>
-					<td>{{=i.crew.id}}</td>
-					<td>{{=i.crew.room if i.crew.room else 'None'}}</td>
 					<td>{{=' '.join([i.student.first_name, i.student.last_name])}}</td>
 					<td>{{=' '.join([i.peer_support.first_name, i.peer_support.last_name])}}</td>
 					<td>{{='Yes' if i.student_issue.need_follow_up else 'No'}}</td>
 					<td>{{='Yes' if i.student_issue.refer else 'No'}}</td>
 					<td>
-						<a href="{{=URL(a='javelin', c='peersupport', f='issue', vars={'id': str(i.student_issue.id)})}}" class="btn mobile-btn"><i class="icon-eye-open"></i>View</a>
-						<a href="{{=URL(a='javelin', c='peersupport', f='follow_up', vars={'id': str(i.student_issue.id)})}}" class="btn btn-primary"><i class="icon-refresh"></i>Follow Up</a>
+						<div class="btn-group">
+							<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+								Actions <span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu" style="margin-left: -77px">
+								<li>
+									<a href="{{=URL(a='javelin', c='peersupport', f='issue', vars={'id': str(i.student_issue.id)})}}">
+										<i class="icon-eye-open"></i>View
+									</a>
+									</li>
+								<li>
+									<a href="{{=URL(a='javelin', c='peersupport', f='follow_up', vars={'id': str(i.student_issue.id)})}}">
+										<i class="icon-refresh"></i>Follow Up
+									</a>
+								</li>
+							</ul>
+						</div>
 					</td>
 				</tr>
 				{{pass}}
@@ -53,5 +67,53 @@
 		<div class="alert alert-info" style="padding-top: 20px; padding-bottom: 20px"><h4>No Issues</h4></div>
 		{{pass}}
 	</div>
+
+	{{if auth.has_membership('standard') or auth.has_membership('admin'):}}
+	<div class="tab-pane fade in" id="reports">
+		<a class="btn btn-primary" href="#" id="generate_report_btn" data-loading-text="Loading...">Generate Report</a>
+		{{if reports:}}
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Filename</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				{{for r in reports:}}
+				<tr>
+					<td>{{=r.name}}</td>
+					<td><a class="btn" href="{{=URL('default', 'download', r.file)}}">Download</a></td>
+				</tr>
+				{{pass}}
+			</tbody>
+		</table>
+		{{else:}}
+		<div class="alert alert-info" style="padding-top: 20px; padding-bottom: 20px"><h4>No Reports</h4></div>
+		{{pass}}
+	</div>
+	{{pass}}
 </div>
+
+<script type="text/javascript">
+	$(function() {
+		$('#generate_report_btn').on('click', function() {
+			$('#generate_report_btn').button('loading');
+
+			$.ajax({
+				'type': 'POST',
+				'url': '/peersupport/call/json/generate_report',
+				'dataType': 'json',
+				success: function(data) {
+					displaySuccess("Report has been generated! Now downloading.");
+					$('#generate_report_btn').button('reset');
+					window.location.href = '/download/' + data.filename; 
+				},
+				error: function() {
+					displayError("There was a problem generating the report.");
+				}
+			});
+		});
+	});
+</script>
 {{end}}

@@ -59,34 +59,52 @@ def make_labels(event_name, type, present=None, event_id=None):
 	elements = list()
 
 	if type == 'leaders':
-		people = db(db.person.leader==True).select(
-			db.person.ALL, db.crew.room, db.crew.wefsk,
-			left=db.crew.on(db.person.crew==db.crew.id),
-			orderby=[db.person.last_name, db.person.first_name])
-
 		if present is not None and event_id is not None:
+			if present == True:
+				people = db((db.person.leader==True) & (db.attendance.present==True)).select(
+					db.person.ALL, db.crew.room, db.crew.wefsk,
+					left=[db.crew.on(db.person.crew==db.crew.id),
+						db.attendance.on((db.person.id==db.attendance.person_id) & 
+							(db.attendance.event_id==event_id))],
+					orderby=[db.person.last_name, db.person.first_name])
+			else:
+				people = db((db.person.leader==True) & 
+						((db.attendance.present==False) | (db.attendance.present==None))).select(
+					db.person.ALL, db.crew.room, db.crew.wefsk,
+					left=[db.crew.on(db.person.crew==db.crew.id),
+						db.attendance.on((db.person.id==db.attendance.person_id) & 
+							(db.attendance.event_id==event_id))],
+					orderby=[db.person.last_name, db.person.first_name])
+		else:
 			people = db(db.person.leader==True).select(
 				db.person.ALL, db.crew.room, db.crew.wefsk,
 				left=db.crew.on(db.person.crew==db.crew.id),
-				join=db.attendance.on((db.person.id==db.attendance.person_id) & 
-					(db.attendance.event_id==event_id) & 
-					(db.attendance.present==present)),
 				orderby=[db.person.last_name, db.person.first_name])
 
 	else:
-		people = db(db.person.grade==9).select(
-			db.person.ALL, db.crew.room, db.crew.wefsk,
-			left=db.crew.on(db.person.crew==db.crew.id),
-			orderby=[db.person.last_name, db.person.first_name])
 
 		if present is not None and event_id is not None:
+			if present == True:
+				people = db((db.person.grade==9) & (db.attendance.present==True)).select(
+					db.person.ALL, db.crew.room, db.crew.wefsk,
+					left=[db.crew.on(db.person.crew==db.crew.id),
+						db.attendance.on((db.person.id==db.attendance.person_id) & 
+							(db.attendance.event_id==event_id))],
+					orderby=[db.person.last_name, db.person.first_name])
+			else:
+				people = db((db.person.grade==9) & 
+						((db.attendance.present==False) | (db.attendance.present==None))).select(
+					db.person.ALL, db.crew.room, db.crew.wefsk,
+					left=[db.crew.on(db.person.crew==db.crew.id),
+						db.attendance.on((db.person.id==db.attendance.person_id) & 
+							(db.attendance.event_id==event_id))],
+					orderby=[db.person.last_name, db.person.first_name])
+		else:
 			people = db(db.person.grade==9).select(
 				db.person.ALL, db.crew.room, db.crew.wefsk,
 				left=db.crew.on(db.person.crew==db.crew.id),
-				join=db.attendance.on((db.person.id==db.attendance.person_id) & 
-					(db.attendance.event_id==event_id) & 
-					(db.attendance.present==present)),
 				orderby=[db.person.last_name, db.person.first_name])
+
 
 	centerStyle = ParagraphStyle(name='Center', alignment=TA_CENTER)
 	leftStyle = ParagraphStyle(name='Left', alignment=TA_LEFT)

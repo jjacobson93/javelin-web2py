@@ -385,8 +385,17 @@ $(function() {
 	$('#nametags-btn').on('click', function() {
 		var type = $('input[name="typeradios"]:checked').val().toLowerCase();
 		var event_name = $('#event_name').val();
+		var present = $('input[name="presentradios"]:checked').val();
+		var event_id = $('#eventatt_select').val();
 		$(this).button('loading');
-		makeNametags(type, event_name);
+		makeNametags(type, event_name, present, event_id);
+	});
+
+	$('#eventatt_select').on('change', function() {
+		if ($(this).val() == -1)
+			$('input[name="presentradios"]').prop('disabled', true);
+		else
+			$('input[name="presentradios"]').prop('disabled', false);
 	});
 
 	$('#att-sheets-btn').on('click', function() {
@@ -539,13 +548,22 @@ function reloadAttendance() {
 	}
 }
 
-function makeNametags(type, event_name) {
+function makeNametags(type, event_name, present, event_id) {
+	if (present == 'null') present = null;
+	else if (present == 'true') present = true;
+	else if (present == 'false') present = false;
+
+	if (event_id == -1)
+		event_id = null;
+
 	$.ajax({
 		type: 'POST',
 		url: '/orientation/call/json/make_labels',
 		data: {
 			'event_name': event_name,
-			'type': type
+			'type': type,
+			'present': present,
+			'event_id': event_id
 		},
 		dataType: 'json',
 		success: function(data) {

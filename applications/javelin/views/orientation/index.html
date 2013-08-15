@@ -343,7 +343,7 @@ table tbody > tr:nth-child(odd):not(:hover) > td {
 			<div class="tab-pane fade active in" id="nametags">
 				<form>
 					<div class="row-fluid">
-						<div class="row-fluid span3" style="margin-left: 10px">
+						<div class="row-fluid span4" style="margin-left: 10px">
 							<label>Type</label>
 							<label class="radio inline">
 								<input type="radio" name="typeradios" id="type_freshmen" value="Freshmen" checked> Freshmen
@@ -352,9 +352,32 @@ table tbody > tr:nth-child(odd):not(:hover) > td {
 								<input type="radio" name="typeradios" id="type_leaders" value="Leaders"> Leaders
 							</label>
 						</div>
-						<div class="row-fluid span3">
+						<div class="row-fluid span4">
 							<label for="event_name">Event Name</label>
-							<input type='text' placeholder="Event Name" id="event_name">
+							<input class="span12" type='text' placeholder="Event Name" id="event_name">
+						</div>
+					</div>
+					<div class="row-fluid">
+						<div class="row-fluid span4">
+							<label for="attendance">Based on Attendance for</label>
+							<select class="span12" type='text' placeholder="Event Name" id="eventatt_select">
+								<option value="-1">None</option>
+								{{for e in db().select(db.events.ALL):}}
+								<option value="{{=e.id}}">{{=e.title}}</option>
+								{{pass}}
+							</select>
+						</div>
+						<div class="row-fluid span4" style="margin-left: 10px">
+							<label>By Present?</label>
+							<label class="radio inline">
+								<input type="radio" name="presentradios" id="present_yes" value="true" checked disabled> Yes
+							</label>
+							<label class="radio inline">
+								<input type="radio" name="presentradios" id="present_no" value="false" disabled> No
+							</label>
+							<label class="radio inline">
+								<input type="radio" name="presentradios" id="present_all" value="null" disabled> All
+							</label>
 						</div>
 					</div>
 				</form>

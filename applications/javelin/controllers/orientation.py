@@ -35,13 +35,14 @@ def quick_attendance(event_id, person_id=None, student_id=None, present=True):
 @auth.requires_login()
 @auth.requires_membership('standard')
 @service.json
-def make_labels(event_name, type, filename='labels'):
+def make_labels(event_name, type, present=None, event_id=None):
 	import time
 	import os
 	import StringIO
 	from datetime import datetime
 
 	year = datetime.now().year
+	filename='labels'
 
 	from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, Image, Spacer
 	from reportlab.platypus.flowables import PageBreak
@@ -62,11 +63,30 @@ def make_labels(event_name, type, filename='labels'):
 			db.person.ALL, db.crew.room, db.crew.wefsk,
 			left=db.crew.on(db.person.crew==db.crew.id),
 			orderby=[db.person.last_name, db.person.first_name])
+
+		if present is not None and event_id is not None:
+			people = db(db.person.leader==True).select(
+				db.person.ALL, db.crew.room, db.crew.wefsk,
+				left=db.crew.on(db.person.crew==db.crew.id),
+				join=db.attendance.on((db.person.id==db.attendance.person_id) & 
+					(db.attendance.event_id==event_id) & 
+					(db.attendance.present==present)),
+				orderby=[db.person.last_name, db.person.first_name])
+
 	else:
 		people = db(db.person.grade==9).select(
 			db.person.ALL, db.crew.room, db.crew.wefsk,
 			left=db.crew.on(db.person.crew==db.crew.id),
 			orderby=[db.person.last_name, db.person.first_name])
+
+		if present is not None and event_id is not None:
+			people = db(db.person.grade==9).select(
+				db.person.ALL, db.crew.room, db.crew.wefsk,
+				left=db.crew.on(db.person.crew==db.crew.id),
+				join=db.attendance.on((db.person.id==db.attendance.person_id) & 
+					(db.attendance.event_id==event_id) & 
+					(db.attendance.present==present)),
+				orderby=[db.person.last_name, db.person.first_name])
 
 	centerStyle = ParagraphStyle(name='Center', alignment=TA_CENTER)
 	leftStyle = ParagraphStyle(name='Left', alignment=TA_LEFT)
@@ -155,6 +175,7 @@ def make_labels(event_name, type, filename='labels'):
 
 		label.append(Paragraph("<font face='Times-Roman' size=11>ID#: {}</font>".format(row.person.student_id), leftStyle))
 		label.append(Paragraph("<font face='Times-Roman' size=11>Crew #: {}</font>".format(row.person.crew), leftStyle))
+
 		label.append(Paragraph("<font face='Times-Roman' size=11>Crew Room: {}</font>".format(row.crew.room), leftStyle))
 		label.append(Paragraph("<font face='Times-Roman' size=11>W.E.F.S.K. Rotation: {}</font>".format(rooms), leftStyle))
 

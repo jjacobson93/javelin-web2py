@@ -41,7 +41,8 @@ routers = dict(
 		domains = {
 			'javelinwebapp.com' : 'javelin',
 			'bugs.javelinwebapp.com' : 'bugs',
-			'forms.javelinwebapp.com' : 'forms'
+			'forms.javelinwebapp.com' : 'forms',
+			'sb.javelinwebapp.com' : 'studybuddies'
 		}
 	)
 )

@@ -76,12 +76,12 @@ $(function() {
 		var localDate = new Date(ev.date.valueOf() + ev.date.getTimezoneOffset()*60000);
 		console.log("LOCAL DATE: " + localDate);
 		$('.date-long-span').html(monthNames[localDate.getMonth()] + " " + localDate.getDate() + ", " + localDate.getFullYear());
-		localDate = localDate.getFullYear() + "-" + 
-			("0" + (localDate.getMonth() + 1)).slice(-2) + "-" + 
-			("0" + localDate.getDate()).slice(-2) + "-" + 
-			("0" + localDate.getHours()).slice(-2) + "-" +
-			("0" + localDate.getMinutes()).slice(-2) + "-" + 
-			("0" + localDate.getSeconds()).slice(-2);
+		var date = ev.date.getFullYear() + "-" + 
+			("0" + (ev.date.getMonth() + 1)).slice(-2) + "-" + 
+			("0" + ev.date.getDate()).slice(-2) + "-" + 
+			("0" + ev.date.getHours()).slice(-2) + "-" +
+			("0" + ev.date.getMinutes()).slice(-2) + "-" + 
+			("0" + ev.date.getSeconds()).slice(-2);
 		loadTable(localDate);
 	});
 

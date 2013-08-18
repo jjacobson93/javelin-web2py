@@ -77,6 +77,7 @@ $(function() {
 		console.log("LOCAL DATE: " + localDate);
 		$('.date-long-span').html(monthNames[localDate.getMonth()] + " " + localDate.getDate() + ", " + localDate.getFullYear());
 		var date = new Date(localDate.valueOf() + localDate.getTimezoneOffset()*60000);
+		console.log("UTC DATE: " + date);
 
 		date = date.getFullYear() + "-" + 
 			("0" + (date.getMonth() + 1)).slice(-2) + "-" + 

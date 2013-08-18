@@ -9,11 +9,8 @@ function setCurrentDate(date) {
 }
 
 function loadTable(date) {
-	console.log("LOADING TABLE WITH DATE: " + date);
 	var local = utcToLocal(date);
-	console.log("LOCAL: " + local);
 	var date = dateToStartEnd(local);
-	console.log("DATE START/END: (" + date.start + ", " + date.end + ")");
 	$.ajax({
 		type: "POST",
 		url: "/studybuddies/archive/table",
@@ -71,13 +68,9 @@ $(function() {
         todayBtn: true,
         minView: 2
 	}).on('changeDate', function(ev){
-		console.log("DATE CHANGED: " + ev.date);
-		console.log("TIMEZONE OFFSET: " + ev.date.getTimezoneOffset());
 		var localDate = new Date(ev.date.valueOf() + ev.date.getTimezoneOffset()*60000);
-		console.log("LOCAL DATE: " + localDate);
 		$('.date-long-span').html(monthNames[localDate.getMonth()] + " " + localDate.getDate() + ", " + localDate.getFullYear());
 		var date = new Date(localDate.valueOf() + localDate.getTimezoneOffset()*60000);
-		console.log("UTC DATE: " + date);
 
 		date = date.getFullYear() + "-" + 
 			("0" + (date.getMonth() + 1)).slice(-2) + "-" + 

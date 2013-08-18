@@ -12,7 +12,7 @@
 	</thead>
 	<tbody>
 		<tr {{if students:}}style="display: none"{{pass}} id="no-students-row">
-			<td colspan='7' style="text-align: center"><h4>No Students</h4></td>
+			<td colspan='7' style="text-align: center"><h2 style="margin-top: 10px">No Students</h2></td>
 		</tr>
 		{{for s in students:}}
 		<tr {{if s.sb_att.is_out:}}class="sb-out-hide"{{pass}}>

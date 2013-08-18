@@ -1,10 +1,58 @@
+var currentDate = undefined;
+var monthNames = [ "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December" ];
+
+function setCurrentDate(date) {
+	currentDate = date;
+	var localDate = utcToLocal(date);
+	$('.date-long-span').html(monthNames[localDate.getMonth()] + " " + localDate.getDate() + ", " + localDate.getFullYear());
+}
+
 function loadTable(section_id, date) {
+	var date = dateToStartEnd(utcToLocal(date));
 	$.ajax({
 		type: "POST",
-		url: "/table",
+		url: "/studybuddies/table",
 		data: {
 			'section_id': section_id,
-			'date': date
+			'start': date.start,
+			'end': date.end
+		},
+		success: function(content) {
+			var v = $('#out-show-all-btn').attr('data-value');
+			$('#sb-table-content').html(content);
+			if (v == 'Show') {
+				$('.sb-out-hide').hide();	
+			}
+			$('#sb-table-content').css("height", $(window).height()/2);
+		}
+	});
+}
+
+function loadSections(date) {
+	var date = dateToStartEnd(utcToLocal(date));
+	$.ajax({
+		type: "POST",
+		url: "/studybuddies/sections",
+		data: {
+			'start': date.start,
+			'end': date.end
+		},
+		success: function(content) {
+			window.history.pushState({"html":content, "pageTitle": "Javelin Study Buddies"},"", "");
+			$('.sb-rows').html(content);
+		}
+	});
+}
+
+function loadCheckouts(date) {
+	var date = dateToStartEnd(utcToLocal(date));
+	$.ajax({
+		type: "POST",
+		url: "/studybuddies/checkout_table",
+		data: {
+			'start': date.start,
+			'end': date.end
 		},
 		success: function(content) {
 			$('#sb-table-content').html(content);
@@ -13,52 +61,18 @@ function loadTable(section_id, date) {
 	});
 }
 
-function loadSections(date) {
-	$.ajax({
-		type: "POST",
-		url: "/sections",
-		data: {
-			'date': date
-		},
-		success: function(content) {
-			window.history.pushState({"html":content, "pageTitle": "Javelin Study Buddies"},"", "/?date=" + date);
-			$('.sb-rows').html(content);
-		}
-	});
-}
-
-function reloadTable() {
-	var section_id = $('#sb_section_input').val();
-	var date = $('#date-menu').attr("data-value");
-	$.ajax({
-		type: "POST",
-		url: "/table",
-		data: {
-			'section_id': section_id,
-			'date': date
-		},
-		success: function(content) {
-			var v = $('#out-show-all-btn').attr('data-value');
-			$('#sb-table-content').html(content);
-			if (v == 'Show') {
-				$('.sb-out-hide').hide();	
-			}
-		}
-	});
-}
-
 function updateCounts() {
-	var date = $('#date-menu').attr("data-value");
+	var date = dateToStartEnd(utcToLocal($('#currdate-input').val()));
 	$.ajax({
 		type: "POST",
-		url: "/call/json/counts",
+		url: "/studybuddies/call/json/counts",
 		data: {
-			'date': date
+			'start': date.start,
+			'end': date.end
 		},
 		dataType: 'json',
 		success: function(data) {
 			$.each(data, function(key, value) {
-				console.log($('#' + key + '_count'));
 				$('#' + key + '_count').html((value != 0) ? value : '');
 			});
 		},
@@ -69,20 +83,20 @@ function updateCounts() {
 }
 
 function checkIn(person_id, section_id) {
-	var date = $('#date-menu').attr("data-value");
 	$.ajax({
 		type: 'POST',
-		url: '/call/json/checkin',
+		url: '/studybuddies/call/json/checkin',
 		data: {
 			'person_id': person_id,
-			'section_id': section_id,
-			'date': date
+			'section_id': section_id
 		},
 		dataType: 'json',
 		success: function() {
 			$('#checkin_id_input').val('');
 			$('#checkin_id_submit').addClass('disabled');
-			reloadTable();
+			var section_id = $('#sb_section_input').val();
+			var date = $('#currdate-input').val();
+			loadTable(section_id, date);
 			updateCounts();
 		},
 		error: function() {
@@ -91,22 +105,28 @@ function checkIn(person_id, section_id) {
 	});
 }
 
-function checkOut(person_id, section_id) {
-	var date = $('#date-menu').attr("data-value");
+function checkOut(person_id, any) {
 	$.ajax({
 		type: 'POST',
-		url: '/call/json/checkout',
+		url: '/studybuddies/call/json/checkout',
 		data: {
-			'person_id': person_id,
-			'section_id': section_id,
-			'date': date
+			'person_id': person_id
 		},
 		dataType: 'json',
 		success: function() {
-			$('#checkout_id_input').val('');
-			$('#checkout_id_submit').addClass('disabled');
-			reloadTable();
-			updateCounts();
+			if (!any) {
+				$('#checkout_id_input').val('');
+				$('#checkout_id_submit').addClass('disabled');
+				var section_id = $('#sb_section_input').val();
+				var date = $('#currdate-input').val();
+				loadTable(section_id, date);
+				updateCounts();
+			} else {
+				$('#checkoutall_id_input').val('');
+				$('#checkoutall_id_submit').addClass('disabled');
+				var date = $('#currdate-input').val();
+				loadCheckouts(date);
+			}
 		},
 		error: function() {
 			displayError("Could not check in Student ID " + person_id + ".");
@@ -114,34 +134,47 @@ function checkOut(person_id, section_id) {
 	});
 }
 
-function loadDates() {
-	$.ajax({
-		type: "POST",
-		url: "/call/json/dates",
-		dataType: 'json',
-		success: function(data) {
-			var list = $('<div/>');
-			var d = $('#date-menu').attr('data-value');
+// function loadDates() {
+// 	$.ajax({
+// 		type: "POST",
+// 		url: "/studybuddies/call/json/dates",
+// 		dataType: 'json',
+// 		success: function(data) {
+// 			var list = $('<div/>');
+// 			var d = $('#currdate-input').val();
+// 			var currUtcDate = utcStringToDate(d);
 
-			$.each(data, function(i, el) {
-				list.append($('<li><a href="#" data-value="' + data[i]['value'] +
-					'">' + ((d == data[i]['value']) ? '<i class="icon-caret-right"></i> ' : '') +
-					data[i]['label'] + '</a></li>'));
-			});
+// 			$.each(data, function(i, el) {
+// 				var localDate = utcToLocal(data[i]);
+// 				var utcDate = utcStringToDate(data[i]);
 
-			$('#date-menu').html(list.html());
-		},
-		error: function() {
-			displayError("Could not load date menu.");
-			$('#date-menu').append('<li style="background-color: #f2dede; padding: 10px; text-align: center"><b>Error!</b></li>');
-		}
-	});
-}
+// 				var value = utcDate.getFullYear() + "-" + 
+// 					("0" + (utcDate.getMonth() + 1)).slice(-2) + "-" + 
+// 					("0" + utcDate.getDate()).slice(-2) + "-" + 
+// 					("0" + utcDate.getHours()).slice(-2) + "-" +
+// 					("0" + utcDate.getMinutes()).slice(-2) + "-" + 
+// 					("0" + utcDate.getSeconds()).slice(-2);
+
+// 				var label = monthNames[localDate.getMonth()] + " " + localDate.getDate() + ", " + localDate.getFullYear();
+
+// 				list.append($('<li><a href="#" data-value="' + value +
+// 					'">' + ((currUtcDate.getFullYear() == utcDate.getFullYear() && 
+// 						currUtcDate.getMonth() == utcDate.getMonth() && currUtcDate.getDate() == utcDate.getDate()) ? '<i class="icon-caret-right"></i> ' : '') +
+// 					label + '</a></li>'));
+// 			});
+
+// 			$('#currdate-input').val();
+// 		},
+// 		error: function() {
+// 			$('#currdate-input').val()d-color: #f2dede; padding: 10px; text-align: center"><b>Error!</b></li>');
+// 		}
+// 	});
+// }
 
 $(function() {
 	window.onpopstate = function(e){
 		if (e.state){
-			document.getElementById("content").innerHTML = e.state.html;
+			// document.getElementById("content").innerHTML = e.state.html;
 			document.title = e.state.pageTitle;
 		}
 	};
@@ -154,8 +187,7 @@ $(function() {
 
 	$('#checkout_id_submit').on('click', function() {
 		var person_id = $('#checkout_id_input').val();
-		var section_id = $('#sb_section_input').val();
-		checkOut(person_id, section_id);
+		checkOut(person_id, false);
 	});
 
 	$('#checkin_id_input').on('keyup', function(e) {
@@ -183,25 +215,28 @@ $(function() {
 		if (v == 'Show') {
 			$(this).attr('data-value', 'Hide');
 			$(this).html("Hide Inactive");
-			$('.sb-out-hide').fadeIn(500);
-			$('#no-students-row').hide();
+			$('.sb-out-hide').fadeIn(250);
+			if ($('#sb-table-content table tbody tr:not(.sb-out-hide, #no-students-row)').length == 0) {
+				$('#no-students-row').fadeOut(250);
+			} else {
+				$('#no-students-row').fadeIn(250);
+			}
 		}
 		else {
 			$(this).attr('data-value', 'Show');
 			$(this).html("Show Inactive");
-			$('.sb-out-hide').fadeOut(500);
-
+			$('.sb-out-hide').fadeOut(250);
 			if ($('#sb-table-content table tbody tr:not(.sb-out-hide, #no-students-row)').length == 0) {
-				$('#no-students-row').fadeIn(500);;
+				$('#no-students-row').fadeIn(250);
 			} else {
-				$('#no-students-row').fadeOut(500);
+				$('#no-students-row').fadeOut(250);
 			}
 		}
 	});
 
 	$(document).on('click', 'button.sb-section', function() {
 		var section = $(this).attr('data-section');
-		var date = $('#date-menu').attr('data-value');
+		var date = $('#currdate-input').val();
 		var text = $(this).html();
 		$('#section_title').html(text);
 		$('#sb_section_input').val(section);
@@ -260,16 +295,19 @@ $(function() {
 		}, 450);
 	});
 
-	$('#date-btn').on('click', function() {
-		$('#date-menu').html("<li style='text-align: center'><span><i class='icon-spinner icon-spin icon-2x'></i></span></li>");
-		loadDates();
-	});
+	// $('#date-btn').on('click', function() {
+	// 	$('#currdate-input').val()t-align: center'><span><i class='icon-spinner icon-spin icon-2x'></i></span></li>");
+	// 	loadDates();
+	// });
 
-	$('#date-menu').on('click', 'li > a', function(e) {
-		e.preventDefault();
-		$('#date-menu').attr('data-value', $(this).attr('data-value'));
-		$('#date-btn').html($(this).html() + " <span class='caret'></span>");
-		loadSections($(this).attr('data-value'));
-	});
+	// $('#currdate-input').val()i > a', function(e) {
+	// 	e.preventDefault();
+	// 	var value = $(this).attr('data-value');
+	// 	var date = utcToLocal(value);
+	// 	var label = monthNames[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear();
+	// 	$('#currdate-input').val(), value);
+	// 	$('#date-btn').html(label + " <span class='caret'></span>");
+	// 	loadSections(value);
+	// });
 
 });

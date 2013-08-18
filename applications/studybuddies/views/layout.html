@@ -183,12 +183,15 @@
 							<span class="icon-bar"></span>
 							<span class="icon-bar"></span>
 						</button>
-						<a href="/" class="navbar-brand">
+						<a href="{{=URL('default','index')}}" class="navbar-brand">
 							<span class="javelin-brand">Javelin</span> <span class="reg-span">Study Buddies</span>
 						</a>
 					</div>
 					<nav class="collapse navbar-collapse" role="navigation">
 						<ul class="nav navbar-nav">
+							<li {{if request.function == 'checkoutall':}}class="active"{{pass}}>
+								<a href="{{=URL('default','checkoutall')}}">Check Out</a>
+							</li>
 							<li {{if request.controller == 'archive':}}class="active"{{pass}}>
 								<a href="{{=URL('archive', 'index')}}">Archive</a>
 							</li>

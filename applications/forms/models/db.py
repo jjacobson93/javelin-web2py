@@ -13,6 +13,7 @@ import uuid
 import logging
 logger = logging.getLogger('web2py.app.forms')
 logger.setLevel(logging.DEBUG)
+from conf import *
 
 from gluon.custom_import import track_changes
 track_changes(True)
@@ -20,7 +21,7 @@ track_changes(True)
 if not request.env.web2py_runtime_gae:
 	## if NOT running on Google App Engine use SQLite or other DB
 	# db = DAL('sqlite://storage.sqlite',pool_size=1,check_reserved=['all'],migrate=False)
-	db = DAL('postgres://postgres:p0stmast3r!@localhost/javelin')
+	db = DAL(DB_URI)
 	session.connect(request, response, db=db, masterapp='javelin')
 else:
 	## connect to Google BigTable (optional 'google:datastore://namespace')

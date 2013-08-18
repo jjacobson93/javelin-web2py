@@ -1,39 +1,24 @@
 {{extend 'layout.html'}}
 
 {{block content}}
+<link rel="stylesheet" type="text/css" href="{{=URL('static', 'css/datetimepicker.css')}}">
+
 <div class="row" style="margin-bottom: 20px">
 	<div class="col-12 col-sm-12">
-		<div class="btn-group">
-			<button id="date-btn" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="font-size: 20px">
-				{{=datetime.datetime.strptime(currdate, '%Y-%m-%d').date().strftime('%B %d, %Y')}} <span class="caret"></span>
-			</button>
-			<ul class="dropdown-menu" style="width">
-				<li style="padding-bottom: 4px">
-					<span style="padding: 0 20px; line-height: 1.428571429; clear: both">
-						<i class="icon-time"></i> <b>Choose a date</b>
-					</span>
-				</li>
-				<li>
-					<ul class="dropdown-menu scroll-menu" id="date-menu" data-value="{{=currdate}}">
-						{{for d in dates:}}
-						<li>
-							<a href="#" data-value="{{=d['value']}}">
-								{{if d['value'] == currdate:}}
-								<i class="icon-caret-right"></i>
-								{{pass}}
-								{{=d['label']}}
-							</a>
-						</li>
-						{{pass}}
-					</ul>
-				</li>
-			</ul>
-		</div>
+		<button id="date-btn" type="button" class="btn btn-default" style="font-size: 20px">
+ 			<span class="date-long-span"></span> <span class="caret"></span>
+		</button>
 	</div>
 </div>
 
-<div id="sb-table-content" style="overflow: scroll">
-{{=LOAD('archive', 'table', vars={'date': currdate})}}
-</div>
+<div id="sb-table-content" style="overflow: scroll"></div>
+
 <script type="text/javascript" src="{{=URL('static', 'js/archive.js')}}"></script>
+<script type="text/javascript" src="{{=URL('static', 'js/bootstrap-datetimepicker.min.js')}}"></script>
+<script type="text/javascript">
+$(function() {
+	setCurrentDate("{{=currdate}}");
+	loadTable("{{=currdate}}");
+});
+</script>
 {{end}}

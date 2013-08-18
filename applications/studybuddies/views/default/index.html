@@ -14,6 +14,17 @@
 		}
 	}*/
 
+	.close {
+		opacity: 0.6;
+		filter: alpha(opacity=60);
+	}
+
+	.close:hover,
+	.close:focus {
+		opacity: 0.95;
+		filter: alpha(opacity=95);
+	}
+
 	div.login-form {
 		width: 340px;
 		margin: 20px auto;
@@ -97,9 +108,11 @@
 
 <div class="row" style="margin-bottom: 20px">
 	<div class="col-12 col-sm-12">
-		<div class="btn-group">
+		<span class="date-long-span" style="font-size: 28px; font-weight: bold"></span>
+		<input type="hidden" id="currdate-input" value="{{=currdate}}">
+		<!-- <div class="btn-group">
 			<button id="date-btn" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="font-size: 20px">
-				{{=datetime.datetime.strptime(currdate, '%Y-%m-%d').date().strftime('%B %d, %Y')}} <span class="caret"></span>
+				<span class="date-long-span"></span> <span class="caret"></span>
 			</button>
 			<ul class="dropdown-menu" style="width">
 				<li style="padding-bottom: 4px">
@@ -108,21 +121,10 @@
 					</span>
 				</li>
 				<li>
-					<ul class="dropdown-menu scroll-menu" id="date-menu" data-value="{{=currdate}}">
-						{{for d in dates:}}
-						<li>
-							<a href="#" data-value="{{=d['value']}}">
-								{{if d['value'] == currdate:}}
-								<i class="icon-caret-right"></i>
-								{{pass}}
-								{{=d['label']}}
-							</a>
-						</li>
-						{{pass}}
-					</ul>
+					<ul class="dropdown-menu scroll-menu" id="date-menu" data-value=""></ul>
 				</li>
 			</ul>
-		</div>
+		</div> -->
 	</div>
 </div>
 <div class="sb-main-view">
@@ -159,9 +161,13 @@
 	</div>
 </div>
 
-<div class="sb-rows" id="index-main">
-	{{=LOAD('default', 'sections', vars={'date': currdate})}}
-</div>
+<div class="sb-rows"></div>
 
 <script type="text/javascript" src="{{=URL('static', 'js/default.js')}}"></script>
+<script type="text/javascript">
+$(function() {
+	setCurrentDate("{{=currdate}}");
+	loadSections("{{=currdate}}");
+});
+</script>
 {{end}}

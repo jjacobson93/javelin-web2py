@@ -1,3 +1,50 @@
+function dateToStartEnd(date) {
+	return {
+		start: dateToStringValue(new Date(date.getFullYear(), date.getMonth(), date.getDate())),
+		end: dateToStringValue(new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1))
+	};
+}
+
+function utcToLocal(dateString) {
+	var tmpDate = utcStringToDate(dateString); //UTC time
+	var tzOffset = new Date().getTimezoneOffset();
+	return new Date(tmpDate.valueOf() - tzOffset*60000);
+}
+
+function utcStringToDate(dateString) {
+	var date = dateString.split('-');
+	return new Date(date[0], date[1] - 1, date[2], date[3], date[4], date[5]);
+}
+
+function dateToStringValue(date) {
+	date = shiftToUTC(date);
+	return date.getFullYear() + "-" + 
+		("0" + (date.getMonth() + 1)).slice(-2) + "-" + 
+		("0" + date.getDate()).slice(-2) + "-" + 
+		("0" + date.getHours()).slice(-2) + "-" +
+		("0" + date.getMinutes()).slice(-2) + "-" + 
+		("0" + date.getSeconds()).slice(-2);
+}
+
+function shiftToUTC(date) {
+	var tzOffset = new Date().getTimezoneOffset();
+	return new Date(date.valueOf() + tzOffset*60000);
+}
+
+function formatAMPM(date) {
+	if (date) {
+		var hours = date.getHours();
+		var minutes = date.getMinutes();
+		var ampm = hours >= 12 ? 'PM' : 'AM';
+		hours = hours % 12;
+		hours = hours ? hours : 12; // the hour '0' should be '12'
+		minutes = minutes < 10 ? '0'+minutes : minutes;
+		var strTime = hours + ':' + minutes + ' ' + ampm;
+		return strTime;
+	} else
+		return "None"
+}
+
 // function checkIn(id) {
 // 	$.ajax({
 // 		type: 'POST',

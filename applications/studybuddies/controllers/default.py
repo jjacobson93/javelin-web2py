@@ -15,103 +15,216 @@ def index():
 	if you need a simple wiki simple replace the two lines below with:
 	return auth.wiki()
 	"""
-	currdate = request.vars['date'] or request.now.date().strftime('%Y-%m-%d')
-	return dict(dates=dates(), currdate=currdate)
+	currdate = request.now.strftime('%Y-%m-%d-%H-%M-%S') #this is UTC time
+	return dict(currdate=currdate)
 
 @auth.requires_login()
 def sections():
-	date = request.vars['date']
-	if not date or date == 'today':
-		return dict(counts=counts())
+	start = request.vars.get('start', None)
+	end = request.vars.get('end', None)
+	if start and end:
+		return dict(counts=counts(start, end))
 	else:
-		return dict(counts=counts(date))
+		return dict(counts=dict())
+		
 
 @auth.requires_login()
 def table():
-	date = request.vars['date']
+	start = request.vars.get('start', None)
+	end = request.vars.get('end', None)
+
 	section = request.vars['section_id']
-	if not date or date == 'today':
-		students = db(db.sb_att.event_date==request.now.date()).select(
-				db.person.ALL, db.sb_att.ALL, 
-				join=db.sb_att.on((db.person.id==db.sb_att.person_id) & (db.sb_att.sb_section_id==section)),
-				orderby=[~db.sb_att.in_time, ~db.sb_att.out_time])
-	else:
-		students = db(db.sb_att.event_date==datetime.datetime.strptime(date, '%Y-%m-%d').date()).select(
+	if start and end:
+		start = datetime.datetime.strptime(start, '%Y-%m-%d-%H-%M-%S')
+		end = datetime.datetime.strptime(end, '%Y-%m-%d-%H-%M-%S')
+		
+		students = db(((db.sb_att.in_time >= start) & (db.sb_att.in_time < end)) |
+			((db.sb_att.out_time >= start) & (db.sb_att.out_time < end)) ).select(
 				db.person.ALL, db.sb_att.ALL, 
 				join=db.sb_att.on((db.person.id==db.sb_att.person_id) & (db.sb_att.sb_section_id==section)),
 				orderby=[~db.sb_att.in_time, ~db.sb_att.out_time])
 
-	return dict(students=students)
+		return dict(students=students)
+	else:
+		return dict(students=list())
 
 @auth.requires_login()
 @service.json
-def checkin(person_id, section_id, date):
-	if type(date) == str:
-		date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
-
-	student = db(db.person.student_id==person_id).select().first()
-	if student:
-		person_id = student.student_id
-
-	check = db((db.sb_att.event_date==date) & 
-		(db.sb_att.person_id==person_id) &
-		(db.sb_att.sb_section_id==section_id)).select().first()
-
+def checkin(person_id, section_id):
+	student = db((db.person.student_id==person_id) | 
+		(db.person.id==person_id)).select().first()
 	result = None
 	error = None
-	if not check:
-		checktwo = db((db.sb_att.person_id==person_id) & (db.sb_att.is_out==False)).select()
-		if checktwo:
-			for c in checktwo:
-				update = db((db.sb_att.person_id==person_id) & 
-					(db.sb_att.id==c.id)).update(studyhour=calc_hour(c.in_time), is_out=True) # if not checked out of other section, check out
-		result = db.sb_att.insert(person_id=person_id, sb_section_id=section_id)
+
+	if student:
+		person_id = student.id
+
+		check = db((db.sb_att.is_out==False) & 
+			(db.sb_att.person_id==person_id) &
+			(db.sb_att.sb_section_id==section_id)).select().first()
+
+		
+		if not check:
+			checktwo = db((db.sb_att.person_id==person_id) & 
+				(db.sb_att.is_out==False)).select()
+			if checktwo:
+				for c in checktwo:
+					update = db((db.sb_att.person_id==person_id) & 
+						(db.sb_att.id==c.id)).update(studyhour=calc_hour(c.in_time), is_out=True) # if not checked out of other section, check out
+			result = db.sb_att.insert(person_id=person_id, sb_section_id=section_id)
+		else:
+			result = 'Already exists'
+			error = True
 	else:
-		result = 'Already exists'
+		result = "No person exists with ID"
 		error = True
 
 	return dict(response=result, error=error)
 
 @auth.requires_login()
 @service.json
-def checkout(person_id, section_id, date):
-	if type(date) == str:
-		date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
+def checkout(person_id):
+	student = db((db.person.student_id==person_id) | 
+		(db.person.id==person_id)).select().first()
+	result = None
+	error = None
 
-	student = db(db.person.student_id==person_id).select().first()
+	if student:
+		person_id = student.id
+
+		check = db((db.sb_att.is_out==False) &
+					(db.sb_att.person_id==person_id)).select()
+		if check:
+			for c in check:
+				db(db.sb_att.id==c.id).update(studyhour=calc_hour(c.in_time), is_out=True)
+		else:
+			result = 'Does not exist'
+			error = True
+	else:
+		result = "No person exists with ID"
+		error = True
+
+	return dict(response=result, error=error)
+
+@auth.requires_login()
+def checkoutall():
+	currdate = request.now.strftime('%Y-%m-%d-%H-%M-%S') #this is UTC time
+	return dict(currdate=currdate)
+
+@auth.requires_login()
+def checkout_table():
+	start = request.vars.get('start', None)
+	end = request.vars.get('end', None)
+
+	if start and end:
+		start = datetime.datetime.strptime(start, '%Y-%m-%d-%H-%M-%S')
+		end = datetime.datetime.strptime(end, '%Y-%m-%d-%H-%M-%S')
+
+		records = db(((db.sb_att.in_time >= start) & 
+			(db.sb_att.in_time < end)) &
+			(db.sb_att.is_out==True)).select(
+				db.person.ALL, db.sb_att.ALL, db.sb_section.ALL,
+				join=[db.sb_att.on(db.person.id==db.sb_att.person_id),
+					db.sb_section.on(db.sb_section.id==db.sb_att.sb_section_id)],
+				orderby=db.person.id|db.person.last_name|db.person.first_name,
+				distinct=db.person.id)
+
+		def recordsfor(id):
+			return db(((db.sb_att.in_time >= start) & 
+				(db.sb_att.in_time < end)) &
+			(db.sb_att.is_out==True)).select(
+				db.person.ALL, db.sb_att.ALL, db.sb_section.ALL,
+				join=[db.sb_att.on((db.person.id==db.sb_att.person_id) & (db.person.id==id)),
+					db.sb_section.on(db.sb_section.id==db.sb_att.sb_section_id)],
+				orderby=[db.person.last_name, db.person.first_name])
+
+		students = list()
+		for p in records:
+			s = Storage(subjects=[],totalhours=[], in_time=None, out_time=None, **dict((c,v) for c, v in p.items()))
+			for r in recordsfor(p.person.id):
+				s.subjects.append(str(r.sb_section.title))
+				s.totalhours.append(r.sb_att.studyhour)
+				if not s.in_time or (r.sb_att.in_time and r.sb_att.in_time < s.in_time):
+					s.in_time = r.sb_att.in_time
+
+				if not s.out_time or (r.sb_att.out_time and r.sb_att.out_time > s.out_time):
+					s.out_time = r.sb_att.out_time
+
+			s.subjects = ', '.join(s.subjects)
+			s.totalhours = sum(s.totalhours) if sum(s.totalhours) <= 2 else 2
+
+			students.append(s)
+
+
+		return dict(students=students)
+
+	return dict(students=list())
+
+@auth.requires_login()
+@service.json
+def checkout_any(person_id):
+	student = db((db.person.student_id==person_id) | 
+		(db.person.person_id==person_id)).select().first()
+	result = None
+	error = None
+
 	if student:
 		person_id = student.student_id
 
-	check = db((db.sb_att.event_date==date) & 
-		(db.sb_att.person_id==person_id) &
-		(db.sb_att.sb_section_id==section_id)).select().first()
-	result = None
-	error = None
-	if check:
-		result = db(db.sb_att.id==check.id).update(studyhour=calc_hour(check.in_time), is_out=True)
+		check = db((db.sb_att.is_out==False) & 
+			(db.sb_att.person_id==person_id)).select().first()
+		
+		if check:
+			result = db(db.sb_att.id==check.id).update(studyhour=calc_hour(check.in_time), is_out=True)
 	else:
-		result = 'Does not exist'
+		result = "No person exists with ID"
 		error = True
 
 	return dict(response=result, error=error)
 
 @auth.requires_login()
 @service.json
-def counts(date=request.now.date()):
-	if type(date) is str:
-		date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
+def counts(start, end):
+	if start and end:
+		start = datetime.datetime.strptime(start, '%Y-%m-%d-%H-%M-%S')
+		end = datetime.datetime.strptime(end, '%Y-%m-%d-%H-%M-%S')
 
-	sections= db().select(db.sb_section.ALL)
-	counts = dict(('_'.join(s.title.lower().split()), db((db.sb_att.event_date==date) & 
-		(db.sb_att.sb_section_id==s.id) & (db.sb_att.is_out==False)).count()) for s in sections)
-	return counts
+		sections = db().select(db.sb_section.ALL)
+		counts = dict(('_'.join(s.title.lower().split()), 
+			db( (((db.sb_att.in_time >= start) & (db.sb_att.in_time < end)) |
+				((db.sb_att.out_time >= start) & (db.sb_att.out_time < end))) & 
+				(db.sb_att.sb_section_id==s.id) & 
+				(db.sb_att.is_out==False)).count()) for s in sections)
+		return counts
+	else:
+		return dict()
 
-@auth.requires_login()
-@service.json
-def dates():
-	dates = [dict(label=d.event_date.strftime('%B %d, %Y'), value=d.event_date.strftime('%Y-%m-%d'))
-		for d in db().select(db.sb_att.event_date, groupby=db.sb_att.event_date)]
-	return dates
+# @auth.requires_login()
+# @service.json
+# def dates(offset):
+# 	"""
+# 		:param offset: Timezone offset in minutes
+# 	"""
+# 	minimum = db.sb_att.in_time.min()
+# 	earliest = db().select(minimum).first()
+	
+# 	dates = list()
+# 	if earliest:
+# 		now = request.now
+# 		numdays = (now - earliest).days
+# 		for x in range(numdays):
+# 			new = earliest - datetime.timedelta(minutes=offset) + datetime.timedelta(days=x)
+# 			dates.append(dict(label=new.strftime('%B %d, %Y'), value=new.strftime('%Y-%m-%d-%H-%M-%S')))
+# 	else:
+# 		new = now - datetime.timedelta(minutes=offset)
+# 		dates.append(dict(label=new.strftime('%B %d, %Y'), value=new.strftime('%Y-%m-%d-%H-%M-%S')))
+
+# 	return dates
+
+def is_in_day(time, date):
+	start = datetime.datetime(date.year, date.month, date.day)
+	end = start + datetime.timedelta(1)
+	return True if (time >= start and time < end) else False
 
 def calc_hour(in_time):
 	diff = request.now - in_time

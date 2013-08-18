@@ -11,17 +11,31 @@
 	</thead>
 	<tbody>
 		<tr {{if students:}}style="display: none"{{pass}} id="no-students-row">
-			<td colspan='7' style="text-align: center"><h4>No Students</h4></td>
+			<td colspan='6' style="text-align: center"><h2 style="margin-top: 10px">No Students</h2></td>
 		</tr>
 		{{for s in students:}}
 		<tr {{if s.sb_att.is_out:}}class="sb-out-hide"{{pass}}>
 			<td>{{=s.person.id}}</td>
 			<td>{{=s.person.last_name}}</td>
 			<td>{{=s.person.first_name}}</td>
-			<td>{{=s.sb_att.in_time.strftime("%I:%M %p")}}</td>
-			<td>{{=s.sb_att.out_time.strftime("%I:%M %p") if s.sb_att.out_time else None}}</td>
+			<td class="time-cell" data-value="{{=s.sb_att.in_time.strftime('%Y-%m-%d-%H-%M-%S')}}"></td>
+			<td class="time-cell" data-value="{{=s.sb_att.out_time.strftime('%Y-%m-%d-%H-%M-%S') if s.sb_att.out_time else None}}"></td>
 			<td>{{=s.sb_att.studyhour}}</td>
 		</tr>
 		{{pass}}
 	</tbody>
 </table>
+
+<script type="text/javascript">
+$(function() {
+	$('.time-cell').each(function(i, el) {
+		var value = $(el).attr('data-value');
+		if (value != "None") {
+			var date =  utcToLocal(value);
+			$(el).html(formatAMPM(date));
+		} else {
+			$(el).html("None");
+		}
+	});
+});
+</script>

@@ -27,7 +27,7 @@ def data(str_filter=None):
 			(db.person.first_name.contains(str_filter)) |
 			(db.person.id.contains(str_filter))).as_list()
 	else:
-		people = db().select(db.person.ALL, db.crew.room, left=db.crew.on(db.person.crew==db.crew.id), orderby=db.person.id).as_list()
+		people = db().select(db.person.ALL, db.crew.room, left=db.crew.on(db.person.crew==db.crew.id), orderby=db.person.last_name).as_list()
 
 	people = [dict((k[-1],v) for k,v in flattenDict(d).items()) for d in people]
 	return people

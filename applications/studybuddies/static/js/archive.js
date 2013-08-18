@@ -1,12 +1,24 @@
+var currentDate = undefined;
+var monthNames = [ "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December" ];
+
+function setCurrentDate(date) {
+	currentDate = date;
+	var localDate = utcToLocal(date);
+	$('.date-long-span').html(monthNames[localDate.getMonth()] + " " + localDate.getDate() + ", " + localDate.getFullYear());
+}
+
 function loadTable(date) {
+	var date = dateToStartEnd(utcToLocal(date));
 	$.ajax({
 		type: "POST",
-		url: "/archive/table",
+		url: "/studybuddies/archive/table",
 		data: {
-			'date': date
+			'start': date.start,
+			'end': date.end
 		},
 		success: function(content) {
-			window.history.pushState({"html":content, "pageTitle": "Javelin Study Buddies", "date": date},"", "/archive?date=" + date);
+			window.history.pushState({"html":content, "pageTitle": "Javelin Study Buddies"},"", "");
 			$('#sb-table-content').html(content);
 			$('#sb-table-content').css("height", $(window).height() - $('.navbar').outerHeight() - 100);
 		}
@@ -48,15 +60,33 @@ $(function() {
 
 	$('#sb-table-content').css("height", $(window).height() - $('.navbar').outerHeight() - 100);
 
-	$('#date-btn').on('click', function() {
-		$('#date-menu').html("<li style='text-align: center'><span><i class='icon-spinner icon-spin icon-2x'></i></span></li>");
-		loadDates();
+	$("#date-btn").datetimepicker({
+		format: 'yyyy-mm-dd-hh-ii-ss',
+		showMeridian: true,
+        autoclose: true,
+        todayBtn: true,
+        minView: 2
+	}).on('changeDate', function(ev){
+		var localDate = new Date(ev.date.getFullYear(), ev.date.getMonth(), ev.date.getDate(), 0, 0);
+		$('.date-long-span').html(monthNames[localDate.getMonth()] + " " + localDate.getDate() + ", " + localDate.getFullYear());
+		localDate = localDate.getFullYear() + "-" + 
+			("0" + (localDate.getMonth() + 1)).slice(-2) + "-" + 
+			("0" + localDate.getDate()).slice(-2) + "-" + 
+			("0" + localDate.getHours()).slice(-2) + "-" +
+			("0" + localDate.getMinutes()).slice(-2) + "-" + 
+			("0" + localDate.getSeconds()).slice(-2);
+		loadTable(localDate);
 	});
 
-	$('#date-menu').on('click', 'li > a', function(e) {
-		e.preventDefault();
-		$('#date-menu').attr('data-value', $(this).attr('data-value'));
-		$('#date-btn').html($(this).html() + " <span class='caret'></span>");
-		loadTable($(this).attr('data-value'));
-	});
+	// $('#date-btn').on('click', function() {
+	// 	$('#date-menu').html("<li style='text-align: center'><span><i class='icon-spinner icon-spin icon-2x'></i></span></li>");
+	// 	loadDates();
+	// });
+
+	// $('#date-menu').on('click', 'li > a', function(e) {
+	// 	e.preventDefault();
+	// 	$('#date-menu').attr('data-value', $(this).attr('data-value'));
+	// 	$('#date-btn').html($(this).html() + " <span class='caret'></span>");
+	// 	loadTable($(this).attr('data-value'));
+	// });
 });

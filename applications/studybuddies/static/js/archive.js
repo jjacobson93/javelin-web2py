@@ -82,7 +82,7 @@ $(function() {
 			("0" + ev.date.getHours()).slice(-2) + "-" +
 			("0" + ev.date.getMinutes()).slice(-2) + "-" + 
 			("0" + ev.date.getSeconds()).slice(-2);
-		loadTable(localDate);
+		loadTable(date);
 	});
 
 	// $('#date-btn').on('click', function() {

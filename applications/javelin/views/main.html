@@ -1,18 +1,16 @@
 {{extend 'layout.html'}}
 
-{{block left_sidebar}}
-<div class="nav-collapse collapse" id="left-sidebar">
-	<div class="span3">
-		<div class="well" style="padding: 8px 0 !important">
-			<ul class="nav nav-list" id="main-nav">
-				<li class="nav-header">Modules</li>
-				{{for module in modules_data:}}
-				<li class="{{if modules_data[module]['name'] == active_module:}}active{{pass}}"><a href="/{{=modules_data[module]['name']}}"><i class="icon-{{=modules_data[module]['icon']}} icon-large"></i>{{=modules_data[module]['labels']['cap']}}</a></li>
-				{{pass}}
-			</ul>
-		</div>
-	</div>
-</div>
+{{block nav}}
+<ul class="nav navbar-nav" id="main-nav" style="overflow: scroll">
+	{{for module in modules_data:}}
+	<li class="{{if modules_data[module]['name'] == active_module:}}active{{pass}}">
+		<a href="/{{=modules_data[module]['name']}}">
+			<!-- <i class="icon-{{=modules_data[module]['icon']}}"></i> -->
+			<span class="module-name">{{=modules_data[module]['labels']['cap']}}</span>
+		</a>
+	</li>
+	{{pass}}
+</ul>
 {{end}}
 
 {{block center}}

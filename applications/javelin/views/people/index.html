@@ -14,9 +14,9 @@ form .row {
 	margin-left: 0px;
 }
 
-table tbody > tr:nth-child(odd):not(:hover) > td {
+/*table tbody > tr:nth-child(odd):not(:hover) > td {
 	background-color: rgb(240, 250, 255) !important;
-}
+}*/
 
 @media (max-width: 767px) {
 	#person-thumb {
@@ -42,72 +42,16 @@ table tbody > tr:nth-child(odd):not(:hover) > td {
 <div class="carousel slide" id="main-container" data-interval="false">
 	<div class="carousel-inner" style="overflow:visible">
 		<div class="item active" id="people-div">
-			<div class="fuelux" style="height:100%;width:100%;margin-bottom:20px;">
-				<table id="people-table" class="table table-bordered table-striped table-hover datagrid">
+			<div style="width: 100%">
+				<table id="people-table" class="table table-bordered table-striped table-hover" style="width: 100%">
 					<thead>
-						<tr>
-							<th>
-								<span class="pull-left"><h4>{{=modules_data['people']['labels']['cap']}}</h4></span>
-								<div class="datagrid-header-left">
-									<div class="row-fluid">
-										<div class="select filter">
-											<button type="button" data-toggle="dropdown" class="btn dropdown-toggle">
-												<span class="dropdown-label"></span>
-												<span class="caret"></span>
-											</button>
-											<ul class="dropdown-menu">
-												<li data-value="all" data-selected="true"><a href="#">All</a></li>
-												<li data-value="freshmen"><a href="#">Freshmen</a></li>
-												<li data-value="leaders"><a href="#">Leaders</a></li>
-												<li data-value="non_leaders"><a href="#">Non-Leaders</a></li>
-											</ul>
-										</div>
-									</div>
-								</div>
-								<div class="datagrid-header-right">
-									<div class="input-append search datagrid-search" data-delay="300">
-										<input type="text" id="search-field" class="input-medium" placeholder="Search">
-										<button class="btn">
-											<i class="icon-search"></i>
-										</button>
-									</div>
-								</div>
-							</th>
-						</tr>
+						<th>ID</th>
+						<th>Student ID</th>
+						<th>Last Name</th>
+						<th>First Name</th>
+						<th>Gender</th>
+						<th>Crew</th>
 					</thead>
-
-					<tfoot>
-					<tr>
-						<th>
-							<div class="datagrid-footer-left" style="display:none;">
-								<div class="grid-controls">
-									<span>
-										<span class="grid-start"></span> -
-										<span class="grid-end"></span> of
-										<span class="grid-count"></span>
-									</span>
-									<select class="grid-pagesize" id="people-pagesize">
-										<option value="5">5</option>
-										<option value="10">10</option>
-										<option value="20">20</option>
-										<option value="50">50</option>
-										<option value="100" selected="selected">100</option>
-									</select>
-									<span>Per Page</span>
-								</div>
-							</div>
-							<div class="datagrid-footer-right" style="display:none">
-								<div class="grid-pager">
-									<button type="button" class="btn grid-prevpage"><i class="icon-chevron-left"></i></button>
-									<span>Page</span>
-									<select class="grid-page" id="people-page-select"></select>
-									<span>of <span class="grid-pages"></span></span>
-									<button type="button" class="btn grid-nextpage"><i class="icon-chevron-right"></i></button>
-								</div>
-							</div>
-						</th>
-					</tr>
-					</tfoot>
 				</table>
 			</div>
 		</div>
@@ -116,20 +60,6 @@ table tbody > tr:nth-child(odd):not(:hover) > td {
 				<li class="active"><a href="#info" data-toggle="tab">Info</a></li>
 				<li><a href="#notestab" data-toggle="tab">Notes</a></li>
 				<li><a href="#schedule" data-toggle="tab">Schedule</a></li>
-				<!-- <li><a href="#docs" data-toggle="tab">Docs</a></li> -->
-				<!-- <li><a href="#groups" data-toggle="tab">Groups</a></li> -->
-				<!-- <li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-						Modules <b class="caret"></b>
-					</a>
-					
-					<ul class="dropdown-menu" id="module-dropdown">
-						These will be dynamically loaded from the list of modules
-						<li><a href="#groups" data-toggle="tab">Groups</a></li>
-						<li><a href="#schedule" data-toggle="tab">Schedule</a></li>
-						<li><a href="#time-card" data-toggle="tab">Time Card</a></li>
-					</ul>
-				</li> -->
 			</ul>
 			<div class="tab-content">
 				<div class="tab-pane fade active in" id="info">

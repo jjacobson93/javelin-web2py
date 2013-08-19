@@ -3,50 +3,37 @@
 {{block content}}
 <!-- <div id="filter-block"></div> -->
 {{if request.args(0)!='register':}} 
-<div id="login-form" class="well">
-<h2>{{=T( request.args(0).replace('_',' ').capitalize() )}}</h2>
-<div id="web2py_user_form">
-{{
-if request.args(0)=='login' and request.args(0)!='register':
-    if not 'register' in auth.settings.actions_disabled:
-        form.add_button(T('Register'),URL(args='register', vars={'_next': request.vars._next} if request.vars._next else None),_class='btn pull-left')
-    pass
-    if not 'request_reset_password' in auth.settings.actions_disabled:
-        form.add_button(T('Lost Password'),URL(args='request_reset_password'),_class='btn pull-right')
-    pass
-    =form
-else:
-	=form
-pass
-}}
-</div>
+
+<h1 style="text-align: center;font-size: 50px;">{{=T( request.args(0).replace('_',' ').capitalize() )}}</h1>
+<div id="web2py_user_form" class='login-form'>
+	{{=form}}
 </div>
 <script type="text/javascript">
-$(function() {
-	$('input[type="text"], input[type="password"]').each(function(i, e) {
-		var nameArray = $(this).attr('name').split('_');
-		for (var i = 0; i < nameArray.length; i++) {
-			nameArray[i] = nameArray[i].charAt(0).toUpperCase() + nameArray[i].substr(1);
-		}
+// $(function() {
+// 	$('input[type="text"], input[type="password"]').each(function(i, e) {
+// 		var nameArray = $(this).attr('name').split('_');
+// 		for (var i = 0; i < nameArray.length; i++) {
+// 			nameArray[i] = nameArray[i].charAt(0).toUpperCase() + nameArray[i].substr(1);
+// 		}
 
-		var name = nameArray.join(' ');
+// 		var name = nameArray.join(' ');
 
-		$(this).attr("placeholder", name);
-		if ($(this).attr('name') === "password_two" || $(this).attr('name') === "new_password2")
-			$(this).attr("placeholder", "Verify Password");
-	});
+// 		$(this).attr("placeholder", name);
+// 		if ($(this).attr('name') === "password_two" || $(this).attr('name') === "new_password2")
+// 			$(this).attr("placeholder", "Verify Password");
+// 	});
 
-	$('input[type="submit"]').addClass("span12");
-	$('input[type="submit"]').addClass("btn-primary");
-	$('input[type="submit"]').css('height', 34);
-	$('input[type="submit"]').css('font-size', 16);
-	$('input[type="submit"]').css('font-weight', 'bold');
-	$('.w2p_fl').remove();
-	$('.w2p_fc').remove();
+// 	$('input[type="submit"]').addClass("span12");
+// 	$('input[type="submit"]').addClass("btn-primary");
+// 	$('input[type="submit"]').css('height', 34);
+// 	$('input[type="submit"]').css('font-size', 16);
+// 	$('input[type="submit"]').css('font-weight', 'bold');
+// 	$('.w2p_fl').remove();
+// 	$('.w2p_fc').remove();
 
-	$('input[type="text"], input[type="password"]').css('height', 28);
-	$('input[type="text"], input[type="password"]').css('font-weight', 'bold');
-});
+// 	$('input[type="text"], input[type="password"]').css('height', 28);
+// 	$('input[type="text"], input[type="password"]').css('font-weight', 'bold');
+// });
 </script>
 {{elif request.args(0)=='register':}}
 <h2>{{=T( request.args(0).replace('_',' ').capitalize() )}}</h2>
@@ -69,35 +56,35 @@ $(function() {
 			"and here for Chrome: https://www.google.com/chrome/");
 	}
 
-	$('#login-form').css('margin-top', -$('#login-form').height()/2);
+	// $('#login-form').css('margin-top', -$('#login-form').height()/2);
 
-	var navbarHeight = $('.navbar').height() + $('#top-margin').height() + parseInt($('.navbar').css('margin-bottom'));
-	var footerHeight = $('footer').height() + parseInt($('footer').css('padding-top')) + parseInt($('footer').css('border-top'));
-	var newHeight = $(window).height() - navbarHeight - footerHeight;
-	if (newHeight < $('#login-form').height() + 80)
-		newHeight = $('#login-form').height() + 80; 
+	// var navbarHeight = $('.navbar').height() + $('#top-margin').height() + parseInt($('.navbar').css('margin-bottom'));
+	// var footerHeight = $('footer').height() + parseInt($('footer').css('padding-top')) + parseInt($('footer').css('border-top'));
+	// var newHeight = $(window).height() - navbarHeight - footerHeight;
+	// if (newHeight < $('#login-form').height() + 80)
+	// 	newHeight = $('#login-form').height() + 80; 
 
-	$('.row-fluid').css('height', newHeight);
+	// $('.row-fluid').css('height', newHeight);
 
-	// $('#filter-block').css('top', $('#login-form').position().top - 15);
-	// $('#filter-block').css('left', parseInt($('#login-form').css('margin-left')));
-	// $('#filter-block').css('height', $('#login-form').height() + 35);
-	// $('#filter-block').css('width', $('#login-form').width() + 45);
+	// // $('#filter-block').css('top', $('#login-form').position().top - 15);
+	// // $('#filter-block').css('left', parseInt($('#login-form').css('margin-left')));
+	// // $('#filter-block').css('height', $('#login-form').height() + 35);
+	// // $('#filter-block').css('width', $('#login-form').width() + 45);
 
-	$(window).on('resize', function() {
-		var navbarHeight = $('.navbar').height() + $('#top-margin').height() + parseInt($('.navbar').css('margin-bottom'));
-		var footerHeight = $('footer').height() + parseInt($('footer').css('padding-top')) + parseInt($('footer').css('border-top'));
-		var newHeight = $(window).height() - navbarHeight - footerHeight;
-		if (newHeight < $('#login-form').height() + 80)
-			newHeight = $('#login-form').height() + 80; 
+	// $(window).on('resize', function() {
+	// 	var navbarHeight = $('.navbar').height() + $('#top-margin').height() + parseInt($('.navbar').css('margin-bottom'));
+	// 	var footerHeight = $('footer').height() + parseInt($('footer').css('padding-top')) + parseInt($('footer').css('border-top'));
+	// 	var newHeight = $(window).height() - navbarHeight - footerHeight;
+	// 	if (newHeight < $('#login-form').height() + 80)
+	// 		newHeight = $('#login-form').height() + 80; 
 
-		$('.row-fluid').css('height', newHeight);
+	// 	$('.row-fluid').css('height', newHeight);
 
-		// $('#filter-block').css('top', $('#login-form').position().top - 15);
-		// $('#filter-block').css('left', parseInt($('#login-form').css('margin-left')));
-		// $('#filter-block').css('height', $('#login-form').height() + 35);
-		// $('#filter-block').css('width', $('#login-form').width() + 45);
-	});
+	// 	// $('#filter-block').css('top', $('#login-form').position().top - 15);
+	// 	// $('#filter-block').css('left', parseInt($('#login-form').css('margin-left')));
+	// 	// $('#filter-block').css('height', $('#login-form').height() + 35);
+	// 	// $('#filter-block').css('width', $('#login-form').width() + 45);
+	// });
 });
 //--></script>
 {{end}}

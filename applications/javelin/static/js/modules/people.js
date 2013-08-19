@@ -139,53 +139,73 @@ function checkPictureForUpload() {
 }
 
 $(function() {
-	$('#people-table').datagrid({
-		dataSource: new PeopleDataSource({
-			columns: [
-				{
-					property: 'id',
-					label: 'ID',
-					sortable: true
-				},
-				{
-					property: 'student_id',
-					label: 'Student ID',
-					sortable: true
-				},
-				{
-					property: 'last_name',
-					label: 'Last Name',
-					sortable: true
-				},
-				{
-					property: 'first_name',
-					label: 'First Name',
-					sortable: true
-				},
-				{
-					property: 'gender',
-					label: 'Gender',
-					sortable: true
-				},
-				{
-					property: 'crew',
-					label: 'Crew',
-					sortable: true
-				}
-			]
-		}),
-		stretchHeight: true
+	$('#people-table').dataTable({
+		'sDom': "<'row'<'col-6 col-sm-6'><'col-6 col-sm-6'<'form-group pull-right' f>>>" +
+			"<'row'<'col-12 col-sm-12'rt>><'row'<'col-6 col-sm-6'il><'col-6 col-sm-6'p>>",
+		'sAjaxSource': "/people/call/json/data",
+		'sAjaxDataProp' : "",
+		"sPaginationType": "bootstrap",
+		"bScrollCollapse": true,
+		"sScrollY": "300px",
+		"sScrollX": "100%",
+		'aoColumns': [
+			{'mData' : 'id'},
+			{'mData' : 'student_id'},
+			{'mData' : 'last_name'},
+			{'mData' : 'first_name'},
+			{'mData' : 'gender'},
+			{'mData' : 'crew'}
+		]
 	});
 
-	$('#people-table').on('loaded', function() {
-		if (!tableIsInit) {
-			tableIsInit = true;
-			$('#people-pagesize').select2();
-			$('#people-page-select').select2({placeholder: "1"});
-		}
-	});
 
-	$('#people-div').height($(window).height()*.6);
+	// $('#people-table').datagrid({
+	// 	dataSource: new PeopleDataSource({
+	// 		columns: [
+	// 			{
+	// 				property: 'id',
+	// 				label: 'ID',
+	// 				sortable: true
+	// 			},
+	// 			{
+	// 				property: 'student_id',
+	// 				label: 'Student ID',
+	// 				sortable: true
+	// 			},
+	// 			{
+	// 				property: 'last_name',
+	// 				label: 'Last Name',
+	// 				sortable: true
+	// 			},
+	// 			{
+	// 				property: 'first_name',
+	// 				label: 'First Name',
+	// 				sortable: true
+	// 			},
+	// 			{
+	// 				property: 'gender',
+	// 				label: 'Gender',
+	// 				sortable: true
+	// 			},
+	// 			{
+	// 				property: 'crew',
+	// 				label: 'Crew',
+	// 				sortable: true
+	// 			}
+	// 		]
+	// 	}),
+	// 	stretchHeight: true
+	// });
+
+	// $('#people-table').on('loaded', function() {
+	// 	if (!tableIsInit) {
+	// 		tableIsInit = true;
+	// 		$('#people-pagesize').select2();
+	// 		$('#people-page-select').select2({placeholder: "1"});
+	// 	}
+	// });
+
+	// $('#people-div').height($(window).height()*.6);
 
 	$('#person-pane').on('change', 'input', function() {
 		$('#save-button').removeClass('disabled');

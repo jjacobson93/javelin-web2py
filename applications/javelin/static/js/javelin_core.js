@@ -47,7 +47,7 @@ function displayError(message, inModal) {
 	$("#" + id).remove();
 
 	var alert = $('<div/>', { 
-		class: "alert alert-error", 
+		class: "alert alert-danger", 
 		id: id,
 		style: "display: none"
 	}).append($('<span/>')).append('<strong>Error!</strong> ' + message);

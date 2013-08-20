@@ -3,7 +3,8 @@
 	Javelin Web2Py Groups Controller
 """
 
-from applications.javelin.modules import modules_enabled, get_module_data, groups
+from applications.javelin.modules import modules_enabled, get_module_data
+from applications.javelin.private.utils import flattenDict
 from gluon.contrib import simplejson as json
 
 from gluon.tools import Service
@@ -30,7 +31,21 @@ def data():
 
 	:returns: a list of groups
 	"""
-	return groups.data()
+	count = db.person.id.count()
+	groups = db().select(
+		db.groups.ALL, count.with_alias('count'),
+		left=[db.group_rec.on(db.groups.id==db.group_rec.group_id), 
+			db.person.on(db.person.id==db.group_rec.person_id)],
+		groupby=db.groups.id,
+		orderby=db.groups.name).as_list()
+
+	groups = [dict([('actions', '<button class="btn btn-small btn-primary" id="edit-row-' + str(d['groups']['id']) + '">' +\
+						'<i class="icon-edit"></i>Edit' + '</button>' +\
+					'<button class="btn btn-small btn-danger" id="delete-row-' + str(d['groups']['id']) + '" style="margin-left: 10px">' +\
+						'<i class="icon-trash"></i>Delete' + \
+					'</button>')] + [(k[-1],v) for k,v in flattenDict(d).items()]) for d in groups]
+	
+	return groups
 
 @auth.requires_login()
 @auth.requires_membership('standard')
@@ -41,7 +56,19 @@ def records(id):
 	:param id: the id of the group
 	:returns: a list of records for the group
 	"""
-	return groups.records(id)
+	result = db(db.group_rec.group_id==id).select(
+		db.person.id, 
+		db.person.last_name, 
+		db.person.first_name, 
+		join=db.person.on(db.person.id==db.group_rec.person_id)).as_list()
+
+	result = [dict([('actions', '<button class="btn btn-small btn-primary" id="view-row-' + str(d['id']) + '">' +\
+						'<i class="icon-eye-open"></i>View' +\
+						'</button>' +\
+						'<button class="btn btn-small btn-danger" id="delete-row-' + str(d['id']) + '" style="margin-left: 10px">' +\
+						'<i class="icon-trash"></i>Delete</button>')] + [(k,v) for k,v in d.items()]) for d in result]
+	
+	return result
 
 @auth.requires_login()
 @auth.requires_membership('standard')
@@ -55,7 +82,21 @@ def add_group(name, description, values):
 	:returns: the id of the added group and ids for the records for the group or
 	 a boolean true value if the name already exists
 	"""
-	return groups.add_group(name, description, json.loads(values))
+	values = json.loads(values)
+
+	exists = not db(db.groups.name==name).isempty()
+
+	if not exists:
+		id = db.groups.insert(name=name, description=description)
+
+		if values:
+			rec_id = db.group_rec.bulk_insert([{'group_id' : id, 'person_id' : person_id} for person_id in values])
+		else:
+			rec_id = 0
+
+		return dict(group_id=id, group_rec_id=rec_id)
+	else:
+		return dict(exists=True)
 
 @auth.requires_login()
 @auth.requires_membership('standard')
@@ -71,10 +112,13 @@ def add_to_group(group_id, person_id=0, people=None, multiple=False):
 		people = json.loads(people)
 		response = list()
 		for person_id in people:
-			response.append(groups.add_to_group(person_id, group_id))
+			rec_id = db.group_rec.insert(person_id=person_id, group_id=group_id)
+			response.append(dict(group_rec_id=rec_id))
 		return dict(response=response)
 	else:
-		return groups.add_to_group(person_id, group_id)
+		rec_id = db.group_rec.insert(person_id=person_id, group_id=group_id)
+
+		return dict(group_rec_id=rec_id)
 
 @auth.requires_login()
 @auth.requires_membership('standard')
@@ -85,7 +129,9 @@ def delete_group(id):
 	:param id: the id of the group
 	:returns: a dictionary with a response, either a 0 or 1, depending on success
 	""" 
-	return groups.delete_group(id)
+	deleted = db(db.groups.id==id).delete()
+	
+	return dict(deleted=deleted)
 
 @auth.requires_login()
 @auth.requires_membership('standard')
@@ -97,7 +143,9 @@ def delete_from_group(person_id, group_id):
 	:param group_id: the id of the group
 	:returns: a dictionary with a response, either a 0 or 1, depending on success
 	"""
-	return groups.delete_from_group(person_id, group_id)
+	deleted = db((db.group_rec.person_id==person_id) & (db.group_rec.group_id==group_id)).delete()
+	
+	return dict(deleted=deleted)
 
 @auth.requires_login()
 @auth.requires_membership('standard')
@@ -111,7 +159,14 @@ def edit_group(id, name, description):
 	:returns: a dictionary with a response, either a 0 or 1, depending on success or
 	 a boolean true value if the name already exists
 	""" 
-	return groups.edit_group(id, name, description)
+	exists = not db(db.groups.name==name).isempty()
+
+	if not exists:
+		response = db(db.groups.id==id).update(name=name, description=description)
+
+		return dict(response=response)
+	else:
+		return dict(exists=True)
 
 @auth.requires_login()
 @auth.requires_membership('standard')
@@ -121,7 +176,13 @@ def get_people():
 
 	:returns: a list of people
 	"""
-	return groups.get_people()
+	people = db().select(db.person.ALL).as_list() # people = person.select().execute().fetchall()
+
+	result = []
+	for p in people:
+		result.append({'value' : str(p['id']), 'label' : p['last_name'] + ", " + p['first_name']})
+	
+	return result
 
 @auth.requires_login()
 @auth.requires_membership('standard')
@@ -131,7 +192,18 @@ def people_not_in_group(group_id, query):
 
 	:returns: a list of people
 	"""
-	return groups.people_not_in_group(group_id, query)
+	people = [rec.person_id for rec in db(db.group_rec.group_id==group_id).select(db.group_rec.person_id)]
+
+	if not query:
+		return db(~(db.person.id.belongs(people)) & (db.person.leader==True)).select(
+			db.person.id, db.person.last_name, db.person.first_name, orderby=db.person.last_name).as_list()
+	else:
+		people = db(~(db.person.id.belongs(people)) & 
+			((db.person.last_name.contains(query)) | (db.person.first_name.contains(query))) &
+			(db.person.leader==True) ).select(
+			db.person.id, db.person.last_name, db.person.first_name, orderby=db.person.last_name).as_list()
+
+		return people
 
 @auth.requires_login()
 @auth.requires_membership('standard')

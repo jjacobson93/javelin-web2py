@@ -9,7 +9,7 @@ __copyright__ = "(c) 2013, Jacobson and Varni, LLC"
 __date__ = "7/28/2013"
 __email__ = "jjacobson93@gmail.com"
 __data__ = {'name' : 'messages', 'label' : 'Messages', 'description' : 'Send Email and SMS messages to people', 
-	'icon' : 'comment', 'u-icon' : u'\uf075', 'required' : True}
+	'icon' : 'comment', 'u-icon' : u'\uf075', 'color': 'light-blue', 'required' : True}
 
 from globals import current
 from gluon.contrib.sms_utils import sms_email

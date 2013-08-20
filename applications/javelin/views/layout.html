@@ -50,6 +50,7 @@
 	<link rel="stylesheet" type="text/css" href="{{=URL('static','css/fuelux-responsive.css')}}">
 	<link rel="stylesheet" type="text/css" href="{{=URL('static','css/font-awesome.min.css')}}">
 	<link rel="stylesheet" type="text/css" href="{{=URL('static','css/select2.css')}}">
+	<link rel="stylesheet" type="text/css" href="{{=URL('static','css/select2-bootstrap.css')}}">
 	<link rel="stylesheet" type="text/css" href="{{=URL('static','css/jquery-picklist.css')}}">
 	<link rel="stylesheet" type="text/css" href="{{=URL('static','css/bootstrap-fileupload.css')}}">
 	<link rel="stylesheet" type="text/css" href="{{=URL('static','css/bootstrap-switch.css')}}">
@@ -78,58 +79,69 @@
 	<header class="navbar navbar-inverse navbar-fixed-top main-nav">
 		<div class="row">
 			<div class="col-sm-12">
-		<!-- <div class="container"> -->
 				<div class="navbar-header">
-					{{if auth.has_membership('standard') or not auth.user:}}
-					<button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".navbar-collapse">
+					{{if request.controller != 'default':}}
+					<button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".mainnav-collapse">
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</button>
 					{{pass}}
+					<button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".user-collapse" style="margin-right: 10px; padding-top: 6px; max-height: 34px">
+						<span><b style="color: #ffffff;">User</b></span>
+					</button>
 					<a href="{{=URL('default','index')}}" class="navbar-brand">
 						<span class="javelin-brand">Javelin</span>
 					</a>
 				</div>
-				<nav class="collapse navbar-collapse">
-					{{block nav}}
-					{{include}}
-					{{end}}
-					<ul class="nav navbar-nav pull-right">
-						{{='auth' in globals() and auth.navbar(mode="dropdown") or ''}}
-					</ul>
-				</nav>
-		<!-- </div> -->
+				<ul class="collapse navbar-collapse user-collapse nav navbar-nav pull-right">
+					{{='auth' in globals() and auth.navbar(mode='dropdown') or ''}}
+				</ul>
 			</div>
+		</div>
 	</header>
 	
 	<!-- <div id="top-margin"></div> -->
 
 	<!-- MAIN CONTAINER -->
 	
-	<section style="padding: 70px 20px 30px">
-		<div class="row">
-			{{if response.flash:}}
-			<div class="alert alert-info alert-dismissable fade in" id="flash_alert" style="display: none">
-				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-				<span id="response_flash">{{=response.flash or ''}}</span>
+	<section style="padding: 50px 0 30px">
+		{{if request.controller != 'default':}}
+		<nav class="collapse navbar-collapse mainnav-collapse navbar navbar-default" style="border-radius: 0;">
+			<ul class="nav navbar-nav">
+				{{for module in modules_data:}}
+				<li class="{{if modules_data[module]['name'] == active_module:}}active{{pass}}">
+					<a href="/{{=modules_data[module]['name']}}">
+						<span class="module-name"><i class="icon-{{=modules_data[module]['icon']}} icon-large"></i> {{=modules_data[module]['labels']['cap']}}</span>
+					</a>
+				</li>
+				{{pass}}
+			</ul>
+		</nav>
+		{{pass}}
+		<div class="container">
+			<div class="row" {{if request.controller == 'default':}}style="margin-top: 20px"{{pass}}>
+				{{if response.flash:}}
+				<div class="alert alert-info alert-dismissable fade in" id="flash_alert" style="display: none">
+					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+					<span id="response_flash">{{=response.flash or ''}}</span>
+				</div>
+				{{pass}}
+				{{block content}}
+				<div class="col-12 col-sm-12" id="main-content">
+					<!-- ALERTS -->
+					<div class="alert-container"></div>
+				{{block center}}
+				{{include}}
+				{{end}}
+				</div>
+				{{end}}
 			</div>
-			{{pass}}
-			{{block content}}
-			<div class="col-12 col-sm-12" id="main-content">
-				<!-- ALERTS -->
-				<div class="alert-container"></div>
-			{{block center}}
-			{{include}}
-			{{end}}
-			</div>
-			{{end}}
 		</div>
 	</section>
 
 	<!-- The javascript =============================================
 			 (Placed at the end of the document so the pages load faster) -->
-	<script src="{{=URL('static','js/javelin_core.js')}}"></script>
 	<script src="{{=URL('static','js/jquery-ui-1.9.2.custom.js')}}"></script>
 	<script src="{{=URL('static','js/bootstrap.min.js')}}"></script>
 	<script src="{{=URL('static','js/web2py_bootstrap.js')}}"></script>
@@ -148,6 +160,8 @@
 	<script src="{{=URL('static','js/jquery-picklist.js')}}"></script>
 	<script src="{{=URL('static','js/jquery.dataTables.js')}}"></script>
 	<script src="{{=URL('static','js/bootstrap-datatables.js')}}"></script>
+	<script src="{{=URL('static','js/datatables-js/DataTables.js')}}"></script>
+	<script src="{{=URL('static','js/javelin_core.js')}}"></script>
 	<!--[if lt IE 7 ]>
 			<script src="{{=URL('static','js/dd_belatedpng.js')}}"></script>
 			<script> DD_belatedPNG.fix('img, .png_bg'); //fix any <img> or .png_bg background-images </script>

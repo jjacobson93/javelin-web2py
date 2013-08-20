@@ -2,17 +2,8 @@
 
 {{block center}}
 <style>
-	.fuelux table tbody tr td {
-		vertical-align: middle !important;
-	}
-
-	#groups-table tbody > tr:nth-child(odd):not(:hover) > td,
-	#records-table tbody > tr:nth-child(odd):not(:hover) > td {
-		background-color: rgb(240, 250, 255);
-	}
-
-	#groups-div .btn i {
-		margin-right: 0px;
+	div.dataTables_scrollBody tr td {
+		vertical-align: middle;
 	}
 
 	.select2-offscreen {
@@ -21,238 +12,160 @@
 </style>
 
 <!-- NAV -->
+<div class="container">
 
-<div class="row-fluid" id="nav">
-	<a class="btn btn-primary disabled" id="prev-button" href="#main-container" data-slide="prev">
-		<i class="icon-arrow-left"></i>Back
-	</a>
-	<a class="btn btn-success pull-right" href="#" id="add-group-btn">
-		<i class="icon-plus"></i>Add {{=labels['sing']}}
-	</a>
-</div>
-<hr>
+	<div id="nav">
+		<a class="btn btn-primary disabled" id="prev-button" href="#main-container" data-slide="prev">
+			<i class="icon-arrow-left"></i>Back
+		</a>
+		<a class="btn btn-success pull-right" href="#" id="add-group-btn">
+			<i class="icon-plus"></i>Add {{=labels['sing']}}
+		</a>
+	</div>
+	<hr>
 
-<!-- ALERTS -->
+	<!-- ALERTS -->
 
-<div class="alert-container"></div>
-
-<!-- <div class="alert alert-info" id="noresults" style="display: none;">
-	<strong>No results found</strong>
-</div>
-
-<div class="alert alert-info" id="no-groups-alert" style="display: none;">
-	<strong>No {{ labels['lower'] }}.</strong> To add {{ labels['lower'] }}, click the 'Add {{ labels['sing'] }}' button below.
-</div>
-
-<div class="alert alert-success" id="success-alert" style="display: none;">
-	<strong>Success!</strong> The group has been added.
-</div>
-
-<div class="alert alert-error" id="error-alert" style="display: none;">
-	<strong>Error!</strong> Something went wrong.
-</div>
-
-<div class="alert alert-info" id="no-rows-alert" style="display: none;">
-	<strong>No records.</strong> To add to the {{ labels['lower'] }}, enter an ID or name below.
-</div> -->
+	<div class="alert-container"></div>
 
 <!-- MAIN CONTAINER -->
 
-<div class="carousel slide" id="main-container" data-interval="false">
-	<div class="carousel-inner">
-		<div class="item active" id="table">
-			<div id="groups-div" class="fuelux" style="height:100%;width:100%;margin-bottom:20px;">
-				<table id="groups-table" class="table table-bordered table-striped table-hover datagrid">
-					<thead>
-						<tr>
-							<th>
-								<div class="datagrid-header-left">
-									<h4>{{=modules_data['groups']['labels']['cap']}}</h4>
-								</div>
-								<div class="datagrid-header-right">
-									<div class="input-append search datagrid-search" data-delay="300">
-										<input type="text" id="search-field" class="input-medium" placeholder="Search">
-										<button class="btn">
-											<i class="icon-search"></i>
-										</button>
-									</div>
-								</div>
-							</th>
-						</tr>
-					</thead>
-
-					<tfoot>
-					<tr>
-						<th>
-							<div class="datagrid-footer-left" style="display:none;">
-								<div class="grid-controls">
-									<span>
-										<span class="grid-start"></span> -
-										<span class="grid-end"></span> of
-										<span class="grid-count"></span>
-									</span>
-									<select class="grid-pagesize" id="group-pagesize">
-										<option value="5">5</option>
-										<option value="10">10</option>
-										<option value="20">20</option>
-										<option value="50">50</option>
-										<option value="100" selected="selected">100</option>
-									</select>
-									<span>Per Page</span>
-								</div>
-							</div>
-							<div class="datagrid-footer-right" style="display:none">
-								<div class="grid-pager">
-									<button type="button" class="btn grid-prevpage"><i class="icon-chevron-left"></i></button>
-									<span>Page</span>
-									<select class="grid-page" id="group-page-select"></select>
-									<span>of <span class="grid-pages"></span></span>
-									<button type="button" class="btn grid-nextpage"><i class="icon-chevron-right"></i></button>
-								</div>
-							</div>
-						</th>
-					</tr>
-					</tfoot>
-				</table>
-			</div>
-		</div>
-		<div class="item" id="records-for-">
-			<div class="row-fluid">
-				<div class="input-append" style="line-height: 30px; font-size: 10pt">
-					<input type="hidden" class="span4" id="add-person-select" style="margin-right: 0">
-					<button class="btn" type="button" id="add-person-btn" style="height: 34px">Add</button>
+	<div class="carousel slide" id="main-container" data-interval="false">
+		<div class="carousel-inner" style="overflow: visible">
+			<div class="item active" id="table">
+				<div style="width: 100%">
+					<table id="groups-table" class="table table-bordered table-striped table-hover" width="100%">
+						<thead>
+							<th>ID</th>
+							<th>Name</th>
+							<th>Description</th>
+							<th>Count</th>
+							<th>Actions</th>
+						</thead>
+					</table>
 				</div>
 			</div>
-			<div id="records-div" class="fuelux" style="height:100%;width:100%;margin-bottom:20px;">
-				<table id="records-table" class="table table-bordered table-striped table-hover datagrid">
-					<thead>
-						<tr>
-							<th>
-								<div class="datagrid-header-left">
-									<h4 id="group-legend"></h4>
-								</div>
-								<div class="datagrid-header-right">
-									<div class="input-append search datagrid-search" data-delay="300">
-										<input type="text" id="search-field" class="input-medium" placeholder="Search">
-										<button class="btn">
-											<i class="icon-search"></i>
-										</button>
-									</div>
-								</div>
-							</th>
-						</tr>
-					</thead>
-
-					<tfoot>
-					<tr>
-						<th>
-							<div class="datagrid-footer-left" style="display:none;">
-								<div class="grid-controls">
-									<span>
-										<span class="grid-start"></span> -
-										<span class="grid-end"></span> of
-										<span class="grid-count"></span>
-									</span>
-									<select class="grid-pagesize" id="rec-pagesize">
-										<option value="5">5</option>
-										<option value="10">10</option>
-										<option value="20">20</option>
-										<option value="50">50</option>
-										<option value="100" selected="selected">100</option>
-									</select>
-									<span>Per Page</span>
-								</div>
+			<div class="item" id="records-for-">
+				<div class="row">
+					<div class="col-4 col-md-4">
+						<div class="form-group">
+							<div class="input-group select2-bootstrap-append">
+								<input class="form-control select2-remote" type="hidden" id="add-person-select">
+								<span class="input-group-btn">
+									<button class="btn btn-default" type="button" id="add-person-btn">Add</button>
+								</span>
 							</div>
-							<div class="datagrid-footer-right" style="display:none">
-								<div class="grid-pager">
-									<button type="button" class="btn grid-prevpage"><i class="icon-chevron-left"></i></button>
-									<span>Page</span>
-									<select id="rec-page-select"></select>
-									<span>of <span class="grid-pages"></span></span>
-									<button type="button" class="btn grid-nextpage"><i class="icon-chevron-right"></i></button>
-								</div>
-							</div>
-						</th>
-					</tr>
-					</tfoot>
-				</table>
+						</div>
+					</div>
+					<!-- <div class="input-append" style="line-height: 30px; font-size: 10pt">
+						<input type="hidden" class="col-4 col-md-4" id="add-person-select" style="margin-right: 0">
+						<button class="btn btn-default" type="button" id="add-person-btn" style="height: 34px">Add</button>
+					</div> -->
+				</div>
+				<div style="width: 100%">
+					<table id="records-table" class="table table-bordered table-striped table-hover" width="100%">
+						<thead>
+							<th>ID</th>
+							<th>Last Name</th>
+							<th>First Name</th>
+							<th>Actions</th>
+						</thead>
+					</table>
+				</div>
 			</div>
 		</div>
 	</div>
+
 </div>
 
 <!-- MODALS -->
 
-<div class="modal hide fade" id="add-group-modal">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h3>Add {{ labels['sing'] }}</h3>
-	</div>
-	<div class="modal-body">
-		<form>
-			<fieldset>
-				<label class="control-label" for="inputName">Name</label>
-				<input type="text" id="inputName" placeholder="Name" />
-				<label class="control-label" for="inputDescription">Description</label>
-				<input type="text" id="inputDescription" placeholder="Description" />
-				<!-- <p>The {{=labels['sing'].lower()}} can't have no one! Let's add some people!</p>
-				<select id="people-select" multiple="multiple"></select> -->
-			</fieldset>
-		</form>
-	</div>
-	<div class="modal-footer">
-		<a href="#" class="btn" data-dismiss="modal">Cancel</a>
-		<a href="#" class="btn btn-primary" id="add-done-btn">Done</a>
-	</div>
-</div>
-
-<div class="modal hide fade" id="delete-group-modal">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h3>Delete {{=modules_data['groups']['labels']['sing']}}</h3>
-	</div>
-	<div class="modal-body">
-		<p>Are you sure you want to delete <strong id="group-name-delete"></strong>?</p>
-	</div>
-	<div class="modal-footer">
-		<a href="#" class="btn" data-dismiss="modal">Cancel</a>
-		<a href="#" class="btn btn-danger" id="delete-done-btn">Delete</a>
+<div class="modal fade" id="add-group-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Add {{=modules_data['groups']['labels']['sing']}}</h4>
+			</div>
+			<div class="modal-body">
+				<form role="form">
+					<fieldset>
+						<label class="control-label" for="inputName">Name</label>
+						<input class="form-control" type="text" id="inputName" placeholder="Name" />
+						<label class="control-label" for="inputDescription">Description</label>
+						<input class="form-control" type="text" id="inputDescription" placeholder="Description" />
+						<!-- <p>The {{=labels['sing'].lower()}} can't have no one! Let's add some people!</p>
+						<select id="people-select" multiple="multiple"></select> -->
+					</fieldset>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<a href="#" class="btn btn-default" data-dismiss="modal">Cancel</a>
+				<a href="#" class="btn btn-primary" id="add-done-btn">Done</a>
+			</div>
+		</div>
 	</div>
 </div>
 
-<div class="modal hide fade" id="edit-group-modal">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h3>Edit <span id="group-name-edit"></span></h3>
-	</div>
-	<div class="modal-body">
-		<form>
-			<fieldset>
-				<label class="control-label" for="name-field">Name</label>
-				<input type="text" id="name-field">
-				<label class="control-label" for="desc-field">Description</label>
-				<input type="text" id="desc-field">
-			</fieldset>
-		</form>
-		<!-- <select id="edit-people-select" multiple="multiple"></select> -->
-	</div>
-	<div class="modal-footer">
-		<a href="#" class="btn" data-dismiss="modal">Cancel</a>
-		<a href="#" class="btn btn-primary" id="edit-done-btn">Done</a>
+<div class="modal fade" id="delete-group-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Delete {{=modules_data['groups']['labels']['sing']}}</h4>
+			</div>
+			<div class="modal-body">
+				<p>Are you sure you want to delete <strong id="group-name-delete"></strong>?</p>
+			</div>
+			<div class="modal-footer">
+				<a href="#" class="btn btn-default" data-dismiss="modal">Cancel</a>
+				<a href="#" class="btn btn-danger" id="delete-done-btn">Delete</a>
+			</div>
+		</div>
 	</div>
 </div>
 
-<div class="modal hide fade" id="delete-person-modal">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h3>Delete from {{=modules_data['groups']['labels']['sing']}}</h3>
+<div class="modal fade" id="edit-group-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Edit <span id="group-name-edit"></span></h4>
+			</div>
+			<div class="modal-body">
+				<form>
+					<fieldset>
+						<label class="control-label" for="name-field">Name</label>
+						<input type="text" id="name-field">
+						<label class="control-label" for="desc-field">Description</label>
+						<input type="text" id="desc-field">
+					</fieldset>
+				</form>
+				<!-- <select id="edit-people-select" multiple="multiple"></select> -->
+			</div>
+			<div class="modal-footer">
+				<a href="#" class="btn btn-default" data-dismiss="modal">Cancel</a>
+				<a href="#" class="btn btn-primary" id="edit-done-btn">Done</a>
+			</div>
+		</div>
 	</div>
-	<div class="modal-body">
-		<p>Are you sure you want to delete <strong id="person-name-delete"></strong> from <strong id="from-group"></strong>?</p>
-	</div>
-	<div class="modal-footer">
-		<a href="#" class="btn" data-dismiss="modal">Cancel</a>
-		<a href="#" class="btn btn-danger" id="delete-person-done-btn">Delete</a>
+</div>
+
+<div class="modal fade" id="delete-person-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Delete from {{=modules_data['groups']['labels']['sing']}}</h4>
+			</div>
+			<div class="modal-body">
+				<p>Are you sure you want to delete <strong id="person-name-delete"></strong> from <strong id="from-group"></strong>?</p>
+			</div>
+			<div class="modal-footer">
+				<a href="#" class="btn btn-default" data-dismiss="modal">Cancel</a>
+				<a href="#" class="btn btn-danger" id="delete-person-done-btn">Delete</a>
+			</div>
+		</div>
 	</div>
 </div>
 
@@ -261,4 +174,9 @@
 <script src="{{=URL('static', 'js/modules/groups_datasource.js')}}"></script>
 <script src="{{=URL('static', 'js/modules/records_datasource.js')}}"></script>
 <script src="{{=URL('static', 'js/modules/groups.js')}}"></script>
+<script type="text/javascript">
+$(function() {
+	$('.table-header').html("{{=modules_data['groups']['labels']['cap']}}");
+});
+</script>
 {{end}}

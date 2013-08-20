@@ -1,71 +1,78 @@
 var groupsTableIsInit = false;
-var recordDataSource;
+
+var groupsTable = undefined;
+var recordsTable = undefined;
 
 function initGroupTable() {
-	$('#groups-table').datagrid({
-		dataSource: new GroupDataSource({
-			columns: [
-				{
-					property: 'name',
-					label: 'Name',
-					sortable: true
-				},
-				{
-					property: 'description',
-					label: 'Description',
-					sortable: true
-				},
-				{
-					property: 'count',
-					label: 'Count',
-					sortable: true
-				},
-				{
-					property: 'actions',
-					label: 'Actions',
-					sortable: false
-				}
-			]
-		}),
-		stretchHeight: true
+	groupsTable = $('#groups-table').dataTable({
+		'aoColumnDefs': [
+			{ "bVisible": false,  "aTargets": [0] }
+		],
+		'aoColumns': [
+			{'mData' : 'id'},
+			{'mData' : 'name'},
+			{'mData' : 'description'},
+			{'mData' : 'count'},
+			{'mData' : 'actions'}
+		],
+		"oLanguage": {
+			"sEmptyTable": "0 items"
+		},
+		'sDom': "<'row'<'col-6 col-sm-6'<'table-header'>>" +
+			"<'col-6 col-sm-6'<'form-group pull-right' f>>>" +
+			"<'row'<'col-12 col-sm-12'rt>><'row'<'col-6 col-sm-6'il><'col-6 col-sm-6'p>>",
+		'sAjaxSource': "/groups/call/json/data",
+		'sAjaxDataProp' : "",
+		"sPaginationType": "bootstrap",
+		"bScrollCollapse": true,
+		"bLengthChange": false,
+		"sScrollY": "300px",
+		"fnCreatedRow": function( nRow, data, iDisplayIndex, iDisplayIndexFull) {
+			$(nRow).attr("id", data['id']);
+			return nRow;
+		}
+	});
+
+	$('.table-header').css({
+		'display': 'inline',
+		'margin-right' : '10px',
+		'font-weight': 'bold',
+		'font-size': '26px'
 	});
 }
 
 function initRecordsTable() {
-	recordDataSource = new GroupRecDataSource({
-		columns: [
-			{
-				property: 'id',
-				label: 'ID',
-				sortable: true
-			},
-			{
-				property: 'last_name',
-				label: 'Last Name',
-				sortable: true
-			},
-			{
-				property: 'first_name',
-				label: 'First Name',
-				sortable: true
-			},
-			{
-				property: 'actions',
-				label: 'Actions',
-				sortable: false
-			}
+	recordsTable = $('#records-table').dataTable({
+		'sDom': "<'row'<'col-6 col-sm-6'<'#group-legend'>>" +
+			"<'col-6 col-sm-6'<'form-group pull-right' f>>>" +
+			"<'row'<'col-12 col-sm-12'rt>><'row'<'col-6 col-sm-6'il><'col-6 col-sm-6'p>>",
+		'sAjaxSource': "/groups/call/json/records?id=0",
+		'sAjaxDataProp' : "",
+		"sPaginationType": "bootstrap",
+		"bScrollCollapse": true,
+		"bLengthChange": false,
+		"sScrollY": "300px",
+		'aoColumns': [
+			{'mData' : 'id'},
+			{'mData' : 'last_name'},
+			{'mData' : 'first_name'},
+			{'mData' : 'actions'}
 		],
-		group_id: '0'
+		"oLanguage": {
+			"sEmptyTable": "0 items"
+		}
 	});
 
-	$('#records-table').datagrid({
-		dataSource: recordDataSource,
-		stretchHeight: true
+	$('#group-legend').css({
+		'display': 'inline',
+		'margin-right' : '10px',
+		'font-weight': 'bold',
+		'font-size': '26px'
 	});
 }
 
 function loadRecordsTable(id) {
-	recordDataSource._group_id = id;
+	recordsTable._group_id = id;
 
 	$('div[id^="records-for-"]').attr("id", "records-for-" + id);
 
@@ -96,15 +103,17 @@ function loadRecordsTable(id) {
 		}
 	});
 
-	$('.select2-search-field input').css('width', '100%');
+	// $('.select2-search-field input').css('width', '100%');
 
-	$('#records-table').datagrid('reload');
+	// $('#records-table').datagrid('reload');
+	recordsTable.api().ajax.url("/groups/call/json/records?id="+id).load();
+	recordsTable.fnDraw();
 
-	$('#rec-pagesize').select2('destroy');
-	$('#rec-page-select').select2('destroy');
+	// $('#rec-pagesize').select2('destroy');
+	// $('#rec-page-select').select2('destroy');
 
-	$('#rec-pagesize').select2();
-	$('#rec-page-select').select2();
+	// $('#rec-pagesize').select2();
+	// $('#rec-page-select').select2();
 }
 
 function addGroup(name, description, values) {
@@ -123,7 +132,7 @@ function addGroup(name, description, values) {
 				$('#add-group-modal').modal('hide');
 				displaySuccess("The group has been added");
 
-				$('#groups-table').datagrid('reload');
+				groupsTable.api().ajax.reload();
 			} else {
 				displayError("A group with that name already exists.", true);
 			}
@@ -146,7 +155,7 @@ function addPeopleToGroup(group_id, people) {
 		},
 		success: function() {
 			$('#add-person-select').select2('val', '');
-			$('#records-table').datagrid('reload');
+			recordsTable.api().ajax.url("/groups/call/json/records?id="+group_id).load();
 			displaySuccess("The person/people has been added.");
 		},
 		error: function() {
@@ -173,7 +182,7 @@ function addPerson() {
 				$("#delete-person-done-btn").attr("href", "#");
 				displaySuccess("The group has been deleted.");
 			
-				$('#groups-table').datagrid('reload');
+				groupsTable.api().ajax.reload();
 
 			},
 			error: function() {
@@ -203,7 +212,7 @@ function editGroup(id) {
 				$('#edit-group-modal').modal('hide');
 				displaySuccess("The group has been edited.");
 
-				$('#groups-table').datagrid('reload');
+				groupsTable.api().ajax.reload();
 			} else {
 				displayError("Could not edit group. A group already exists with that name.", true);
 			}
@@ -228,7 +237,7 @@ function deleteGroup(id) {
 			$("#delete-done-btn").attr("href", "#");
 			displaySuccess("The group has been deleted.");
 		
-			$('#groups-table').datagrid('reload');
+			groupsTable.api().ajax.reload();
 		},
 		error: function() {
 			// $("#delete-group-modal").modal("hide");
@@ -252,7 +261,7 @@ function deletePersonFromGroup(p_id, g_id) {
 			$("#delete-person-done-btn").attr("data-person", "");
 			displaySuccess("Person has been deleted from the group.");
 
-			$('#records-table').datagrid('reload');
+			recordsTable.api().ajax.url("/groups/call/json/records?id="+g_id).load();
 		},
 		error: function() {
 			$("#delete-person-modal").modal("hide");
@@ -266,52 +275,17 @@ $(function() {
 	initGroupTable();
 	initRecordsTable();
 
-	$('#groups-div').height($(window).height()*.6);
-	$('#records-div').height($(window).height()*.6);
-
-	$('#groups-table').on('loaded', function() {
-		if (!groupsTableIsInit) {
-			groupsTableIsInit = true;
-			$('#group-pagesize').select2();
-			$('#group-page-select').select2({ placeholder: "1" });
-		}
-
-		if ($('#groups-table tr').eq(1).find('td').html() != '0 items') {
-			$('#groups-table tbody td:last-child').each(function(index, el) {
-				var id = $(el).parent().attr('id');
-				$(this).html('<button class="btn btn-small btn-primary" id="edit-row-' + id + '">' +
-					'<i class="icon-edit"></i>Edit' +
-				'</button>' +
-				'<button class="btn btn-small btn-danger" id="delete-row-' + id + '" style="margin-left: 10px">' +
-					'<i class="icon-trash"></i>Delete' + 
-				'</button>');
-			});	
-		}
-	});
-
-	$('#records-table').on('loaded', function() {
-		if ($('#records-table tr').eq(1).find('td').html() != '0 items') {
-			$('#records-table tbody td:last-child').each(function(index, el) {
-				var id = $(el).parent().attr('id');
-				$(this).html('<button class="btn btn-small btn-primary" id="view-row-' + id + '">' +
-					'<i class="icon-eye-open"></i>View' +
-					'</button>' +
-					'<button class="btn btn-small btn-danger" id="delete-row-' + id + '" style="margin-left: 10px">' +
-					'<i class="icon-trash"></i>Delete' + '</button>');
-			});
-		}
-	})
-
 	$('#main-container').on('slid', '', function() {
 		$('#prev-button').removeClass('disabled');
 		$('#add-group-btn').removeClass('disabled');
 
 		if ($('.carousel-inner .item:first').hasClass('active')) {
 			$('#prev-button').addClass('disabled');
-			$('#groups-table').datagrid('reload');
+			groupsTable.api().ajax.reload();
+
+			groupsTable.fnDraw();
 		} else if ($('.carousel-inner .item:last').hasClass('active')) {
 			$('#add-group-btn').addClass('disabled');
-			// $('#records-table').datagrid('reload');
 		}
 	});
 
@@ -324,30 +298,6 @@ $(function() {
 
 	$('#add-group-btn').on('click', function(e) {
 		if (!$(this).hasClass('disabled')) {
-		// 	e.preventDefault();
-
-		// 	$('#people-select').pickList();
-		// 	$("#people-select").html("");
-		// 	$("#people-select").pickList("destroy");
-
-		// 	$.ajaxSetup( { "async": false } );
-		// 	$.getJSON("/groups/call/json/get_people", function(data) {
-		// 		$.each(data, function(i, entry) {
-		// 			$("#people-select").append('<option value="' + entry.value + '">' + entry.label + "</option>");
-		// 		});
-		// 	});
-		// 	$.ajaxSetup( { "async": true } );
-
-		// 	$('#people-select').pickList({
-		// 		sourceListLabel: "People",
-		// 		targetListLabel: "Added",
-		// 		addAllLabel: '<i class="icon-chevron-right" style="padding: 0"></i><i class="icon-chevron-right" style="padding: 0"></i>',
-		// 		addLabel: '<i class="icon-chevron-right" style="padding: 0"></i>',
-		// 		removeAllLabel: '<i class="icon-chevron-left" style="padding: 0"></i><i class="icon-chevron-left" style="padding: 0"></i>',
-		// 		removeLabel: '<i class="icon-chevron-left" style="padding: 0"></i>',
-		// 		sortAttribute: "label"
-		// 	});
-
 			$('#add-group-modal').modal('show');
 		}
 	});
@@ -365,9 +315,9 @@ $(function() {
 		addGroup(name, description, values);
 	});
 
-	$('#groups-div').on('click', '#groups-table tr td:not(:last-child)', function() {
+	$('#groups-table').on('click', 'tr td:not(:last-child)', function() {
 		// row was clicked
-		if ($(this).html() !== "0 items") {
+		if ($(this).html() != "0 items") {
 			var id = $(this).parent().attr("id");
 			var name = $(this).parent().find("td").eq(0).html();
 
@@ -377,12 +327,14 @@ $(function() {
 
 			$('#main-container').carousel('next');
 			$('#main-container').carousel('pause');
+
+			recordsTable.fnDraw();
 		} else {
 			console.log("OOPS");
 		}
 	});
 
-	$('#groups-div').on('click', '#groups-table td button[id^="delete-row"]', function(e) {
+	$('#groups-table').on('click', 'td button[id^="delete-row"]', function(e) {
 		var id = $(this).attr('id').match(/[\d]+/);
 		var name = $(this).parent().parent().find("td").eq(0).html();
 
@@ -391,7 +343,7 @@ $(function() {
 		$("#delete-group-modal").modal("show");
 	});
 
-	$('#groups-div').on('click', '#groups-table td button[id^="edit-row"]', function(e) {
+	$('#groups-table').on('click', 'td button[id^="edit-row"]', function(e) {
 		var id = $(this).attr('id').match(/[\d]+/);
 		var name = $(this).parent().parent().find("td").eq(0).html();
 		var desc = $(this).parent().parent().find("td").eq(1).html();
@@ -436,7 +388,7 @@ $(function() {
 
 	$('#add-person-btn').on('click', function() {
 		var people = $('#add-person-select').select2('val');
-		var group_id = recordDataSource._group_id
+		var group_id = recordsTable._group_id
 		addPeopleToGroup(group_id, people);
 	});
 });

@@ -127,8 +127,12 @@ db.define_table('person',
 	Field('grade', 'integer'),
 	Field('leader', 'boolean', default=False), migrate=False)
 
+db.define_table('dept',
+	Field('title', 'string', notnull=True), migrate=False)
+
 db.define_table('sb_section',
-	Field('title', 'string'))
+	Field('title', 'string'),
+	Field('dept_id', 'reference dept'))
 
 db.define_table('sb_att',
 	Field('person_id', 'reference person'),

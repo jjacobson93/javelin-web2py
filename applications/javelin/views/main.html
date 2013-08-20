@@ -1,15 +1,22 @@
 {{extend 'layout.html'}}
 
 {{block nav}}
-<ul class="nav navbar-nav" id="main-nav" style="overflow: scroll">
-	{{for module in modules_data:}}
-	<li class="{{if modules_data[module]['name'] == active_module:}}active{{pass}}">
-		<a href="/{{=modules_data[module]['name']}}">
-			<!-- <i class="icon-{{=modules_data[module]['icon']}}"></i> -->
-			<span class="module-name">{{=modules_data[module]['labels']['cap']}}</span>
-		</a>
+<ul class="nav navbar-nav" id="main-nav">
+	<li {{if request.controller=='default' and request.function=='index':}}class="active"{{pass}}>
+		<a href="{{=URL('default', 'index')}}">Home</a>
 	</li>
-	{{pass}}
+	<li class="dropdown">
+		<a class="dropdown-toggle" data-toggle="dropdown" href="#">Modules</a>
+		<ul class="dropdown-menu">
+			{{for module in modules_data:}}
+			<li class="{{if modules_data[module]['name'] == active_module:}}active{{pass}}">
+				<a href="/{{=modules_data[module]['name']}}">
+					<span class="module-name"><i class="icon-{{=modules_data[module]['icon']}}"></i> {{=modules_data[module]['labels']['cap']}}</span>
+				</a>
+			</li>
+			{{pass}}
+		</ul>
+	</li>
 </ul>
 {{end}}
 

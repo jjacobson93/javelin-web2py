@@ -1,8 +1,197 @@
 {{extend 'main.html'}}
 
 {{block center}}
-<div class="hero-unit">
-	<h1>Welcome to Javelin!</h1>
-	<p>Choose one of the modules on the side to get started using the portal.</p> 
+<style type="text/css">
+	div a.btn {
+		display: inline-block;
+	}
+
+	a[class^="mod-btn"], a[class*=" mod-btn"] {
+		height: 200px;
+		margin-bottom: 20px;
+	}
+
+	.mod-btn-red {
+		background-color: #d9534f;
+  		border-color: #d43f3a;
+		color: #ffffff;
+	}
+
+	.mod-btn-orange {
+		background-color: #f0ad4e;
+  		border-color: #eea236;
+		color: #ffffff;
+	}
+
+	.mod-btn-yellow {
+		background-color: #FFD930;
+		border-color: #D9B929;
+		color: #ffffff;
+	}
+
+	.mod-btn-green {
+		background-color: #5cb85c;
+		border-color: #4cae4c;
+		color: #ffffff;
+	}
+	
+	.mod-btn-blue {
+		background-color: #428bca;
+		border-color: #357ebd;
+		color: #ffffff;
+	}
+
+	.mod-btn-purple {
+		background-color: #563d7c; /*background-color: #9667E6;*/
+		border-color: #463265; /*border-color: #855CCC;*/
+		color: #ffffff;
+	}
+
+	.mod-btn-light-blue {
+		background-color: #5bc0de;
+		border-color: #46b8da;
+		color: #ffffff;
+	}
+
+	.mod-btn-pink {
+		background-color: #FFBCD9;
+		border-color: #E6A1BE;
+		color: #ffffff;
+	}
+
+	.mod-btn-red:hover, .mod-btn-red:focus {
+		background-color: #d2322d;
+  		border-color: #ac2925;
+		color: #ffffff;
+	}
+
+	.mod-btn-orange:hover, .mod-btn-orange:focus {
+		background-color: #ed9c28;
+		border-color: #d58512;
+		color: #ffffff;
+	}
+
+	.mod-btn-yellow:hover, .mod-btn-yellow:focus {
+		background-color: #D9B929;
+		border-color: #BFA324;
+		color: #ffffff;
+	}
+
+	.mod-btn-green:hover, .mod-btn-green:focus {
+		background-color: #47a447;
+  		border-color: #398439;
+		color: #ffffff;
+	}
+	
+	.mod-btn-blue:hover, .mod-btn-blue:focus {
+		background-color: #3276b1;
+  		border-color: #285e8e;
+		color: #ffffff;
+	}
+
+	.mod-btn-purple:hover, .mod-btn-purple:focus {
+		background-color: #463265; /*background-color: #855CCC;*/
+		border-color: #6C4BA6;
+		color: #ffffff;
+	}
+
+	.mod-btn-light-blue:hover, .mod-btn-light-blue:focus {
+		background-color: #39b3d7;
+  		border-color: #269abc;
+		color: #ffffff;
+	}
+
+	.mod-btn-pink:hover, .mod-btn-pink:focus {
+		background-color: #E6A1BE;
+		border-color: #D9A0B8;
+		color: #ffffff;
+	}
+
+	p.mod-icon {
+		font-size: 90px;
+		margin-bottom: 0;
+	}
+
+	p.mod-name {
+		margin-top: -10px;
+		font-size: 30px;
+		word-break: all;
+	}
+
+	@media (max-width: 980px) {
+		p.mod-icon {
+			font-size: 80px;
+		}
+
+		p.mod-name {
+			font-size: 20px;
+		}
+
+		a[class^="mod-btn"], a[class*=" mod-btn"] {
+			height: 155px;
+		}
+	}
+
+	@media (max-width: 767px) {
+		p.mod-icon {
+			font-size: 70px;
+		}
+
+		p.mod-name {
+			font-size: 18px;
+		}
+
+		a[class^="mod-btn"], a[class*=" mod-btn"] {
+			height: 140px;
+		}
+
+		/*.col-3 {
+			padding: 0 5px 0;
+		}*/
+
+		.row {
+			padding: 0 !important;
+		}
+	}
+
+	@media (max-width: 480px) {
+		p.mod-icon {
+			font-size: 30px;
+			margin-bottom: 5px;
+			margin-top: -4px;
+		}
+
+		p.mod-name {
+			font-size: 15px;
+		}
+
+		a[class^="mod-btn"], a[class*=" mod-btn"] {
+			height: 65px;
+			margin-bottom: 10px;
+		}
+	}
+</style>
+
+<div class="row">
+	<div class="col-12 col-sm-12">
+		{{count = 0}}
+		{{for module in modules_data:}}
+		{{if count%4 == 0:}}
+		
+		{{pass}}
+		<div class="col-3 col-xs-6 col-md-3">
+			<div>
+				<a class="btn btn-block mod-btn-{{=modules_data[module]['color']}}" href="/{{=modules_data[module]['name']}}" role="button">
+					<p class="mod-icon"><i class="icon-{{=modules_data[module]['icon']}}"></i></p>
+					<p class="mod-name">{{=modules_data[module]['labels']['cap']}}</p>
+				</a>
+			</div>
+		</div>
+		{{if count%4 == 0:}}
+		
+		{{pass}}
+		{{count += 1}}
+		{{pass}}
+	</div>
 </div>
 {{end}}

@@ -10,7 +10,7 @@ __date__ = "7/22/2013"
 __email__ = "jjacobson93@gmail.com"
 __status__ = "Development"
 __data__ = {'name' : 'events', 'label' : 'Events', 'description' : 'Manage and create events', 
-	'icon' : 'calendar', 'u-icon' : u'\uf073', 'required' : True}
+	'icon' : 'calendar', 'u-icon' : u'\uf073', 'color':'red', 'required' : True}
 
 from globals import current
 

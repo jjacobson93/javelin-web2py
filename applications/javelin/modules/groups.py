@@ -9,16 +9,15 @@ __copyright__ = "(c) 2013, Jacobson and Varni, LLC"
 __date__ = "7/9/2013"
 __email__ = "jjacobson93@gmail.com"
 __data__ = {'name' : 'groups', 'label' : 'Groups', 'description' : 'Create groups and add people to them', 
-	'icon' : 'book', 'u-icon' : u'\uf02d', 'required' : True}
+	'icon' : 'book', 'u-icon' : u'\uf02d', 'color': 'green', 'required' : True}
 
 from globals import current
-from applications.javelin.private.utils import flattenDict
 
 def data():
 	db = current.javelin.db
 	count = db.person.id.count()
 	groups = db().select(
-		db.groups.ALL, count.with_alias('count'),
+		db.groups.ALL, count.with_alias('count'), 'actions',
 		left=[db.group_rec.on(db.groups.id==db.group_rec.group_id), 
 			db.person.on(db.person.id==db.group_rec.person_id)],
 		groupby=db.groups.id,
@@ -33,7 +32,7 @@ def records(id):
 	result = db(db.group_rec.group_id==id).select(
 		db.person.id, 
 		db.person.last_name, 
-		db.person.first_name, 
+		db.person.first_name,
 		join=db.person.on(db.person.id==db.group_rec.person_id)).as_list()
 	
 	return result

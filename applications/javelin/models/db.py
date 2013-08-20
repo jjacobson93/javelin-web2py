@@ -134,12 +134,16 @@ db.define_table('teacher',
 	Field('teacher_id', 'integer', notnull=True, unique=True),
 	Field('teacher_name', 'string', notnull=True))
 
+db.define_table('dept',
+	Field('title', 'string', notnull=True))
+
 db.define_table('course',
 	Field('course_id', 'integer', notnull=True, unique=True),
 	Field('code', 'string', notnull=True),
 	Field('title', 'string', notnull=True),
 	Field('period', 'integer', notnull=True),
-	Field('teacher_id', 'reference teacher', notnull=True))
+	Field('teacher_id', 'reference teacher', notnull=True),
+	Field('dept_id', 'reference dept'))
 
 db.define_table('course_rec',
 	Field('course_id', 'reference course', notnull=True),
@@ -225,6 +229,10 @@ db.define_table('student_issue',
 	Field('refer', 'boolean', label="Refer to Peer Support? (should PS check in with this student?)", default=False, notnull=True, required=True),
 	Field('timestamp', 'datetime', default=request.now, writable=False),
 	Field('updated', 'datetime', default=None, update=request.now, writable=False))
+
+db.define_table('grade',
+	Field('course_rec_id', 'reference course_rec', notnull=True),
+	Field('grade', 'integer', notnull=True))
 
 ## after defining tables, uncomment below to enable auditing
 # auth.enable_record_versioning(db)

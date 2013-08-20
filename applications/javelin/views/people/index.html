@@ -9,9 +9,13 @@ table #people-table {
 .btn i {
 	padding-right: 0px;
 }
-
+/*
 form .row {
 	margin-left: 0px;
+}*/
+
+#main-form .row {
+	margin-bottom: 4px;
 }
 
 /*table tbody > tr:nth-child(odd):not(:hover) > td {
@@ -43,14 +47,16 @@ form .row {
 	<div class="carousel-inner" style="overflow:visible">
 		<div class="item active" id="people-div">
 			<div style="width: 100%">
-				<table id="people-table" class="table table-bordered table-striped table-hover" style="width: 100%">
+				<table id="people-table" class="table table-bordered table-striped table-hover" width="100%">
 					<thead>
 						<th>ID</th>
-						<th>Student ID</th>
+						<th>Stud. ID</th>
 						<th>Last Name</th>
 						<th>First Name</th>
 						<th>Gender</th>
+						<th>Grade</th>
 						<th>Crew</th>
+						<th>Leader</th>
 					</thead>
 				</table>
 			</div>
@@ -63,139 +69,153 @@ form .row {
 			</ul>
 			<div class="tab-content">
 				<div class="tab-pane fade active in" id="info">
-					<form>
-						<div class="row-fluid">
-							<div class="span3" id="person-thumb" style="width: 180px; margin: 0 20px 15px 0;">
-								<a href="#" class="thumbnail" id="person-pic"></a>
+					<div class="container" style="margin-top: 4px">
+						<form>
+							<div class="row">
+								<!-- <div class="col-md-2" id="person-thumb" style="width: 180px; margin: 10px 10px 0 0; padding: 0">
+									<a href="#" class="thumbnail" id="person-pic"></a>
+								</div> -->
+								<div class="col-md-12" style="margin-left: 0;" id="main-form">
+									<div class="row">
+										<div style="display: none;">
+											<fieldset>
+												<label class="control-label" for="id">ID</label>
+												<input class="col-md-12 form-control" type="text" id="id" placeholder="ID" readonly/>
+											</fieldset>
+										</div>
+										<div class="col-md-2" style="margin-left: 0;">
+											<fieldset>
+												<label class="control-label" for="student_id">Student ID</label>
+												<input class="col-md-12 form-control" type="text" id="student_id" placeholder="Student ID" readonly/>
+											</fieldset>
+										</div>
+										<div class="col-md-4">
+											<fieldset>
+												<label class="control-label" for="last_name">Last Name</label>
+												<input class="col-md-12 form-control" type="text" id="last_name" placeholder="Last Name" readonly/>
+											</fieldset>
+										</div>
+										<div class="col-md-4">
+											<fieldset>
+												<label class="control-label" for="first_name">First Name</label>
+												<input class="col-md-12 form-control" type="text" id="first_name" placeholder="First Name" readonly/>
+											</fieldset>
+										</div>
+										<div class="col-md-1">
+											<fieldset>
+												<label class="control-label" for="gender">Gender</label>
+												<select class="col-md-12 form-control" id="gender">
+													<option></option>
+													<option value="M">M</option>
+													<option value="F">F</option>
+												</select>
+											</fieldset>
+										</div>
+										<div class="col-md-1">
+											<fieldset>
+												<label class="control-label" for="leader">Leader</label>
+												<input type="checkbox" id="leader" />
+											</fieldset>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-3">
+											<fieldset>
+												<label class="control-label" for="home_phone">Home Phone</label>
+												<input class="col-md-12 form-control" type="text" id="home_phone"
+												placeholder="Home Phone" data-mask="999-999-9999" />
+											</fieldset>
+										</div>
+										<div class="col-md-3">
+											<fieldset>
+												<label class="control-label" for="cell_phone">Cell Phone</label>
+												<input class="col-md-12 form-control" type="text" id="cell_phone"
+												placeholder="Cell Phone" data-mask="999-999-9999" />
+											</fieldset>
+										</div>
+										<div class="col-md-2">
+											<fieldset>
+												<label class="control-label" for="cell_provider">Cell Provider</label>
+												<input class="col-md-12 form-control" type="text" id="cell_provider"
+												placeholder="Cell Provider" />
+											</fieldset>
+										</div>
+										<div class="col-md-4">
+											<fieldset>
+												<label class="control-label" for="email">Email</label>
+												<input class="col-md-12 form-control" type="text" id="email" placeholder="Email"
+												/>
+											</fieldset>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-5">
+											<fieldset>
+												<label class="control-label" for="street">Address</label>
+												<input class="col-md-12 form-control" type="text" id="street" placeholder="Street"
+												/>
+											</fieldset>
+										</div>
+										<div class="col-md-4">
+											<fieldset>
+												<label class="control-label" for="city">City</label>
+												<input class="col-md-12 form-control" type="text" id="city" placeholder="City"
+												/>
+											</fieldset>
+										</div>
+										<div class="col-md-1">
+											<fieldset>
+												<label class="control-label" for="state">State</label>
+												<input class="col-md-12 form-control" type="text" id="state" placeholder="State"
+												data-mask="aa" />
+											</fieldset>
+										</div>
+										<div class="col-md-2">
+											<fieldset>
+												<label class="control-label" for="zip_code">Zip Code</label>
+												<input class="col-md-12 form-control" type="text" id="zip_code" placeholder="Zip Code"
+												data-mask="99999" />
+											</fieldset>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-4">
+											<fieldset>
+												<label class="control-label" for="crew">Crew</label>
+												<input class="col-md-12 form-control" type="number" id="crew" placeholder="Crew"
+												/>
+											</fieldset>
+										</div>
+										<div class="col-md-4">
+											<fieldset>
+												<label class="control-label" for="room">Crew Room</label>
+												<input class="col-md-12 form-control" type="text" id="room" placeholder="Crew Room"
+												readonly="readonly" />
+											</fieldset>
+										</div>
+										<div class="col-md-4">
+											<fieldset>
+												<label class="control-label" for="grade">Grade</label>
+												<select class="form-control" id="grade">
+													<option value="9">9</option>
+													<option value="10">10</option>
+													<option value="11">11</option>
+													<option value="12">12</option>
+												</select>
+											</fieldset>
+										</div>
+									</div>
+								</div>
 							</div>
-							<div class="span9" style="margin-left: 0" id="main-form">
-								<div class="row">
-									<div style="display: none">
-										<fieldset>
-											<label class="control-label" for="id">ID</label>
-											<input class="span12" type="text" id="id" placeholder="ID" disabled>
-										</fieldset>
-									</div>
-									<div class="span2" style="margin-left: 0">
-										<fieldset>
-											<label class="control-label" for="student_id">Student ID</label>
-											<input class="span12" type="text" id="student_id" placeholder="Student ID" disabled>
-										</fieldset>
-									</div>
-									<div class="span4">
-										<fieldset>
-											<label class="control-label" for="last_name">Last Name</label>
-											<input class="span12" type="text" id="last_name" placeholder="Last Name">
-										</fieldset>
-									</div>
-									<div class="span4">
-										<fieldset>
-											<label class="control-label" for="first_name">First Name</label>
-											<input class="span12" type="text" id="first_name" placeholder="First Name">
-										</fieldset>
-									</div>
-									<div class="span1">
-										<fieldset>
-											<label class="control-label" for="gender">Gender</label>
-											<select class="span12" id="gender">
-												<option></option>
-												<option value="M">M</option>
-												<option value="F">F</option>
-											</select>
-										</fieldset>
-									</div>
-									<div class="span1">
-										<fieldset>
-											<label class="control-label" for="leader">Leader</label>
-											<input type="checkbox" id="leader">
-										</fieldset>
-									</div>
-								</div>
-								<div class="row">
-									<div class="span3">
-										<fieldset>
-											<label class="control-label" for="home_phone">Home Phone</label>
-											<input class="span12" type="text" id="home_phone" placeholder="Home Phone" data-mask="999-999-9999">
-										</fieldset>
-									</div>
-									<div class="span3">
-										<fieldset>
-											<label class="control-label" for="cell_phone">Cell Phone</label>
-											<input class="span12" type="text" id="cell_phone" placeholder="Cell Phone" data-mask="999-999-9999">
-										</fieldset>
-									</div>
-									<div class="span2">
-										<fieldset>
-											<label class="control-label" for="cell_provider">Cell Provider</label>
-											<input class="span12" type="text" id="cell_provider" placeholder="Cell Provider">
-										</fieldset>
-									</div>
-									<div class="span4">
-										<fieldset>
-											<label class="control-label" for="email">Email</label>
-											<input class="span12" type="text" id="email" placeholder="Email">
-										</fieldset>
-									</div>
-								</div>
-								<div class="row">
-									<div class="span5">
-										<fieldset>
-											<label class="control-label" for="street">Address</label>
-											<input class="span12" type="text" id="street" placeholder="Street">
-										</fieldset>
-									</div>
-									<div class="span4">
-										<fieldset>
-											<label class="control-label" for="city">City</label>
-											<input class="span12" type="text" id="city" placeholder="City">
-										</fieldset>
-									</div>
-									<div class="span1">
-										<fieldset>
-											<label class="control-label" for="state">State</label>
-											<input class="span12" type="text" id="state" placeholder="State" data-mask="aa">
-										</fieldset>
-									</div>
-									<div class="span2">
-										<fieldset>
-											<label class="control-label" for="zip_code">Zip Code</label>
-											<input class="span12" type="text" id="zip_code" placeholder="Zip Code" data-mask="99999">
-										</fieldset>
-									</div>
-								</div>
-								<div class="row">
-									<div class="span4">
-										<fieldset>
-											<label class="control-label" for="crew">Crew</label>
-											<input class="span12" type="number" id='crew' placeholder="Crew">
-										</fieldset>
-									</div>
-									<div class="span4">
-										<fieldset>
-											<label class="control-label" for="room">Crew Room</label>
-											<input class="span12" type="text" id="room" placeholder="Crew Room" readonly>
-										</fieldset>
-									</div>
-									<div class="span4">
-										<fieldset>
-											<label class="control-label" for="grade">Grade</label>
-											<select id="grade">
-												<option value="9">9</option>
-												<option value="10">10</option>
-												<option value="11">11</option>
-												<option value="12">12</option>
-											</select>
-										</fieldset>
-									</div>
-								</div>
-							</div>
-						</div>
-					</form>
+						</form>
+					</div>
 				</div>
 				<div class="tab-pane fade" id="notestab">
-					<form>
-						<textarea class="span11" id="notes" rows="10"></textarea>
-					</form>
+					<div style="margin-top: 10px">
+						<form>
+							<textarea class="col-md-12 form-control" id="notes" rows="10"></textarea>
+						</form>
+					</div>
 				</div>
 				<div class="tab-pane fade" id="groups">
 					<legend>Task Teams</legend>
@@ -226,57 +246,69 @@ form .row {
 
 <!-- THE MODALS -->
 
-<div class="modal hide fade" id="upload-pic-modal">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h3>Upload</h3>
-	</div>
-	<div class="fileupload fileupload-new modal-body" data-provides="fileupload">
-		<input type="hidden" value name/>
-		<div class="span3" style="width: 180px; margin: 0 20px 15px 0;">
-			<div class="fileupload-preview thumbnail" id="current-pic" style="width: 180px; height: 172px; text-align: center; padding: 75px 0; line-height: 172px"></div>
+<div class="modal fade" id="upload-pic-modal" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>Upload</h3>
+			</div>
+			<div class="fileupload fileupload-new modal-body" data-provides="fileupload">
+				<input type="hidden" value name/>
+				<div class="span3" style="width: 180px; margin: 0 20px 15px 0;">
+					<div class="fileupload-preview thumbnail" id="current-pic" style="width: 180px; height: 172px; text-align: center; padding: 75px 0; line-height: 172px"></div>
+				</div>
+				<p id="row-info">Choose an image to upload.</p>
+				<div>
+					<span class="btn btn-file">
+						<span class="fileupload-new">Select Image</span>
+						<span class="fileupload-exists">Change</span>
+						<input type="file"/>
+					</span>
+					<a href="#" id="remove-btn" class="btn fileupload-exists" data-dismiss="fileupload">Remove</a>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<a href="#" class="btn btn-default" data-dismiss="modal">Cancel</a>
+				<a href="#" class="btn btn-primary disabled" id="upload-pic-btn">Upload</a>
+			</div>
 		</div>
-		<p id="row-info">Choose an image to upload.</p>
-		<div>
-			<span class="btn btn-file">
-				<span class="fileupload-new">Select Image</span>
-				<span class="fileupload-exists">Change</span>
-				<input type="file"/>
-			</span>
-			<a href="#" id="remove-btn" class="btn fileupload-exists" data-dismiss="fileupload">Remove</a>
-		</div>
-	</div>
-	<div class="modal-footer">
-		<a href="#" class="btn" data-dismiss="modal">Cancel</a>
-		<a href="#" class="btn btn-primary disabled" id="upload-pic-btn">Upload</a>
 	</div>
 </div>
 
-<div class="modal hide fade" id="upload-doc-modal">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h3>Upload</h3>
-	</div>
-	<div class="modal-body">
-		<p id="row-info">Choose a file to upload.</p>
-	</div>
-	<div class="modal-footer">
-		<a href="#" class="btn" data-dismiss="modal">Cancel</a>
-		<a href="#" class="btn btn-primary">Upload</a>
+<div class="modal fade" id="upload-doc-modal" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>Upload</h3>
+			</div>
+			<div class="modal-body">
+				<p id="row-info">Choose a file to upload.</p>
+			</div>
+			<div class="modal-footer">
+				<a href="#" class="btn btn-default" data-dismiss="modal">Cancel</a>
+				<a href="#" class="btn btn-primary">Upload</a>
+			</div>
+		</div>
 	</div>
 </div>
 
-<div class="modal hide fade" id="save-approve-modal">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h3>Are you sure?</h3>
-	</div>
-	<div class="modal-body">
-		<p>You have unsaved changes, are you sure you would like to continue?</p>
-	</div>
-	<div class="modal-footer">
-		<a href="#" class="btn" data-dismiss="modal" id="cont-button">Continue</a>
-		<a href="#" class="btn btn-primary" id="save-changes-button">Save Changes</a>
+<div class="modal fade" id="save-approve-modal" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>Are you sure?</h3>
+			</div>
+			<div class="modal-body">
+				<p>You have unsaved changes, are you sure you would like to continue?</p>
+			</div>
+			<div class="modal-footer">
+				<a href="#" class="btn btn-default" data-dismiss="modal" id="cont-button">Continue</a>
+				<a href="#" class="btn btn-primary" id="save-changes-button">Save Changes</a>
+			</div>
+		</div>
 	</div>
 </div>
 
@@ -285,4 +317,9 @@ form .row {
 <script src="{{=URL('static','js/jquery-picklist.js')}}"></script>
 <script src="{{=URL('static', 'js/modules/people-datasource.js')}}"></script>
 <script src="{{=URL('static', 'js/modules/people.js')}}"></script>
+<script type="text/javascript">
+$(function() {
+	$('.table-header').html("{{=modules_data['people']['labels']['cap']}}");
+});
+</script>
 {{end}}

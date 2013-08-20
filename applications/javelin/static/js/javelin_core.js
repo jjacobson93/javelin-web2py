@@ -1,3 +1,5 @@
+console.log($.fn.dataTableExt.oStdClasses);
+
 $(function() {
 	$('a.btn').on('click', function(e) {
 		if ($(this).attr('href') === "#")

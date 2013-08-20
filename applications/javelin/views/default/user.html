@@ -4,7 +4,7 @@
 <!-- <div id="filter-block"></div> -->
 {{if request.args(0)!='register':}} 
 
-<h1 style="text-align: center;font-size: 50px;">{{=T( request.args(0).replace('_',' ').capitalize() )}}</h1>
+<h1 style="text-align: center; font-size: 60px">{{=T( request.args(0).replace('_',' ').capitalize() )}}</h1>
 <div id="web2py_user_form" class='login-form'>
 	{{=form}}
 </div>

@@ -2,39 +2,13 @@
 
 {{block content}}
 <!-- <div id="filter-block"></div> -->
-{{if request.args(0)!='register':}} 
-
+{{if request.args(0)!='register':}}
 <h1 style="text-align: center; font-size: 60px">{{=T( request.args(0).replace('_',' ').capitalize() )}}</h1>
 <div id="web2py_user_form" class='login-form'>
-	{{=form}}
+	<div class="col-12 col-md-12">
+		{{=form}}
+	</div>
 </div>
-<script type="text/javascript">
-// $(function() {
-// 	$('input[type="text"], input[type="password"]').each(function(i, e) {
-// 		var nameArray = $(this).attr('name').split('_');
-// 		for (var i = 0; i < nameArray.length; i++) {
-// 			nameArray[i] = nameArray[i].charAt(0).toUpperCase() + nameArray[i].substr(1);
-// 		}
-
-// 		var name = nameArray.join(' ');
-
-// 		$(this).attr("placeholder", name);
-// 		if ($(this).attr('name') === "password_two" || $(this).attr('name') === "new_password2")
-// 			$(this).attr("placeholder", "Verify Password");
-// 	});
-
-// 	$('input[type="submit"]').addClass("span12");
-// 	$('input[type="submit"]').addClass("btn-primary");
-// 	$('input[type="submit"]').css('height', 34);
-// 	$('input[type="submit"]').css('font-size', 16);
-// 	$('input[type="submit"]').css('font-weight', 'bold');
-// 	$('.w2p_fl').remove();
-// 	$('.w2p_fc').remove();
-
-// 	$('input[type="text"], input[type="password"]').css('height', 28);
-// 	$('input[type="text"], input[type="password"]').css('font-weight', 'bold');
-// });
-</script>
 {{elif request.args(0)=='register':}}
 <h2>{{=T( request.args(0).replace('_',' ').capitalize() )}}</h2>
 {{=form}}
@@ -55,36 +29,6 @@ $(function() {
 			"you can download here for Firefox: https://www.mozilla.org/firefox/, " +
 			"and here for Chrome: https://www.google.com/chrome/");
 	}
-
-	// $('#login-form').css('margin-top', -$('#login-form').height()/2);
-
-	// var navbarHeight = $('.navbar').height() + $('#top-margin').height() + parseInt($('.navbar').css('margin-bottom'));
-	// var footerHeight = $('footer').height() + parseInt($('footer').css('padding-top')) + parseInt($('footer').css('border-top'));
-	// var newHeight = $(window).height() - navbarHeight - footerHeight;
-	// if (newHeight < $('#login-form').height() + 80)
-	// 	newHeight = $('#login-form').height() + 80; 
-
-	// $('.row-fluid').css('height', newHeight);
-
-	// // $('#filter-block').css('top', $('#login-form').position().top - 15);
-	// // $('#filter-block').css('left', parseInt($('#login-form').css('margin-left')));
-	// // $('#filter-block').css('height', $('#login-form').height() + 35);
-	// // $('#filter-block').css('width', $('#login-form').width() + 45);
-
-	// $(window).on('resize', function() {
-	// 	var navbarHeight = $('.navbar').height() + $('#top-margin').height() + parseInt($('.navbar').css('margin-bottom'));
-	// 	var footerHeight = $('footer').height() + parseInt($('footer').css('padding-top')) + parseInt($('footer').css('border-top'));
-	// 	var newHeight = $(window).height() - navbarHeight - footerHeight;
-	// 	if (newHeight < $('#login-form').height() + 80)
-	// 		newHeight = $('#login-form').height() + 80; 
-
-	// 	$('.row-fluid').css('height', newHeight);
-
-	// 	// $('#filter-block').css('top', $('#login-form').position().top - 15);
-	// 	// $('#filter-block').css('left', parseInt($('#login-form').css('margin-left')));
-	// 	// $('#filter-block').css('height', $('#login-form').height() + 35);
-	// 	// $('#filter-block').css('width', $('#login-form').width() + 45);
-	// });
 });
 //--></script>
 {{end}}

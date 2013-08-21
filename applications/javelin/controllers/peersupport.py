@@ -3,6 +3,15 @@
 	Javelin Web2Py Peer Support Controller
 """
 
+# metadata
+__author__ = "Jeremy Jacobson"
+__copyright__ = "(c) 2013, Jacobson and Varni, LLC"
+__date__ = "7/12/2013"
+__email__ = "jjacobson93@gmail.com"
+__data__ = {'name' : 'peersupport', 'label' : 'Peer Support', 'description' : 'Issue tracking system for Peer Support', 
+	'icon' : 'heart', 'u-icon' : u'\uf004', 'color': 'pink', 'required' : True}
+
+from applications.javelin.modules import modules_enabled, get_module_data
 from gluon.tools import Service
 from gluon.sqlhtml import FormWidget
 service = Service(globals())
@@ -19,7 +28,8 @@ def index():
 
 	reports = db(db.file.name.contains("Peer_Support")).select(db.file.ALL)
 
-	return dict(issues=issues, reports=reports)
+
+	return dict(issues=issues, reports=reports, modules_enabled=modules_enabled, modules_data=get_module_data(), active_module='peersupport')
 
 @auth.requires_login()
 @auth.requires(auth.has_membership('peer_support') or auth.has_membership('admin'))

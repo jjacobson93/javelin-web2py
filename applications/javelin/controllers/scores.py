@@ -3,7 +3,15 @@
 	Javelin Web2Py Scores Controller
 """
 
-from applications.javelin.modules import modules_enabled, get_module_data, scores
+# metadata
+__author__ = "Jeremy Jacobson"
+__copyright__ = "(c) 2013, Jacobson and Varni, LLC"
+__date__ = "7/5/2013"
+__email__ = "jjacobson93@gmail.com"
+__data__ = {'name' : 'scores', 'label' : 'Scoring', 'description' : 'Score crews', 
+	'icon' : 'star-half-empty', 'u-icon' : u'\uf123', 'color': 'purple', 'required' : True}
+
+from applications.javelin.modules import modules_enabled, get_module_data
 from gluon.contrib import simplejson as json
 from gluon.tools import Service
 service = Service(globals())

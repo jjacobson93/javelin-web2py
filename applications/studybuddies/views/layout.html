@@ -43,6 +43,8 @@
 	{{  
 	response.files.append(URL('static','css/bootstrap.css'))
 	response.files.append(URL('static','css/font-awesome.min.css'))
+	response.files.append(URL('static','css/select2.css'))
+	response.files.append(URL('static','css/select2-bootstrap.css'))
 	}}
 
 	{{include 'web2py_ajax.html'}}
@@ -217,7 +219,8 @@
 	</section>
 
 	<script src="{{=URL('static','js/bootstrap.js')}}"></script>
-	<script src="{{=URL('static','js/web2py_bootstrap.js')}}"></script>
+	<!-- // <script src="{{=URL('static','js/web2py_bootstrap.js')}}"></script> -->
+	<script src="{{=URL('static','js/select2.min.js')}}"></script>
 	<script src="{{=URL('static','js/appcore.js')}}"></script>
 	<script type="text/javascript">
 		$(function() { displayFlash("{{=response.flash or ''}}"); });

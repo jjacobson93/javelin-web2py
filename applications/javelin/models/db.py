@@ -134,16 +134,29 @@ db.define_table('teacher',
 	Field('teacher_id', 'integer', notnull=True, unique=True),
 	Field('teacher_name', 'string', notnull=True))
 
+db.define_table('dept',
+	Field('title', 'string', notnull=True))
+
 db.define_table('course',
 	Field('course_id', 'integer', notnull=True, unique=True),
 	Field('code', 'string', notnull=True),
 	Field('title', 'string', notnull=True),
 	Field('period', 'integer', notnull=True),
-	Field('teacher_id', 'reference teacher', notnull=True))
+	Field('teacher_id', 'reference teacher', notnull=True),
+	Field('dept_id', 'reference dept'))
 
 db.define_table('course_rec',
 	Field('course_id', 'reference course', notnull=True),
 	Field('student_id', 'reference person', notnull=True))
+
+db.define_table('grade_session',
+	Field('title', 'string'),
+	Field('date', 'date'))
+
+db.define_table('grade',
+	Field('course_rec_id', 'reference course_rec', notnull=True),
+	Field('session_id', 'reference grade_session', notnull=True),
+	Field('grade', 'integer', notnull=True))
 
 db.define_table('groups',
 	Field('name', 'string', notnull=True, required=True, unique=True),

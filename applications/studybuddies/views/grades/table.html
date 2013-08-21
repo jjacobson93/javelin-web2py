@@ -1,0 +1,48 @@
+{{
+	GRADES = {
+		0: 'F',
+		1: 'D-',
+		2: 'D',
+		3: 'D+',
+		4: 'C-',
+		5: 'C',
+		6: 'C+',
+		7: 'B-',
+		8: 'B',
+		9: 'B+',
+		10: 'A-',
+		11: 'A'
+	}
+}}
+
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th>Course Title</th>
+			<th>Teacher Name</th>
+			{{for s in sessions:}}
+			<th>{{=s.title}}</th>
+			{{pass}}
+		</tr>
+	</thead>
+	<tbody>
+		{{if not data:}}
+		<tr>
+			<td colspan='{{=2 + len(sessions)}}'>
+				<h3 style="text-align: center">No data</h3>
+			</td>
+		</tr>
+		{{else:}}
+		{{for g in data:}}
+		<tr>
+			<td>{{=g.course_title}}</td>
+			<td>{{=g.teacher_name}}</td>
+			{{for s in g.sessions:}}
+			{{grade = GRADES[s.grade.grade]}}
+			<td>{{=grade}}</td>
+			{{pass}}
+		</tr>
+		{{pass}}
+		{{pass}}
+	</tbody>
+</table>

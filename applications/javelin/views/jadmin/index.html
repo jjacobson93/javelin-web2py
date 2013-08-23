@@ -1,12 +1,23 @@
 {{extend 'main.html'}}
 
 {{block center}}
+<style type="text/css">
+	.select2-container {
+		margin-left: 0 !important;
+	}
+
+	.select2-search-field {
+		width: 100%;
+	}
+</style>
+
 <!-- MAIN CONTENT -->
 
 <ul class="nav nav-tabs">
 	<li class="active"><a href="#modules" data-toggle="tab"><i class="icon-puzzle-piece icon-large"></i>Modules</a></li>
 	<li><a href="#users" data-toggle="tab"><i class="icon-group icon-large"></i>Users</a></li>
 	<li><a href="#approval" data-toggle="tab"><i class="icon-thumbs-up-alt icon-large"></i>Approvals</a></li>
+	<li><a href="#docs" data-toggle="tab"><i class="icon-paste icon-large"></i>Dynamic Documents</a></li>
 	<li><a href="#import" data-toggle="tab"><i class="icon-arrow-down icon-large"></i>Import Data</a></li>
 </ul>
 
@@ -122,6 +133,67 @@
 		<!-- <a class="btn btn-success pull-right" href="#" id="add-user-button"><i class="icon-plus-sign"></i>Add User</a> -->
 	</div>
 
+	<!-- DOCS TAB -->
+
+	<div class="tab-pane fade" id="docs">
+		<h2>Dynamic Documents</h2>
+		<form onsubmit="javascript: return false;">
+			<fieldset>
+				<label>Type</label>
+				<select class="span5" id="doc-type-select">
+					<option></option>
+					{{for d in doctypes:}}
+					<option value='{{=doctypes[d].value}}'>{{=doctypes[d].label}}</option>
+					{{pass}}
+				</select>
+			</fieldset>
+			<div id="fields">
+				<fieldset id="person-fields" style="display: none">
+					<label>Person(s)/Group(s)</label>
+					<select class="span6 " id="add-person-select" multiple></select>
+				</fieldset>
+				<fieldset id="nametag-fields" style="display: none">
+					<div class="row-fluid">
+						<div class="row-fluid span6">
+							<label for="event_name">Event Name</label>
+							<input class="span12 form-control" type='text' placeholder="Event Name" id="event_name_input" style="height: 36px; padding: 6px 12px">
+						</div>
+					</div>
+					<div class="row-fluid">
+						<div class="row-fluid span6">
+							<label for="attendance">Based on Attendance for</label>
+							<select class="span12" type='text' placeholder="Event Name" id="eventatt_select" multiple>
+								<option value="-1">None</option>
+								{{for e in db().select(db.events.ALL):}}
+								<option value="{{=e.id}}">{{=e.title}}</option>
+								{{pass}}
+							</select>
+						</div>
+						<div class="row-fluid span6" style="margin-left: 10px">
+							<label>By Present?</label>
+							<label class="radio inline">
+								<input type="radio" name="presentradios" id="present_yes" value="true" checked disabled> Yes
+							</label>
+							<label class="radio inline">
+								<input type="radio" name="presentradios" id="present_no" value="false" disabled> No
+							</label>
+							<label class="radio inline">
+								<input type="radio" name="presentradios" id="present_all" value="null" disabled> All
+							</label>
+						</div>
+					</div>
+				</fieldset>
+				<fieldset id="callslip-fields" style="display: none">
+					<label>Message</label>
+					<textarea class="form-control" rows='6' id="message-field"></textarea>
+				</fieldset>
+				<button class="btn btn-primary disabled" id="create-doc-btn" style="margin-top: 10px">
+					Create Document
+				</button>
+			</div>
+		</form>
+	</div>
+
 	<!-- IMPORT TAB -->
 
 	<div class="tab-pane fade" id="import">
@@ -188,6 +260,18 @@
 			<input type="submit" class="btn btn-primary disabled" id="import-button" data-loading-text="Importing..." value="Import">
 		</div>
 	</form>
+</div>
+
+<div class="modal fade" id="loading-doc-modal" data-backdrop="static" data-keyboard="false">
+	<div class="modal-header">
+		<h3>Creating Document</h3>
+	</div>
+	<div class="modal-body" style="text-align: center">
+		<p>Do NOT close, move from, or reload this page while processing.</p>
+		<span id="loading-text">
+			<i class="icon-spinner icon-spin" style="font-size: 50px"></i>
+		</span>
+	</div>
 </div>
 
 <!-- JAVASCRIPT -->

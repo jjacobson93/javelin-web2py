@@ -106,62 +106,48 @@
 	}*/
 </style>
 
-<div class="row" style="margin-bottom: 20px">
-	<div class="col-12 col-sm-12">
-		<span class="date-long-span" style="font-size: 28px; font-weight: bold"></span>
-		<input type="hidden" id="currdate-input" value="{{=currdate}}">
-		<!-- <div class="btn-group">
-			<button id="date-btn" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="font-size: 20px">
-				<span class="date-long-span"></span> <span class="caret"></span>
-			</button>
-			<ul class="dropdown-menu" style="width">
-				<li style="padding-bottom: 4px">
-					<span style="padding: 0 20px; line-height: 1.428571429; clear: both">
-						<i class="icon-time"></i> <b>Choose a date</b>
-					</span>
-				</li>
-				<li>
-					<ul class="dropdown-menu scroll-menu" id="date-menu" data-value=""></ul>
-				</li>
-			</ul>
-		</div> -->
+<div class="container">
+	<div class="row" style="margin-bottom: 20px">
+		<div class="col-12 col-sm-12">
+			<span class="date-long-span" style="font-size: 28px; font-weight: bold"></span>
+			<input type="hidden" id="currdate-input" value="{{=currdate}}">
+		</div>
 	</div>
-</div>
-<div class="sb-main-view">
-	<div class="row" style="height: 100%">
-		<div class="col-12 col-sm-12" style="height: 100%">
-			<div class="panel panel-primary">
-				<div class="panel-heading">
-					<span class="panel-title"><b id="section_title">Section</b></span>
-					<button id="out-show-all-btn" class="btn btn-default" style="margin-left: 10px" data-value='Hide'>Hide Inactive</button>
-					<button id="main-view-close" type="button" class="close" style="margin-right: 10px; margin-top: 4px">
-						<span style="font-size: 16px">Close</span> &times;
-					</button>
-				</div>
-				<div class="panel-body">
-					<input type="hidden" id="sb_section_input">
-					<div class="row">
-						<div class="input-group col-6 col-sm-6" style="margin-bottom: 10px">
-							<input type="text" class="form-control" placeholder='Student ID' id="checkin_id_input" style="border-right: 0">
-							<span class="input-group-btn">
-								<a href="#" id='checkin_id_submit' class="btn btn-primary disabled" type="button">Check In</a>
-							</span>
-						</div>
-						<div class="input-group col-6 col-sm-6" style="margin-bottom: 10px">
-							<input type="text" class="form-control" placeholder='Student ID' id="checkout_id_input" style="border-right: 0">
-							<span class="input-group-btn">
-								<a href="#" id='checkout_id_submit' class="btn btn-warning disabled" type="button">Check Out</a>
-							</span>
-						</div>
+	<div class="sb-main-view">
+		<div class="row" style="height: 100%">
+			<div class="col-12 col-sm-12" style="height: 100%">
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<span class="panel-title"><b id="section_title">Section</b></span>
+						<button id="out-show-all-btn" class="btn btn-default" style="margin-left: 10px" data-value='Hide'>Hide Inactive</button>
+						<button id="main-view-close" type="button" class="close" style="margin-right: 10px; margin-top: 4px">
+							<span style="font-size: 16px">Close</span> &times;
+						</button>
 					</div>
-					<div id="sb-table-content" style="overflow: scroll"></div>
+					<div class="panel-body">
+						<input type="hidden" id="sb_section_input">
+						<div class="row">
+							<div class="input-group col-6 col-sm-6" style="margin-bottom: 10px">
+								<input type="text" class="form-control" placeholder='Student ID' id="checkin_id_input" style="border-right: 0">
+								<span class="input-group-btn">
+									<a href="#" id='checkin_id_submit' class="btn btn-primary disabled" type="button">Check In</a>
+								</span>
+							</div>
+							<div class="input-group col-6 col-sm-6" style="margin-bottom: 10px">
+								<input type="text" class="form-control" placeholder='Student ID' id="checkout_id_input" style="border-right: 0">
+								<span class="input-group-btn">
+									<a href="#" id='checkout_id_submit' class="btn btn-warning disabled" type="button">Check Out</a>
+								</span>
+							</div>
+						</div>
+						<div id="sb-table-content" style="overflow: scroll"></div>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+	<div class="sb-rows"></div>
 </div>
-
-<div class="sb-rows"></div>
 
 <script type="text/javascript" src="{{=URL('static', 'js/default.js')}}"></script>
 <script type="text/javascript">

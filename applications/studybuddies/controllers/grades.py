@@ -31,9 +31,6 @@ def table():
 				join=[db.course_rec.on(db.person.id==db.course_rec.student_id),
 					db.course.on(db.course.id==db.course_rec.course_id),
 					db.teacher.on(db.teacher.id==db.course.teacher_id)])
-					# db.grade.on(db.course_rec.id==db.grade.course_rec_id),
-					# db.grade_session.on((db.grade_session.id==db.grade.session_id))])
-
 
 		result = [Storage(course_title=d.course.title, teacher_name=d.teacher.teacher_name,
 			sessions=[db(db.person.id==person_id).select(db.person.id, db.grade.ALL, db.grade_session.ALL,

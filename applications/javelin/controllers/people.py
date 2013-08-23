@@ -21,13 +21,20 @@ def index():
 @auth.requires_login()
 @auth.requires_membership('standard')
 @service.json
-def data(str_filter=None):
+def data(str_filter=None, query=None):
 	"""Loads the data for people with an optional filter
 
 	:param str_filter: an optional string filter
 	:returns: a list of people
 	"""
-	return people.data(str_filter)
+	if query:
+		qlist = query.split()
+
+		people = db((db.person.last_name.contains(qlist)) | 
+			(db.person.first_name.contains(qlist))).select(db.person.ALL)
+		return people
+	else:
+		return people.data(str_filter)
 
 @auth.requires_login()
 @auth.requires_membership('standard')

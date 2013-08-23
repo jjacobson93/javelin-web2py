@@ -142,6 +142,7 @@ db.define_table('course',
 	Field('code', 'string', notnull=True),
 	Field('title', 'string', notnull=True),
 	Field('period', 'integer', notnull=True),
+	Field('room', 'string'),
 	Field('teacher_id', 'reference teacher', notnull=True),
 	Field('dept_id', 'reference dept'))
 

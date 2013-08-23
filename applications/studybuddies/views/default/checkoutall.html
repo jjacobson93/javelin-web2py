@@ -1,25 +1,27 @@
 {{extend 'layout.html'}}
 
 {{block content}}
-<div class="row" style="margin-bottom: 20px">
-	<div class="col-12 col-sm-12">
-		<span class="date-long-span" style="font-size: 28px; font-weight: bold"></span>
-		<input type="hidden" id="currdate-input" value="{{=currdate}}">
+<div class="container">
+	<div class="row" style="margin-bottom: 20px">
+		<div class="col-12 col-sm-12">
+			<span class="date-long-span" style="font-size: 28px; font-weight: bold"></span>
+			<input type="hidden" id="currdate-input" value="{{=currdate}}">
+		</div>
 	</div>
-</div>
 
-<div class="row">
-	<div class="input-group col-4 col-sm-4">
-		<input type="text" class="form-control" placeholder='Student ID' id="checkoutall_id_input" style="border-right: 0">
-		<span class="input-group-btn">
-			<a href="#" id='checkoutall_id_submit' class="btn btn-warning disabled" type="button">Check Out</a>
-		</span>
+	<div class="row">
+		<div class="input-group col-4 col-sm-4">
+			<input type="text" class="form-control" placeholder='Student ID' id="checkoutall_id_input" style="border-right: 0">
+			<span class="input-group-btn">
+				<a href="#" id='checkoutall_id_submit' class="btn btn-warning disabled" type="button">Check Out</a>
+			</span>
+		</div>
 	</div>
-</div>
 
-<div class="row">
-	<div class="col-12 col-sm-12">
-		<div id="sb-table-content"></div>
+	<div class="row">
+		<div class="col-12 col-sm-12">
+			<div id="sb-table-content"></div>
+		</div>
 	</div>
 </div>
 

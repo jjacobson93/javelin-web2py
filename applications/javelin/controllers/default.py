@@ -33,6 +33,16 @@ def query():
 		orderby=[db.person.crew, db.person.id])
 	return dict(results=results)
 
+@auth.requires_login()
+@auth.requires_membership('standard')
+def javelin_header():
+	header = 'Vintage Crusher Crew'
+	recipient = 'Jeremy'
+	content = """Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vulputate mauris sollicitudin felis mollis, sit amet porta ante laoreet. Aliquam erat volutpat. Ut dapibus magna sed nulla hendrerit ullamcorper. Aliquam sapien neque, ullamcorper sed sem lacinia, auctor ullamcorper quam. Aenean eget tellus eget justo consectetur elementum. Aliquam interdum gravida eros, pretium congue enim sagittis eget. Proin quis felis urna. Aliquam congue neque odio, sed tristique sem commodo vulputate. Donec eleifend tempor metus ac lacinia. Sed egestas vel arcu non pellentesque. Aliquam ac viverra purus. Cras vehicula lectus ut nibh ornare hendrerit. Morbi ornare congue urna, sed imperdiet tortor viverra at. Praesent dapibus turpis neque, ut suscipit nunc consequat non.\n
+				Mauris laoreet tristique dui sit amet blandit. Fusce tempus euismod nibh id ultrices. Nunc in enim ac justo vehicula pulvinar. Phasellus ultricies ac turpis id aliquam. Donec scelerisque massa eget malesuada fringilla. Curabitur nec congue est. Vestibulum volutpat dui eget sem auctor, id suscipit nunc dapibus. Etiam vulputate ac lorem nec tristique. Morbi a eros vitae lectus sodales venenatis. Integer pretium nisl nec arcu porta, nec cursus tortor porta. Quisque semper quis augue nec luctus. Suspendisse sed vehicula erat, a tempor quam. Donec sollicitudin molestie erat vel lacinia. Suspendisse porta ipsum vitae venenatis adipiscing. Nam blandit urna eget metus semper vulputate. Integer vel turpis condimentum, auctor diam et, pellentesque dolor."""
+	content = content.split('\n')
+	return dict(header=header, recipient=recipient, content=content)
+
 def user():
 	"""
 	exposes:

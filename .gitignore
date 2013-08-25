@@ -11,3 +11,6 @@ applications/*/databases
 applications/*/uploads
 *.table
 *.log
+tmp/
+parameters_*.py
+*.pid

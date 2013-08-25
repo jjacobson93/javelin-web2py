@@ -1,192 +1,185 @@
-var attDataSource;
-var crewRecDataSource;
 var isMovePopoverVisible = false;
 var clickedAway = false;
 
+var eventsTable = undefined;
+var attendanceTable = undefined;
+var crewsTable = undefined;
+var crewRecTable = undefined;
+
 $(function() {
 
-	setInterval(reloadAttendance, 5000);
+	// setInterval(reloadAttendance, 5000);
 
-	$('#events-table').datagrid({
-		dataSource: new EventsDataSource({
-			columns: [
-				{
-					property: 'id',
-					label: 'ID',
-					sortable: true
-				},
-				{
-					property: 'title',
-					label: 'Title',
-					sortable: true
-				},
-				{
-					property: 'start_time',
-					label: 'From',
-					sortable: true
-				},
-				{
-					property: 'end_time',
-					label: 'To',
-					sortable: true
-				},
-				{
-					property: 'allDay',
-					label: 'All Day',
-					sortable: true
-				}
-			]
-		}),
-		stretchHeight: true
-	});
-
-	attDataSource = new AttendanceDataSource({
-		columns: [
-			{
-				property: 'id',
-				label: 'ID',
-				sortable: true
-			},
-			{
-				property: 'person_student_id',
-				label: 'Student ID',
-				sortable: true
-			},
-			{
-				property: 'person_last_name',
-				label: 'Last Name',
-				sortable: true
-			},
-			{
-				property: 'person_first_name',
-				label: 'First Name',
-				sortable: true
-			},
-			{
-				property: 'attendance_present',
-				label: 'Present',
-				sortable: true
-			}
+	eventsTable = $('#events-table').dataTable({
+		'aoColumns': [
+			{'mData' : 'id'},
+			{'mData' : 'title'},
+			{'mData' : 'start_time'},
+			{'mData' : 'end_time'},
+			{'mData' : 'allDay'}
 		],
-		event_id: '0'
+		"oLanguage": {
+			"sEmptyTable": "0 items"
+		},
+		'sDom': "<'row'<'col-6 col-sm-6'<'table-header'>>" +
+			"<'col-6 col-sm-6'<'form-group pull-right' f>>>" +
+			"<'row'<'col-12 col-sm-12'rt>><'row'<'col-6 col-sm-6'il><'col-6 col-sm-6'p>>",
+		'sAjaxSource': "/events/call/json/data",
+		'sAjaxDataProp' : "",
+		"sPaginationType": "bootstrap",
+		"bScrollCollapse": true,
+		"bLengthChange": false,
+		"sScrollY": "300px",
+		"fnCreatedRow": function( nRow, data, iDisplayIndex, iDisplayIndexFull) {
+			$(nRow).attr("id", data['id']);
+
+			var startDate = new Date(data.start_time*1000);
+			var endDate = new Date(data.end_time*1000);
+
+			$('td:eq(2)', nRow).html(startDate.toLocaleDateString() + " " + startDate.toLocaleTimeString());
+			$('td:eq(3)', nRow).html(endDate.toLocaleDateString() + " " + endDate.toLocaleTimeString());
+			
+			$('td:eq(4)', nRow).html((data.allDay) ? "Yes" : "No");
+
+			return nRow;
+		}
 	});
 
-	$('#attendance-table').datagrid({
-		dataSource: attDataSource,
-		stretchHeight: true
-	});
-
-	$('#crews-table').datagrid({
-		dataSource: new CrewDataSource({
-			columns: [
-				{
-					property: 'id',
-					label: 'ID',
-					sortable: true
-				},
-				{
-					property: 'room',
-					label: 'Room',
-					sortable: true
-				},
-				{
-					property: 'wefsk',
-					label: 'W.E.F.S.K Rotation',
-					sortable: true
-				},
-				{
-					property: 'count',
-					label: 'Count',
-					sortable: true
-				}
-			]
-		}),
-		stretchHeight: true
-	});
-
-	crewRecDataSource = new CrewRecordDataSource({
-		columns: [
-			{
-				property: 'student_id',
-				label: 'Student ID',
-				sortable: true
-			},
-			{
-				property: 'last_name',
-				label: 'Last Name',
-				sortable: true
-			},
-			{
-				property: 'first_name',
-				label: 'First Name',
-				sortable: true
-			},
-			{
-				property: 'actions',
-				label: 'Actions',
-				sortable: false
-			}
+	attendanceTable = $('#attendance-table').dataTable({
+		'aoColumns': [
+			{'mData' : 'id'},
+			{'mData' : 'person_student_id'},
+			{'mData' : 'person_last_name'},
+			{'mData' : 'person_first_name'},
+			{'mData' : 'attendance_present'}
 		],
-		crew_id: '0'
+		"oLanguage": {
+			"sEmptyTable": "0 items"
+		},
+		'sDom': "<'row'<'col-6 col-sm-6'<'table-header'>>" +
+			"<'col-6 col-sm-6'<'form-group pull-right' f>>>" +
+			"<'row'<'col-12 col-sm-12'rt>><'row'<'col-6 col-sm-6'il><'col-6 col-sm-6'p>>",
+		'sAjaxSource': "/orientation/call/json/attendance_data?event_id=0",
+		'sAjaxDataProp' : "",
+		"sPaginationType": "bootstrap",
+		"bScrollCollapse": true,
+		"bLengthChange": false,
+		"sScrollY": "300px",
+		"fnCreatedRow": function( nRow, data, iDisplayIndex, iDisplayIndexFull) {
+			$(nRow).attr("id", data['id']);
+
+			var id = data['id']
+			var present = (data['attendance_present'] == true) ? true : false;
+			var checkbox = $('<div class="switch switch-small" id="present-check-' + id + 
+				'" data-on-label="YES" data-off-label="NO"><input type="checkbox"' + ((present) ? 'checked' : '') + '></div>');
+			
+			checkbox.find('input:checkbox').prop('checked', present);
+			$('td:eq(4)', nRow).html(checkbox);
+			checkbox.bootstrapSwitch().on('switch-change', function(e, data) {
+				var event_id = attendanceTable._event_id;
+				var person_id = $(data.el).parent().parent().parent().parent().attr("id");
+				var present = data.value;
+				quickAttendance(person_id, event_id, present, false);
+			});
+
+			return nRow;
+		}
 	});
 
-	$('#crew-records-table').datagrid({
-		dataSource: crewRecDataSource,
-		stretchHeight: true
+	crewsTable = $('#crews-table').dataTable({
+		'aoColumns': [
+			{'mData' : 'id'},
+			{'mData' : 'room'},
+			{'mData' : 'wefsk'},
+			{'mData' : 'count'}
+		],
+		"oLanguage": {
+			"sEmptyTable": "0 items"
+		},
+		'sDom': "<'row'<'col-6 col-sm-6'<'table-header'>>" +
+			"<'col-6 col-sm-6'<'form-group pull-right' f>>>" +
+			"<'row'<'col-12 col-sm-12'rt>><'row'<'col-6 col-sm-6'il><'col-6 col-sm-6'p>>",
+		'sAjaxSource': "/orientation/call/json/crews",
+		'sAjaxDataProp' : "",
+		"sPaginationType": "bootstrap",
+		"bScrollCollapse": true,
+		"bLengthChange": false,
+		"sScrollY": "300px",
+		"fnCreatedRow": function( nRow, data, iDisplayIndex, iDisplayIndexFull) {
+			$(nRow).attr("id", data['id']);
+
+			return nRow;
+		}
 	});
 
-	$('#crew-records-table').on('loaded', function() {
-		if ($('#crew-records-table tr').eq(1).find('td').html() != '0 items') {
-			$('#crew-records-table tbody td:last-child').each(function(index, el) {
-				var id = $(el).parent().attr('id');
-				$(this).html('<button class="btn btn-small btn-primary" id="crew-move-person' + id + '">' +
-					'<i class="icon-signout"></i>Move' +
-					'</button>' +
-					'<button class="btn btn-small btn-danger" id="crew-remove-person-' + id + '" style="margin-left: 10px">' +
-					'<i class="icon-trash"></i>Remove' + '</button>');
-				$(this).find('button[id^="crew-move-person"]').popover({
-					trigger:'manual', 
-					html: true,
-					placement: 'left',
-					content: function() {
-						return $('<div><input type="hidden" id="change-crew-select" style="width: 100%"></div>');
-					}
-				}).on('click', function(e) {
-					var person_id = $(this).attr("id").match(/[\d]+/);
-					var current_crew = crewRecDataSource._crew_id;
-					$('button[id^="crew-move-person"]').not(this).popover('hide');
-					$(this).popover('toggle');
-					$('input#change-crew-select').attr('data-person', person_id);
-					$('input#change-crew-select').select2({
-						placeholder: "Select Crew",
-						id: function(crew) { 
-							return crew['id'];
+	$('#crews-div .table-header').html("Crews");
+
+	crewRecTable = $('#crew-records-table').dataTable({
+		'aoColumns': [
+			{'mData' : 'student_id'},
+			{'mData' : 'last_name'},
+			{'mData' : 'first_name'},
+			{'mData' : 'actions'}
+		],
+		"oLanguage": {
+			"sEmptyTable": "0 items"
+		},
+		'sDom': "<'row'<'col-6 col-sm-6'<'table-header'>>" +
+			"<'col-6 col-sm-6'<'form-group pull-right' f>>>" +
+			"<'row'<'col-12 col-sm-12'rt>><'row'<'col-6 col-sm-6'il><'col-6 col-sm-6'p>>",
+		'sAjaxSource': "/orientation/call/json/crew_records?id=0",
+		'sAjaxDataProp' : "",
+		"sPaginationType": "bootstrap",
+		"bScrollCollapse": true,
+		"bLengthChange": false,
+		"sScrollY": "300px",
+		"fnCreatedRow": function( nRow, data, iDisplayIndex, iDisplayIndexFull) {
+			$(nRow).attr("id", data['id']);
+
+			$(nRow).find('button[id^="crew-move-person"]').popover({
+				trigger:'manual', 
+				html: true,
+				placement: 'left',
+				content: function() {
+					return $('<div><input type="hidden" id="change-crew-select" style="width: 100%"></div>');
+				}
+			}).on('click', function(e) {
+				var person_id = $(this).attr("id").match(/[\d]+/);
+				var current_crew = crewRecTable._crew_id;
+				$('button[id^="crew-move-person"]').not(this).popover('hide');
+				$(this).popover('toggle');
+				$('input#change-crew-select').attr('data-person', person_id);
+				$('input#change-crew-select').select2({
+					placeholder: "Select Crew",
+					id: function(crew) { 
+						return crew['id'];
+					},
+					ajax: {
+						type: 'POST',
+						url: '/orientation/call/json/crews',
+						dataType: 'json',
+						quietMillis: 100,
+						data: function(term) {
+							return { id: term }
 						},
-						ajax: {
-							type: 'POST',
-							url: '/orientation/call/json/crews',
-							dataType: 'json',
-							quietMillis: 100,
-							data: function(term) {
-								return { id: term }
-							},
-							results: function(data, page) {
-								return { results: data };
-							}
-						},
-						formatResult: function(crew) {
-							return "Crew " + crew['id'];
-						},
-						formatSelection: function(crew) {
-							return "Crew " + crew['id'];
+						results: function(data, page) {
+							return { results: data };
 						}
-					}).on('change', function(e) {
-						var val = e.val;
-						var person_id = $('input#change-crew-select').attr('data-person');
-						changeToCrew(val, person_id);
-					});
+					},
+					formatResult: function(crew) {
+						return "Crew " + crew['id'];
+					},
+					formatSelection: function(crew) {
+						return "Crew " + crew['id'];
+					}
+				}).on('change', function(e) {
+					var val = e.val;
+					var person_id = $('input#change-crew-select').attr('data-person');
+					changeToCrew(val, person_id);
 				});
 			});
+
+			return nRow;
 		}
 	});
 
@@ -200,21 +193,16 @@ $(function() {
 		$(this).carousel('pause');
 	});
 
-	$('#events-div').height($(window).height()*.6);
-	$('#attendance-div').height($(window).height()*.6);
-	$('#crews-div').height($(window).height()*.6);
-	$('#crew-records-div').height($(window).height()*.6);
-
 	$('#events-div').on('click', '#events-table tr td', function() {
 		// row was clicked
 		if ($(this).html() !== "0 items") {
 			var event_id = $(this).parent().attr("id");
 			var title = $(this).parent().find('td').eq(1).html();
-			
-			loadRecord(event_id, title);
-			
+
 			$('#main-container').carousel('next');
 			$('#main-container').carousel('pause');
+
+			setTimeout(loadRecord(event_id, title), 100);
 		}
 	});
 
@@ -225,7 +213,7 @@ $(function() {
 		
 		if ($('#main-container .carousel-inner .item:first').hasClass('active')) {
 			$('#prev-button').addClass('disabled');
-			$('#events-table').datagrid('reload');
+			eventsTable.api().ajax.reload();
 			$('#quick-att-input').attr('readonly', true);
 			$('#quick-att-btn').addClass('disabled');
 		} 
@@ -259,7 +247,7 @@ $(function() {
 		
 		if ($('#crews-container .carousel-inner .item:first').hasClass('active')) {
 			$('#prev-button').addClass('disabled');
-			$('#crews-table').datagrid('reload');
+			crewsTable.api().ajax.reload();
 		} 
 		else if ($('#crews-container .carousel-inner .item:last').hasClass('active')) {
 			$('#add-crew-btn').addClass('disabled');
@@ -292,7 +280,7 @@ $(function() {
 		if (href == '#attendance') {
 			if ($('#main-container .carousel-inner .item:first').hasClass('active')) {
 				$('#prev-button').addClass('disabled');
-				$('#events-table').datagrid('reload');
+				eventsTable.api().ajax.reload();
 				$('#quick-att-input').attr('readonly', true);
 				$('#quick-att-btn').addClass('disabled');
 			} 
@@ -302,7 +290,7 @@ $(function() {
 		} else {
 			if ($('#crews-container .carousel-inner .item:first').hasClass('active')) {
 				$('#prev-button').addClass('disabled');
-				$('#crews-table').datagrid('reload');
+				crewsTable.api().ajax.reload();
 			} 
 			else if ($('#crews-container .carousel-inner .item:last').hasClass('active')) {
 			}
@@ -341,39 +329,14 @@ $(function() {
 		$(this).tooltip('hide');
 	});
 
-	$('#event-pagesize').select2();
-	$('#event-page-select').select2({placeholder: "1"});
-	$('#att-pagesize').select2();
-	$('#att-page-select').select2({placeholder: "1"});
-
-	$('#attendance-table').on('loaded', function() {
-		if ($('#attendance-table tr').eq(1).find('td').html() != '0 items') {
-			$(this).find('td:last-child').each(function(index, el) {
-				var id = $(el).parent().attr('id');
-				var present = ($(el).attr('data-value') == "true") ? true : false;
-				var checkbox = $('<div class="switch switch-small" id="present-check-' + id + 
-					'" data-on-label="YES" data-off-label="NO"><input type="checkbox"' + ((present) ? 'checked' : '') + '></div>');
-				
-				checkbox.find('input:checkbox').prop('checked', present);
-				$(el).html(checkbox);
-				checkbox.bootstrapSwitch().on('switch-change', function(e, data) {
-					var event_id = attDataSource._event_id;
-					var person_id = $(data.el).parent().parent().parent().parent().attr("id");
-					var present = data.value;
-					quickAttendance(person_id, event_id, present, false);
-				});
-			});
-		}
-	});
-
 	$('.nav li a').on('click', function() {
 		var href = $(this).attr('href');
 		if (href == "#attendance") {
-			$('#attendance-table').datagrid('reload');
+			attendanceTable.api().ajax.reload();
 			$('#attendance-nav').fadeIn(500).css('display', 'block');
 			$('#crew-nav').fadeOut(500).css('display', 'none');
 		} else if (href == "#crews") {
-			$('#crews-table').datagrid('reload');
+			crewsTable.api().ajax.reload();
 			$('#attendance-nav').fadeOut(500).css('display', 'none');
 			$('#crew-nav').fadeIn(500).css('display', 'block');
 		} else {
@@ -406,27 +369,10 @@ $(function() {
 		makeCallHomes();
 	});
 
-	// $('#existing-nametags-btn').on('click', function() {
-	// 	if ($(this).attr('data-state') == 'show') {
-	// 		$(this).button('hide');
-	// 		$(this).attr('data-state', 'hide');
-	// 		$('#nametags-table').slideDown(500).css('display', 'block');
-	// 	} else {
-	// 		$(this).button('show');
-	// 		$(this).attr('data-state', 'show');
-	// 		$('#nametags-table').css('display', 'none');
-	// 	}
-	// });
-
 	$('#event_name').on('keyup', function() {
 		var val = $(this).val();
 		$('#event_name_text').html(val);
 	});
-
-	$('#crews-pagesize').select2();
-	$('#crews-page-select').select2({placeholder: "1"});
-	$('#crew-rec-pagesize').select2();
-	$('#crew-rec-page-select').select2({placeholder: "1"});
 
 	$('#add-crew-btn').on('click', function() {
 		$('#add-person-select-modal').select2({
@@ -471,7 +417,7 @@ $(function() {
 
 	$('#add-person-btn').on('click', function() {
 		var people = $('#add-person-select').select2('val');
-		var crew_id = crewRecDataSource._crew_id
+		var crew_id = crewRecTable._crew_id
 		addPeopleToCrew(crew_id, people);
 	});
 
@@ -491,23 +437,26 @@ $(function() {
 });
 
 function loadRecord(event_id, event_title) {
-	attDataSource._event_id = event_id;
+	attendanceTable._event_id = event_id;
 
 	$('div[id^="attendance-for-"]').attr("id", "attendance-for-" + event_id);
 	$('#att-event-title').html(event_title);
 
-	$('#attendance-table').datagrid('reload');
+	attendanceTable.api().ajax.url("/orientation/call/json/attendance_data?event_id="+event_id).load();
 }
 
 function loadCrewRecord(crew_id, room, wefsk) {
-	crewRecDataSource._crew_id = crew_id;
+	crewRecTable._crew_id = crew_id;
 
 	$('div[id^="crew-records-for"]').attr("id", "crew-" + crew_id);
 	$('#crew-number').html(crew_id);
 	$('#crew-room-field').val(room);
 	$('#crew-wefsk-field').val(wefsk);
 
-	$('#crew-records-table').datagrid('reload');
+	crewRecTable.api().ajax.url("/orientation/call/json/crew_records?id="+crew_id).load();
+	crewRecTable.fnDraw();
+
+	$('#crew-records-div .table-header').html('Crew ' + crew_id);
 	loadPeopleForTypeahead();
 }
 
@@ -637,7 +586,7 @@ function addCrew(room, wefsk, people) {
 				$('#add-crew-modal').modal('hide');
 				displaySuccess("The crew has been added");
 
-				$('#crews-table').datagrid('reload');
+				crewsTable.api().ajax.reload();
 			} else {
 				displayError("Could not add crew.", true);
 			}
@@ -658,7 +607,7 @@ function addPeopleToCrew(id, people) {
 		},
 		success: function() {
 			$("#add-person-select").select2("val", "");
-			$('#crew-records-table').datagrid('reload');
+			crewRecTable.api().ajax.reload();
 			displaySuccess("Added people to crew");
 		},
 		error: function() {
@@ -675,7 +624,7 @@ function removeFromCrew(person_id) {
 			'person_id': person_id
 		},
 		success: function() {
-			$('#crew-records-table').datagrid('reload');
+			crewRecTable.api().ajax.reload();
 			displaySuccess("Removed from crew.");
 		},
 		error: function() {
@@ -693,7 +642,7 @@ function changeToCrew(crew_id, person_id) {
 			'id': crew_id
 		},
 		success: function() {
-			$('#crew-records-table').datagrid('reload');
+			crewRecTable.api().ajax.reload();
 			displaySuccess("Moved to Crew " + crew_id + ".");
 		},
 		error: function() {
@@ -703,7 +652,7 @@ function changeToCrew(crew_id, person_id) {
 }
 
 function updateRoom(room, wefsk) {
-	var id = crewRecDataSource._crew_id;
+	var id = crewRecTable._crew_id;
 	$.ajax({
 		type: "POST",
 		url: '/orientation/call/json/update_room',
@@ -722,7 +671,7 @@ function updateRoom(room, wefsk) {
 }
 
 function loadPeopleForTypeahead() {
-	var crew_id = crewRecDataSource._crew_id
+	var crew_id = crewRecTable._crew_id
 	$('#add-person-select').select2({
 		placeholder: "Add Person",
 		id: function(person) { 

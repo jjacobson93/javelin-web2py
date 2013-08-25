@@ -1,4 +1,4 @@
-{{extend 'main.html'}}
+{{extend 'layout.html'}}
 
 {{block content}}
 <style type="text/css">
@@ -64,15 +64,15 @@
 		</tr>
 		<tr>
 			<td><b>Summary of Concern</b></td>
-			<td><textarea rows="10" readonly>{{=issue.student_issue.summary}}</textarea></td>
+			<td><textarea class="form-control" rows="10" readonly>{{=issue.student_issue.summary}}</textarea></td>
 		</tr>
 		<tr>
 			<td><b>Result of Campus Walk</b></td>
-			<td><textarea rows="10" readonly>{{=issue.student_issue.result}}</textarea></td>
+			<td><textarea class="form-control" rows="10" readonly>{{=issue.student_issue.result}}</textarea></td>
 		</tr>
 		<tr>
 			<td><b>Follow Up</b></td>
-			<td><textarea rows="10" readonly>{{=issue.student_issue.follow_up}}</textarea></td>
+			<td><textarea class="form-control" rows="10" readonly>{{=issue.student_issue.follow_up}}</textarea></td>
 		</tr>
 	</tbody>
 </table>

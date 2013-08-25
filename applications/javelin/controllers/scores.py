@@ -3,7 +3,15 @@
 	Javelin Web2Py Scores Controller
 """
 
-from applications.javelin.modules import modules_enabled, get_module_data, scores
+# metadata
+__author__ = "Jeremy Jacobson"
+__copyright__ = "(c) 2013, Jacobson and Varni, LLC"
+__date__ = "7/5/2013"
+__email__ = "jjacobson93@gmail.com"
+__data__ = {'name' : 'scores', 'label' : 'Scoring', 'description' : 'Score crews', 
+	'icon' : 'star-half-empty', 'u-icon' : u'\uf123', 'color': 'purple', 'required' : True}
+
+from applications.javelin.ctr_data import ctr_enabled, get_ctr_data
 from gluon.contrib import simplejson as json
 from gluon.tools import Service
 service = Service(globals())
@@ -15,8 +23,8 @@ def index():
 
 	:returns: a dictionary to pass to the view with the list of modules_enabled, the active module ('scores') and a dynamic form
 	"""
-	modules_data = get_module_data()
-	return dict(modules_enabled=modules_enabled, active_module='scores', modules_data=modules_data, crews=data())
+	ctr_data = get_ctr_data()
+	return dict(ctr_enabled=ctr_enabled, active_module='scores', ctr_data=ctr_data, crews=data())
 
 @auth.requires_login()
 @auth.requires_membership('standard')

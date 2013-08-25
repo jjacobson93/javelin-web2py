@@ -3,7 +3,7 @@
 	Javelin Web2Py Default Controller
 """
 
-from applications.javelin.modules import modules_enabled, get_module_data
+from applications.javelin.ctr_data import ctr_enabled, get_ctr_data
 
 from gluon.tools import Service
 service = Service(globals())
@@ -18,8 +18,9 @@ def index():
 	if you need a simple wiki simple replace the two lines below with:
 	return auth.wiki()
 	"""
-	modules_data = get_module_data()
-	return dict(modules_enabled=modules_enabled, active_module='None', modules_data=modules_data)
+	d = dir()
+	ctr_data = get_ctr_data()
+	return dict(ctr_enabled=ctr_enabled, active_module='None', ctr_data=ctr_data)
 
 @auth.requires_login()
 @auth.requires_membership('standard')
@@ -58,7 +59,48 @@ def user():
 		@auth.requires_permission('read','table name',record_id)
 	to decorate functions that need access control
 	"""
-	return dict(form=auth())
+	form = auth()
+	if request.args(0)=='login':
+		login_form = auth.login()
+		form = FORM(
+				FIELDSET(
+					DIV(
+						INPUT(_type='text', _name='username', 
+							_id='auth_user_username', _placeholder="Username", 
+							_class="form-control"),
+						_class="form-group"
+					),
+					DIV(
+						INPUT(_type='password', _name='password', 
+							_id='auth_user_password', _placeholder="Password", _class="form-control"),
+						_class="form-group"
+					)
+				),
+				DIV(
+					INPUT(_type='submit', _value="Login", _class='btn btn-primary btn-lg btn-block'),
+					_class="form-group"
+				),
+				DIV(
+					INPUT(_type='button', 
+						_onclick="window.location='{}';return false".format(
+							URL(args='register', vars={'_next': request.vars._next} 
+								if request.vars._next else None)),
+						_value='Register', _class='btn btn-default pull-left'),
+					INPUT(_type='button', _onclick="window.location='{}';return false".format(URL(args='request_reset_password')),
+						_value='Lost Password', _class='btn btn-default pull-right', _style='margin-right: 0'),
+					_class="form-group"
+				),
+				_role="form"
+			)
+		form.append(login_form.custom.end)
+
+		# if not 'register' in auth.settings.actions_disabled:
+		# 	form.add_button(T('Register'),URL(args='register', vars={'_next': request.vars._next} if request.vars._next else None),_class='btn')
+
+		# if not 'request_reset_password' in auth.settings.actions_disabled:
+		# 	form.add_button(T('Lost Password'),URL(args='request_reset_password'),_class='btn')
+
+	return dict(form=form)
 
 @auth.requires_login()
 @auth.requires_membership('standard')

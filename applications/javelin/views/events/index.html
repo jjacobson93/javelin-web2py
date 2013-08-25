@@ -1,6 +1,6 @@
-{{extend 'main.html'}}
+{{extend 'layout.html'}}
 
-{{block center}}
+{{block content}}
 <link rel="stylesheet" type="text/css" href="{{=URL('static','css/fullcalendar.css')}}">
 <link rel="stylesheet" type="text/css" href="{{=URL('static','css/datetimepicker.css')}}">
 <style type='text/css'>
@@ -50,132 +50,132 @@
 
 <!-- NAV -->
 
-<div class="row-fluid">
-	<div id="datepicker-5" data-date="12-02-2013" data-date-format="dd-mm-yyyy"></div>
-	<!-- <ul class="nav nav-pills span4" id="cal-tabs">
-		<li class="active">
-			<a href="#schedules"><i class="icon-time"></i>Schedules</a>
-		</li>
-		<li>
-			<a href="#events"><i class="icon-ticket"></i>Events</a>
-		</li>
-	</ul> -->
-	<a href="#" class="btn btn-success pull-right" id="add-event-btn">
-		<i class="icon-plus"></i>Add Event
-	</a>
+<div class="row">
+	<div class="col-12 col-md-12">
+		<a href="#" class="btn btn-success pull-right" id="add-event-btn">
+			<i class="icon-plus"></i>Add Event
+		</a>
+	</div>
 </div>
 
 <hr>
 
 <!-- CALENDAR -->
 
-<!-- <div class="tab-content" id="calendar-div">
-	<div class="tab-pane active" id="schedules">
-		<div id="schedule-calendar"></div>
-	</div> -->
-	<div class="tab-pane" id="events">
-		<div id="event-calendar"></div>
-	</div>
-<!-- </div> -->
+<div class="row" id="events">
+	<div class="col-12 col-md-12" id="event-calendar"></div>
+</div>
 
 <!-- MODALS -->
 
-<div class="modal hide fade" id="edit-event-modal">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h4 id="event-title"></h4>
-		<!-- <span><b id="start-end">8:00am - 10:00am</b></span> -->
-	</div>
-	<div class="modal-body">
-		<div class="row-fluid">
-			<div class="row-fluid">
-				<fieldset class="span4">
-					<span><h5>From</h5></span>
-					<span id="start-time"></span>
-				</fieldset>
-				<fieldset class="span4">
-					<span><h5>To</h5></span>
-					<span id="end-time"></span>
-				</fieldset>
-				<fieldset class="span4">
-					<span><h5>All Day</h5></span>
-					<div class="switch" data-on-label="YES" data-off-label="NO" id="all-day-switch"><input type="checkbox"></div>
-				</fieldset>
+<div class="modal fade" id="edit-event-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 id="event-title"></h4>
+				<!-- <span><b id="start-end">8:00am - 10:00am</b></span> -->
+			</div>
+			<div class="modal-body">
+				<div class="row-fluid">
+					<div class="row-fluid">
+						<fieldset class="span4">
+							<span><h5>From</h5></span>
+							<span id="start-time"></span>
+						</fieldset>
+						<fieldset class="span4">
+							<span><h5>To</h5></span>
+							<span id="end-time"></span>
+						</fieldset>
+						<fieldset class="span4">
+							<span><h5>All Day</h5></span>
+							<div class="switch" data-on-label="YES" data-off-label="NO" id="all-day-switch"><input type="checkbox"></div>
+						</fieldset>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<a href="#" class="btn btn-danger pull-left" id="delete-event-btn">Delete Event</a>
+				<a href="#" class="btn btn-primary" data-dismiss="modal">Done</a>
 			</div>
 		</div>
 	</div>
-	<div class="modal-footer">
-		<a href="#" class="btn btn-danger pull-left" id="delete-event-btn">Delete Event</a>
-		<a href="#" class="btn btn-primary" data-dismiss="modal">Done</a>
-	</div>
 </div>
 
-<div class="modal hide fade" id="add-event-modal">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h4>Add Event</h4>
-	</div>
-	<div class="modal-body">
-		<form>
-			<div class="row-fluid">
-				<div class="row-fluid">
-					<div class="span12">
-						<fieldset>
-							<label class="control-label" for="inputTitle">Title</label>
-							<input class="span12" type="text" id="inputTitle" placeholder="Title">
-						</fieldset>
-					</div>
-				</div>
-				<div class="row-fluid">
-					<div class="span12">
-						<fieldset>
-							<label class="control-label" for="inputAllDay">All Day</label>
-							<div class="switch" data-on-label="YES" data-off-label="NO" id="inputAllDay"><input type="checkbox"></div>
-						</fieldset>
-					</div>
-				</div>
-				<div class="row-fluid">
-					<div class="span6">
-						<fieldset>
-							<label class="control-label" for="inputFrom">From</label>
-							<input class="btn span12" href="#" id="inputFrom" readonly>
-						</fieldset>
-					</div>
-					<div class="span6">
-						<fieldset>
-							<label class="control-label" for="inputTo">To</label>
-							<input class="btn span12" href="#" id="inputTo" readonly>
-						</fieldset>
-					</div>
-				</div>
-				<div class="row-fluid">
-					<div class="span12">
-						<fieldset>
-							<label class="control-label" for="inputNotes">Notes</label>
-							<textarea class="span12" id="inputNotes" rows="4" placeholder="Notes"></textarea>
-						</fieldset>
-					</div>
-				</div>
+<div class="modal fade" id="add-event-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Add Event</h4>
 			</div>
-		</form>
-	</div>
-	<div class="modal-footer">
-		<a href="#" class="btn" data-dismiss="modal">Cancel</a>
-		<a href="#" class="btn btn-primary disabled" id="add-complete-btn">Add</a>
+			<div class="modal-body">
+				<form role='form'>
+					<div class="row">
+						<div class="col-12 col-md-12">
+							<fieldset>
+								<label class="control-label" for="inputTitle">Title</label>
+								<input class="form-control" type="text" id="inputTitle" placeholder="Title">
+							</fieldset>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-12 col-md-12">
+							<fieldset>
+								<label class="control-label" for="inputAllDay">All Day</label>
+								<div class="switch" data-on-label="YES" data-off-label="NO" id="inputAllDay" style="margin-top: 5px">
+									<input type="checkbox">
+								</div>
+							</fieldset>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-6 col-md-6">
+							<fieldset>
+								<label class="control-label" for="inputFrom">From</label>
+								<input class="btn btn-default btn-block" href="#" id="inputFrom" readonly>
+							</fieldset>
+						</div>
+						<div class="col-6 col-md-6">
+							<fieldset>
+								<label class="control-label" for="inputTo">To</label>
+								<input class="btn btn-default btn-block" href="#" id="inputTo" readonly>
+							</fieldset>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-12 col-md-12">
+							<fieldset>
+								<label class="control-label" for="inputNotes">Notes</label>
+								<textarea class="form-control" id="inputNotes" rows="4" placeholder="Notes"></textarea>
+							</fieldset>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<a href="#" class="btn btn-default" data-dismiss="modal">Cancel</a>
+				<a href="#" class="btn btn-primary disabled" id="add-complete-btn">Add</a>
+			</div>
+		</div>
 	</div>
 </div>
 
-<div class="modal hide fade" id="delete-event-modal">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h4>Delete Event</h4>
-	</div>
-	<div class="modal-body">
-		<span>Are you sure you would like to delete <b id="event-to-delete"></b>?</span>
-	</div>
-	<div class="modal-footer">
-		<a href="#" class="btn" data-dismiss="modal">Cancel</a>
-		<a href="#" class="btn btn-danger" id="delete-confirm-btn">Delete</a>
+<div class="modal fade" id="delete-event-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Delete Event</h4>
+			</div>
+			<div class="modal-body">
+				<span>Are you sure you would like to delete <b id="event-to-delete"></b>?</span>
+			</div>
+			<div class="modal-footer">
+				<a href="#" class="btn btn-default" data-dismiss="modal">Cancel</a>
+				<a href="#" class="btn btn-danger" id="delete-confirm-btn">Delete</a>
+			</div>
+		</div>
 	</div>
 </div>
 

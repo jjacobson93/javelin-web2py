@@ -127,65 +127,8 @@ db.define_table('person',
 	Field('grade', 'integer'),
 	Field('leader', 'boolean', default=False), migrate=False)
 
-class_list = [None, 'Pre-Algebra', 'Algebra I', 'Algebra II', 
-	'Geometry', 'Pre-Calculus', 'Geography', 'World History',
-	'U.S. History', "Gov't/Econ", 'English/Writing', 'Biology',
-	'Chemistry', 'Physics', 'AVID', 'French', 'German', 'Spanish',
-	'Sign Language']
-
-db.define_table('study_buddy',
-	Field('person_id', db.person, notnull=True, 
-		required=True, label="Student", 
-		requires=IS_IN_SET([
-			(p.id, p.last_name + ", " + p.first_name) 
-			for p in db(db.person.leader==True).select(db.person.ALL, orderby=[db.person.last_name, db.person.first_name])]
-		)),
-	Field('days', 'string', notnull=True, required=True, requires=IS_IN_SET(["Tuesday", "Thursday", "Both"])),
-	Field('semester', 'string', notnull=True, required=True, requires=IS_IN_SET(["Fall", "Spring", "Both"])),
-	Field('lunch', 'string', notnull=True, required=True, requires=IS_IN_SET(["Yes", "No"]), label="Mon/Wed/Fri Lunch?"),
-	Field('sport_season', 'list:string', notnull=True, required=True, default=None, requires=IS_IN_SET([None, "Fall", "Winter", "Spring", "Summer"], multiple=False)),
-	Field('academic_subject1', 'string', notnull=True, required=True, default=None, requires=IS_IN_SET(class_list, multiple=False)),
-	Field('academic_subject2', 'string', notnull=True, required=True, default=None, requires=IS_IN_SET(class_list, multiple=False)),
-	Field('academic_subject3', 'string', notnull=True, required=True, default=None, requires=IS_IN_SET(class_list, multiple=False)),
-	Field('nickname', 'string', notnull=True, required=True),
-	Field('grad_year', 'integer', notnull=True, required=True),
-	Field('second_language', 'string'), migrate=False)
-
-db.define_table('groups',
-	Field('name', 'string', notnull=True, required=True, unique=True),
-	Field('description', 'string'), migrate=False)
-
-db.define_table('group_rec',
-	Field('group_id', 'reference groups', notnull=True, required=True),
-	Field('person_id', 'reference person', notnull=True, required=True), migrate=False)
-
-db.define_table('teacher',
-	Field('teacher_id', 'integer', notnull=True, unique=True),
-	Field('teacher_name', 'string', notnull=True), migrate=False)
-
 db.define_table('dept',
 	Field('title', 'string', notnull=True), migrate=False)
-
-db.define_table('course',
-	Field('course_id', 'integer', notnull=True, unique=True),
-	Field('code', 'string', notnull=True),
-	Field('title', 'string', notnull=True),
-	Field('period', 'integer', notnull=True),
-	Field('teacher_id', 'reference teacher', notnull=True),
-	Field('dept_id', 'reference dept'), migrate=False)
-
-db.define_table('course_rec',
-	Field('course_id', 'reference course', notnull=True),
-	Field('student_id', 'reference person', notnull=True), migrate=False)
-
-db.define_table('grade_session',
-	Field('title', 'string'),
-	Field('date', 'date'), migrate=False)
-
-db.define_table('grade',
-	Field('course_rec_id', 'reference course_rec', notnull=True),
-	Field('session_id', 'reference grade_session', notnull=True),
-	Field('grade', 'integer', notnull=True), migrate=False)
 
 db.define_table('sb_section',
 	Field('title', 'string'),

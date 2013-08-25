@@ -3,6 +3,15 @@
 	Javelin Web2Py Peer Support Controller
 """
 
+# metadata
+__author__ = "Jeremy Jacobson"
+__copyright__ = "(c) 2013, Jacobson and Varni, LLC"
+__date__ = "7/12/2013"
+__email__ = "jjacobson93@gmail.com"
+__data__ = {'name' : 'peersupport', 'label' : 'Peer Support', 'description' : 'Issue tracking system for Peer Support', 
+	'icon' : 'heart', 'u-icon' : u'\uf004', 'color': 'pink', 'required' : True}
+
+from applications.javelin.ctr_data import ctr_enabled, get_ctr_data
 from gluon.tools import Service
 from gluon.sqlhtml import FormWidget
 service = Service(globals())
@@ -19,19 +28,21 @@ def index():
 
 	reports = db(db.file.name.contains("Peer_Support")).select(db.file.ALL)
 
-	return dict(issues=issues, reports=reports)
+
+	return dict(issues=issues, reports=reports, ctr_enabled=ctr_enabled, ctr_data=get_ctr_data(), active_module='peersupport')
 
 @auth.requires_login()
 @auth.requires(auth.has_membership('peer_support') or auth.has_membership('admin'))
 def new_issue():
 	form = SQLFORM(db.student_issue,
 		fields=['person_id', 'ps_id', 'summary', 'result', 'need_follow_up', 'refer'],
-		formstyle='table2cols')
+		formstyle='divs')
 	if form.process(next=URL(a='javelin', c='peersupport', f='index')).accepted:
 		response.flash = 'The issue has been submitted!'
 	elif form.errors:
 		response.flash = 'There are errors in the form'
-	return dict(form=form)
+
+	return dict(form=form, ctr_enabled=ctr_enabled, active_module='peersupport', ctr_data=get_ctr_data())
 
 @auth.requires_login()
 @auth.requires(auth.has_membership('peer_support') or auth.has_membership('admin'))
@@ -45,9 +56,9 @@ def issue():
 				peer_support.on(peer_support.id==db.student_issue.ps_id)],
 			left=db.crew.on(db.student.crew==db.crew.id)).first()
 		if issue:
-			return dict(issue=issue)
+			return dict(issue=issue, ctr_enabled=ctr_enabled, active_module='peersupport', ctr_data=get_ctr_data())
 
-	return dict(issue=None)
+	return dict(issue=None, ctr_enabled=ctr_enabled, active_module='peersupport', ctr_data=get_ctr_data())
 
 @auth.requires_login()
 @auth.requires(auth.has_membership('peer_support') or auth.has_membership('admin'))
@@ -74,7 +85,7 @@ def follow_up():
 		response.flash = 'The issue has been submitted!'
 	elif form.errors:
 		response.flash = 'There are errors in the form'
-	return dict(form=form)
+	return dict(form=form, ctr_enabled=ctr_enabled, active_module='peersupport', ctr_data=get_ctr_data())
 
 @auth.requires_login()
 @auth.requires(auth.has_membership('peer_support') or auth.has_membership('admin'))

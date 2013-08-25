@@ -3,7 +3,15 @@
 	Javelin Web2Py Orientation Controller
 """
 
-from applications.javelin.modules import modules_enabled, get_module_data, orientation
+# metadata
+__author__ = "Jeremy Jacobson"
+__copyright__ = "(c) 2013, Jacobson and Varni, LLC"
+__date__ = "7/16/2013"
+__email__ = "jjacobson93@gmail.com"
+__data__ = {'name' : 'orientation', 'label' : 'Orientation', 'description' : 'The interface for Crusher Crew Orientation', 
+	'icon' : 'compass', 'u-icon' : u'\uf14e', 'color': 'yellow', 'required' : True}
+
+from applications.javelin.ctr_data import ctr_enabled, get_ctr_data
 from applications.javelin.private.utils import flattenDict, cached
 from gluon.contrib import simplejson as json
 from gluon.tools import Service
@@ -16,21 +24,41 @@ def index():
 
 	:returns: a dictionary to pass to the view with the list of modules_enabled and the active module ('orientation')
 	"""
-	modules_data = get_module_data()
+	ctr_data = get_ctr_data()
 	existing_nametags = db().select(db.file.ALL)
-	return dict(modules_enabled=modules_enabled, modules_data=modules_data, active_module='orientation', existing_nametags=existing_nametags)
+	return dict(ctr_enabled=ctr_enabled, ctr_data=ctr_data, active_module='orientation', existing_nametags=existing_nametags)
 
 @auth.requires_login()
 @auth.requires_membership('standard')
 @service.json
 def attendance_data(event_id):
-	return orientation.attendance_data(event_id)
+	data = db((db.person.grade==9) | (db.person.leader==True)).select(db.person.id, db.person.student_id, db.person.last_name, 
+		db.person.first_name, db.attendance.present, db.attendance.event_id, 
+		db.events.title, db.person.grade, db.person.leader,
+		left=[db.attendance.on((db.person.id==db.attendance.person_id) & (db.attendance.event_id==event_id)),
+		db.events.on(db.events.id==db.attendance.event_id)],
+		orderby=db.person.id).as_list()
+
+	data = [dict(('_'.join(k),v) if k != ('person','id') else ('id',v) for k,v in flattenDict(d).items()) for d in data]
+
+	return data
 
 @auth.requires_login()
 @auth.requires_membership('standard')
 @service.json
 def quick_attendance(event_id, person_id=None, student_id=None, present=True):
-	return orientation.quick_attendance(person_id, student_id, event_id, present)
+	if person_id:
+		response = db.attendance.update_or_insert((db.attendance.person_id==person_id) & (db.attendance.event_id==event_id),
+			person_id=person_id, event_id=event_id, present=present)
+	elif student_id:
+		person = db(db.person.student_id==student_id).select().first()
+		if person:
+			response = db.attendance.update_or_insert((db.attendance.person_id==person.id) & (db.attendance.event_id==event_id),
+				person_id=person.id, event_id=event_id, present=present)
+		else:
+			return dict(error=True)
+
+	return dict(response=response)
 
 @auth.requires_login()
 @auth.requires_membership('standard')
@@ -384,55 +412,154 @@ def attendance_sheet(kind):
 @auth.requires_membership('standard')
 @service.json
 def crews(id=None):
-	return orientation.crews(id)
+	if id:
+		try:
+			id = int(id)
+			count = db.person.id.count()
+			crews = db(db.crew.id==id).select(
+				db.crew.ALL, count.with_alias('count'), 
+				left=db.person.on(db.person.crew==db.crew.id),
+				groupby=db.crew.id, 
+				orderby=db.crew.id).as_list()
+		except:
+			crews = []
+	else:
+		count = db.person.id.count()
+		crews = db().select(
+			db.crew.ALL, count.with_alias('count'), 
+			left=db.person.on(db.person.crew==db.crew.id),
+			groupby=db.crew.id, 
+			orderby=db.crew.id).as_list()
+		crews = [dict((k[-1],v) for k,v in flattenDict(d).items()) for d in crews]
+
+	return crews
 
 @auth.requires_login()
 @auth.requires_membership('standard')
 @service.json
 def crew_records(id):
-	return orientation.crew_records(id)
+	records = db(db.person.crew==id).select(db.person.ALL).as_list()
+	records = [dict([('actions','<button class="btn btn-small btn-primary" id="crew-move-person' + str(d['id']) + '">' +\
+					'<i class="icon-signout"></i>Move</button>' +\
+					'<button class="btn btn-small btn-danger" id="crew-remove-person-' + str(d['id']) + '" style="margin-left: 10px">' +\
+					'<i class="icon-trash"></i>Remove' + '</button>')] + [(k,v) for k,v in d.items()]) for d in records]
+	return records
 
 @auth.requires_login()
 @auth.requires_membership('standard')
 @service.json
 def add_crew(room, wefsk, people):
-	return orientation.add_crew(room, wefsk, json.loads(people))
+	people = json.loads(people)
+	id = db.crew.insert(room=room, wefsk=wefsk)
+	for p in people:
+		db(db.person.id==p).update(crew=id)
+
+	return dict(id=id)
 
 @auth.requires_login()
 @auth.requires_membership('standard')
 @service.json
 def people_not_in_crew(id, query):
-	return orientation.people_not_in_crew(id, query)
+	if id != 0:
+		return db(((db.person.crew != id) | (db.person.crew == None)) & 
+			((db.person.leader==True) | (db.person.grade==9)) & 
+				((db.person.last_name.contains(query)) |
+				 (db.person.first_name.contains(query)))).select(
+			db.person.id, db.person.last_name, db.person.first_name).as_list()
+	else:
+		return db((db.person.crew == None) & 
+			(((db.person.leader==True) | (db.person.grade==9)) & 
+				((db.person.last_name.contains(query)) | 
+					(db.person.first_name.contains(query))))).select(
+			db.person.id, db.person.last_name, db.person.first_name).as_list()
 
 @auth.requires_login()
 @auth.requires_membership('standard')
 @service.json
 def add_people_to_crew(id, people):
-	return orientation.add_people_to_crew(id, json.loads(people))
+	people = json.loads(people)
+	response = list()
+
+	for p_id in people:
+		response.append(db(db.person.id==p_id).update(crew=id))
+
+	return dict(response=response)
 
 @auth.requires_login()
 @auth.requires_membership('standard')
 @service.json
 def remove_crew(person_id):
-	return orientation.remove_crew(person_id)
+	response = db(db.person.id==person_id).update(crew=None)
+	return dict(response=response)
 
 @auth.requires_login()
 @auth.requires_membership('standard')
 @service.json
 def move_to_crew(id, person_id):
-	return orientation.move_to_crew(id, person_id)
+	response = db(db.person.id==person_id).update(crew=int(id))
+	return dict(response=response)
 
 @auth.requires_login()
 @auth.requires_membership('standard')
 @service.json
 def update_room(id, room, wefsk):
-	return orientation.update_room(id, room, wefsk)
+	response = db(db.crew.id==id).update(room=room, wefsk=wefsk)
+	return dict(response=response)
 
 @auth.requires_login()
 @auth.requires_membership('standard')
 @service.json
 def organize_crews():
-	return orientation.organize_crews()
+	courses = db(db.course.code.belongs('EN228', 'EN135', 'EN137')).select(db.course.ALL)
+	
+	crew_index = 1
+	num_crews = 0
+
+	in_crews = list()
+
+	temp_list = list()
+
+	for course in courses:
+		students = [s for s in db(db.course_rec.course_id==course.id,).select(db.person.ALL,
+			join=db.person.on(db.course_rec.student_id==db.person.id))]
+
+		num_crews = int(round(len(students), -1)/desiredsize)
+		if num_crews == 0 and len(students) >= minsize:
+			num_crews = 1
+		elif (num_crews == 0 or num_crews == 1) and len(students) < minsize:
+			while students:
+				student = students.pop(0)
+				temp_list.append(student)
+
+		if num_crews != 0:
+			while students:
+				for i in range(num_crews):
+					student = students.pop(0)
+					if student.id not in in_crews: 
+						crew = db(db.crew.id==int(crew_index + i)).select().first()
+						if not crew:
+							crew_id = db.crew.insert(room='N/A', wefsk='N/A')
+						else:
+							crew_id = crew.id
+						student.crew = crew_id
+						student.update_record()
+						in_crews.append(student.id)
+						if not students:
+							break
+			crew_index += num_crews
+
+	while temp_list:
+		person = temp_list.pop(0)
+		if person.id not in in_crews: 
+			count = db.crew.id.count()
+			min_crew = db(db.person.grade==9).select(db.crew.id, count, 
+				join=db.person.on(db.person.crew==db.crew.id),
+				groupby=db.crew.id,
+				orderby=count).first()
+			person.crew = min_crew.crew.id
+			person.update_record()
+
+	return True
 
 @auth.requires_login()
 @auth.requires_membership('standard')

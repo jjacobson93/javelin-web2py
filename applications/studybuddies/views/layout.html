@@ -41,10 +41,8 @@
 
 	<!-- include stylesheets -->
 	{{  
-	response.files.append(URL('static','css/bootstrap.min.css'))
+	response.files.append(URL('static','css/bootstrap.css'))
 	response.files.append(URL('static','css/font-awesome.min.css'))
-	response.files.append(URL('static','css/select2.css'))
-	response.files.append(URL('static','css/select2-bootstrap.css'))
 	}}
 
 	{{include 'web2py_ajax.html'}}
@@ -77,14 +75,14 @@
 			vertical-align: middle;
 		}
 
-		/*.navbar-brand {
+		.navbar-brand {
 			line-height: 4px;
-		}*/
+		}
 
-		/*.navbar-brand .reg-span {
+		.navbar-brand .reg-span {
 			display: inline-block;
 			vertical-align: middle;
-		}*/
+		}
 
 		.main-nav {
 			background-color: #428bca; /*#2E5099;*/
@@ -176,38 +174,33 @@
 
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top main-nav">
-
-			<div class="row">
-				<div class="col-sm-12">
-					<div class="navbar-header">
-						<button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".navbar-collapse">
-							<span class="icon-bar"></span>
-							<span class="icon-bar"></span>
-							<span class="icon-bar"></span>
-						</button>
-						<a href="{{=URL('default','index')}}" class="navbar-brand">
-							<span class="javelin-brand">Javelin</span> <span class="reg-span">Study Buddies</span>
-						</a>
-					</div>
-					<nav class="collapse navbar-collapse" role="navigation">
-						<ul class="nav navbar-nav">
-							<li {{if request.function == 'checkoutall':}}class="active"{{pass}}>
-								<a href="{{=URL('default','checkoutall')}}">Check Out</a>
-							</li>
-							<li {{if request.controller == 'archive':}}class="active"{{pass}}>
-								<a href="{{=URL('archive', 'index')}}">Archive</a>
-							</li>
-							<li {{if request.controller == 'tutors':}}class="active"{{pass}}>
-								<a href="{{=URL('tutors', 'index')}}">Tutors</a>
-							</li>
-						</ul>
-						<ul class="nav navbar-nav pull-right">
-							{{='auth' in globals() and auth.navbar(mode="dropdown") or ''}}
-						</ul>
-					</nav>
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="navbar-header">
+					<button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".navbar-collapse">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a href="{{=URL('default','index')}}" class="navbar-brand">
+						<span class="javelin-brand">Javelin</span> <span class="reg-span">Study Buddies</span>
+					</a>
 				</div>
+				<nav class="collapse navbar-collapse" role="navigation">
+					<ul class="nav navbar-nav">
+						<li {{if request.function == 'checkoutall':}}class="active"{{pass}}>
+							<a href="{{=URL('default','checkoutall')}}">Check Out</a>
+						</li>
+						<li {{if request.controller == 'archive':}}class="active"{{pass}}>
+							<a href="{{=URL('archive', 'index')}}">Archive</a>
+						</li>
+					</ul>
+					<ul class="nav navbar-nav pull-right">
+						{{='auth' in globals() and auth.navbar(mode="dropdown") or ''}}
+					</ul>
+				</nav>
 			</div>
-
+		</div>
 	</header>
 
 	<section id="main" class="main row">
@@ -216,14 +209,13 @@
 			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 			<span id="response_flash"></span>
 		</div>
-		{{block content}}
-		{{include}}
-		{{end}}
+	{{block content}}
+	{{include}}
+	{{end}}
 	</section>
 
 	<script src="{{=URL('static','js/bootstrap.js')}}"></script>
 	<script src="{{=URL('static','js/web2py_bootstrap.js')}}"></script>
-	<script src="{{=URL('static','js/select2.min.js')}}"></script>
 	<script src="{{=URL('static','js/appcore.js')}}"></script>
 	<script type="text/javascript">
 		$(function() { displayFlash("{{=response.flash or ''}}"); });

@@ -1,4 +1,4 @@
-{{extend 'main.html'}}
+{{extend 'layout.html'}}
 
 {{block content}}
 <style type="text/css">
@@ -6,7 +6,11 @@
 		font-weight: bold !important;
 	}
 
-	td.w2p_fl, td.w2p_fw {
+	.w2p_fl, .w2p_fw {
+		padding: 10px 0 0 0;
+	}
+
+	.has-switch {
 		padding: 0;
 	}
 </style>
@@ -18,6 +22,11 @@
 $(function() {
 	$('input#student_issue_need_follow_up.boolean').wrap('<div class="switch />').parent().bootstrapSwitch();
 	$('input#student_issue_refer.boolean').wrap('<div class="switch />').parent().bootstrapSwitch();
+
+	$('select, textarea').addClass('form-control');
+	$('.btn').addClass('btn-default');
+
+	$('select').select2();
 });
 </script>
 {{end}}

@@ -371,7 +371,7 @@
 			if(this.isInline) return;
 			var zIndex = parseInt(this.element.parents().filter(function() {
 				return $(this).css('z-index') != 'auto';
-			}).first().css('z-index'))+10;
+			}).first().css('z-index'))+1200;
 			var offset, top, left;
 			if (this.component) {
 				offset = this.component.offset();

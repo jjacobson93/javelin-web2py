@@ -1,8 +1,45 @@
-{{extend 'main.html'}}
+{{extend 'layout.html'}}
 
-{{block center}}
-<div class="hero-unit">
-	<h1>Welcome to Javelin!</h1>
-	<p>Choose one of the modules on the side to get started using the portal.</p> 
+{{block content}}
+<style type="text/css">
+	body {
+		background-color: #0A66C6;
+	}
+
+	h1 {
+		font-family: big-noodle;
+		font-style: oblique;
+		text-align: center;
+		font-size: 50px;
+		color: #ffffff;
+	}
+
+	p.lead {
+		text-align: center;
+		color: #BFD0E3;
+		font-size: 16.099999999999998px;
+	}
+
+
+	@media (min-width: 767px) {
+		h1 {
+			text-align: left;
+			font-size: 115px;
+		}
+
+		p.lead {
+			text-align: left;
+			font-size: 30px;
+		}
+	}
+</style>
+
+<div class="container">
+	<div class="row">
+		<div class="col-12 col-sm-12">
+			<h1>Welcome to Javelin!</h1>
+			<p class="lead">Sleek, intuitive, and piercing web application for community management and organization.</p>
+		</div>
+	</div>
 </div>
 {{end}}

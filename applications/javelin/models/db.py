@@ -13,6 +13,7 @@ import logging
 logger = logging.getLogger('web2py.app.javelin')
 logger.setLevel(logging.DEBUG)
 from conf import *
+from applications.javelin.ctr_data import ctr_enabled, get_ctr_data
 
 from gluon.custom_import import track_changes
 track_changes(True)

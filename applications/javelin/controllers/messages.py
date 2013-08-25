@@ -11,7 +11,7 @@ __email__ = "jjacobson93@gmail.com"
 __data__ = {'name' : 'messages', 'label' : 'Messages', 'description' : 'Send Email and SMS messages to people', 
 	'icon' : 'comment', 'u-icon' : u'\uf075', 'color': 'light-blue', 'required' : True}
 
-from applications.javelin.modules import modules_enabled, get_module_data
+from applications.javelin.ctr_data import ctr_enabled, get_ctr_data
 from gluon.contrib import simplejson as json
 from gluon.tools import Service
 service = Service(globals())
@@ -56,8 +56,8 @@ def index():
 
 	:returns: a dictionary to pass to the view with the list of modules_enabled and the active module ('messages')
 	"""
-	modules_data = get_module_data()
-	return dict(modules_enabled=modules_enabled, modules_data=modules_data, active_module='messages')
+	ctr_data = get_ctr_data()
+	return dict(ctr_enabled=ctr_enabled, ctr_data=ctr_data, active_module='messages')
 
 @auth.requires_login()
 @auth.requires_membership('standard')

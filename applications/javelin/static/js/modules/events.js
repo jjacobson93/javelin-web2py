@@ -1,28 +1,4 @@
 $(document).ready(function() {
-	// $('#schedule-calendar').fullCalendar({
-	// 	defaultView: 'agendaWeek',
-	// 	header: {
-	// 		left: '',
-	// 		center: 'title'
-	// 	},
-	// 	eventSources: [
-	// 		{
-	// 			url: "/events/data",
-	// 			success: function(data) {
-	// 				console.log("retrieved schedules")
-	// 			},
-	// 			error: function() {
-	// 				console.log('Could not retrieve events');
-	// 			}
-	// 		}
-	// 	],
-	// 	editable: true,
-	// 	aspectRatio: 2.2,
-	// 	firstHour: 7
-	// });
-
-	// renderPersonDropdown();
-
 	$('#event-calendar').fullCalendar({
 		header: {
 			left: 'agendaDay,agendaWeek,month',

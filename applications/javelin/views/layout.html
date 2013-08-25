@@ -44,7 +44,6 @@
 	<link rel="stylesheet" type="text/css" href="{{=URL('static','css/bootstrap.min.css')}}">
 	<!-- <link rel="stylesheet" type="text/css" href="{{=URL('static','css/web2py_bootstrap.css')}}"> -->
 	<!-- <link rel="stylesheet" type="text/css" href="{{=URL('static','css/bootstrap-responsive.min.css')}}"> -->
-	<link rel="stylesheet" type="text/css" href="{{=URL('static','css/style.css')}}">
 	<link rel="stylesheet" type="text/css" href="{{=URL('static','css/bootstrap3-stickyfooter.css')}}">
 	<link rel="stylesheet" type="text/css" href="{{=URL('static','css/fuelux.css')}}">
 	<link rel="stylesheet" type="text/css" href="{{=URL('static','css/fuelux-responsive.css')}}">
@@ -56,6 +55,7 @@
 	<link rel="stylesheet" type="text/css" href="{{=URL('static','css/bootstrap-switch.css')}}">
 	<!-- <link rel="stylesheet" type="text/css" href="{{=URL('static','css/jquery.dataTables.css')}}"> -->
 	<link rel="stylesheet" type="text/css" href="{{=URL('static','css/DT_bootstrap.css')}}">
+	<link rel="stylesheet" type="text/css" href="{{=URL('static','css/style.css')}}">
 	<!--[if IE 7]><link rel="stylesheet" type="text/css" href="{{=URL('static','css/font-awesome-ie7.min.css')}}"><![endif]-->
 
 	{{include 'web2py_ajax.html'}}
@@ -80,13 +80,11 @@
 		<div class="row">
 			<div class="col-sm-12">
 				<div class="navbar-header">
-					{{if request.controller != 'default':}}
 					<button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".mainnav-collapse">
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</button>
-					{{pass}}
 					<button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".user-collapse" style="margin-right: 10px; padding-top: 6px; max-height: 34px">
 						<span><b style="color: #ffffff;">User</b></span>
 					</button>
@@ -94,6 +92,19 @@
 						<span class="javelin-brand">Javelin</span>
 					</a>
 				</div>
+				{{if request.function != 'user':}}
+				<ul class="collapse navbar-collapse mainnav-collapse nav navbar-nav">
+					{{ctr_data = get_ctr_data()}}
+					{{if 'active_module' not in globals(): active_module = 'None'}}
+					{{for ctr in ctr_data:}}
+					<li class="{{if ctr_data[ctr]['name'] == active_module:}}active{{pass}}">
+						<a href="/{{=ctr_data[ctr]['name']}}">
+							<span class="ctr-name"><i class="icon-{{=ctr_data[ctr]['icon']}} icon-large"></i> {{=ctr_data[ctr]['labels']['cap']}}</span>
+						</a>
+					</li>
+					{{pass}}
+				</ul>
+				{{pass}}
 				<ul class="collapse navbar-collapse user-collapse nav navbar-nav pull-right">
 					{{='auth' in globals() and auth.navbar(mode='dropdown') or ''}}
 				</ul>
@@ -105,37 +116,26 @@
 
 	<!-- MAIN CONTAINER -->
 	
-	<section style="padding: 50px 0 30px">
-		{{if request.controller != 'default':}}
-		<nav class="collapse navbar-collapse mainnav-collapse navbar navbar-default" style="border-radius: 0;">
-			<ul class="nav navbar-nav">
-				{{for module in modules_data:}}
-				<li class="{{if modules_data[module]['name'] == active_module:}}active{{pass}}">
-					<a href="/{{=modules_data[module]['name']}}">
-						<span class="module-name"><i class="icon-{{=modules_data[module]['icon']}} icon-large"></i> {{=modules_data[module]['labels']['cap']}}</span>
-					</a>
-				</li>
-				{{pass}}
-			</ul>
-		</nav>
-		{{pass}}
+	<section style="padding: 70px 15px 30px">
 		<div class="container">
-			<div class="row" {{if request.controller == 'default':}}style="margin-top: 20px"{{pass}}>
-				{{if response.flash:}}
+			<div class="row">
+				
+				<!-- ALERTS -->
+
+				<div class="alert-container"></div>
 				<div class="alert alert-info alert-dismissable fade in" id="flash_alert" style="display: none">
 					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-					<span id="response_flash">{{=response.flash or ''}}</span>
+					<span id="response_flash"></span>
 				</div>
-				{{pass}}
-				{{block content}}
+
+				<!-- CONTENT -->
+
 				<div class="col-12 col-sm-12" id="main-content">
-					<!-- ALERTS -->
-					<div class="alert-container"></div>
-				{{block center}}
+				{{block content}}
 				{{include}}
 				{{end}}
 				</div>
-				{{end}}
+
 			</div>
 		</div>
 	</section>
@@ -161,6 +161,7 @@
 	<script src="{{=URL('static','js/jquery.dataTables.js')}}"></script>
 	<script src="{{=URL('static','js/bootstrap-datatables.js')}}"></script>
 	<script src="{{=URL('static','js/datatables-js/DataTables.js')}}"></script>
+	<script src="{{=URL('static','js/bootstrap-overflow-navs.js')}}"></script>
 	<script src="{{=URL('static','js/javelin_core.js')}}"></script>
 	<!--[if lt IE 7 ]>
 			<script src="{{=URL('static','js/dd_belatedpng.js')}}"></script>
@@ -174,12 +175,14 @@
 		'Google Analytics':{trackingId:'{{=response.google_analytics_id}}'} 
 	});</script>
 	{{pass}}
-	<!-- <script src="{{=URL('static','js/share.js',vars=dict(static=URL('static','images')))}}"></script> -->
+	<script type="text/javascript">
+		$(function() { displayFlash("{{=response.flash or ''}}"); });
+	</script>
 </div>
 </body>
 <footer id="footer" class="footer-inverse">
 	<div class="container">
-		<p class='text-muted credit'>
+		<p class='credit'>
 			<span>&#169; {{=request.now.year}} Jacobson and Varni</span>
 			<span class="pull-right">v{{=__version__}}</span>
 		</p>

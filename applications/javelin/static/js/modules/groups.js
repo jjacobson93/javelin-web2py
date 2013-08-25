@@ -103,17 +103,8 @@ function loadRecordsTable(id) {
 		}
 	});
 
-	// $('.select2-search-field input').css('width', '100%');
-
-	// $('#records-table').datagrid('reload');
 	recordsTable.api().ajax.url("/groups/call/json/records?id="+id).load();
 	recordsTable.fnDraw();
-
-	// $('#rec-pagesize').select2('destroy');
-	// $('#rec-page-select').select2('destroy');
-
-	// $('#rec-pagesize').select2();
-	// $('#rec-page-select').select2();
 }
 
 function addGroup(name, description, values) {
@@ -328,7 +319,7 @@ $(function() {
 			$('#main-container').carousel('next');
 			$('#main-container').carousel('pause');
 
-			recordsTable.fnDraw();
+			// recordsTable.fnDraw();
 		} else {
 			console.log("OOPS");
 		}

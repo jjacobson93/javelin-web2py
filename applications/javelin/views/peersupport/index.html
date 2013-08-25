@@ -1,4 +1,4 @@
-{{extend 'main.html'}}
+{{extend 'layout.html'}}
 
 {{block content}}
 <div class="container">
@@ -51,7 +51,7 @@
 								<td>{{='Yes' if i.student_issue.refer else 'No'}}</td>
 								<td>
 									<div class="btn-group">
-										<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+										<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#">
 											Actions <span class="caret"></span>
 										</a>
 										<ul class="dropdown-menu" style="margin-left: -77px">
@@ -94,7 +94,7 @@
 							{{for r in reports:}}
 							<tr>
 								<td>{{=r.name}}</td>
-								<td><a class="btn" href="{{=URL('default', 'download', r.file)}}">Download</a></td>
+								<td><a class="btn btn-efault" href="{{=URL('default', 'download', r.file)}}">Download</a></td>
 							</tr>
 							{{pass}}
 						</tbody>

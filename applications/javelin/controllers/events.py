@@ -12,7 +12,7 @@ __status__ = "Development"
 __data__ = {'name' : 'events', 'label' : 'Events', 'description' : 'Manage and create events', 
 	'icon' : 'calendar', 'u-icon' : u'\uf073', 'color':'red', 'required' : True}
 
-from applications.javelin.modules import modules_enabled, get_module_data
+from applications.javelin.ctr_data import ctr_enabled, get_ctr_data
 from gluon.contrib import simplejson as json
 from gluon.tools import Service
 service = Service(globals())
@@ -24,8 +24,7 @@ def index():
 
 	:returns: a dictionary to pass to the view with the list of modules_enabled and the active module ('events')
 	"""
-	modules_data = get_module_data()
-	return dict(modules_enabled=modules_enabled, modules_data=modules_data, active_module='events')
+	return dict(ctr_enabled=ctr_enabled, ctr_data=get_ctr_data(), active_module='events')
 
 @auth.requires_login()
 @auth.requires_membership('standard')

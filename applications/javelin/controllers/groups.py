@@ -11,7 +11,7 @@ __email__ = "jjacobson93@gmail.com"
 __data__ = {'name' : 'groups', 'label' : 'Groups', 'description' : 'Create groups and add people to them', 
 	'icon' : 'book', 'u-icon' : u'\uf02d', 'color': 'green', 'required' : True}
 
-from applications.javelin.modules import modules_enabled, get_module_data
+from applications.javelin.ctr_data import ctr_enabled, get_ctr_data
 from applications.javelin.private.utils import flattenDict
 from gluon.contrib import simplejson as json
 
@@ -28,8 +28,8 @@ def index():
 
 	:returns: a dictionary to pass to the view with the list of modules_enabled, the active module ('groups') and the labels for 'groups'
 	"""
-	modules_data = get_module_data()
-	return dict(modules_enabled=modules_enabled, active_module='groups', labels=modules_data['groups']['labels'], modules_data=modules_data)
+	ctr_data = get_ctr_data()
+	return dict(ctr_enabled=ctr_enabled, active_module='groups', labels=ctr_data['groups']['labels'], ctr_data=ctr_data)
 
 @auth.requires_login()
 @auth.requires_membership('standard')

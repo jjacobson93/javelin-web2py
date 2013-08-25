@@ -1,6 +1,6 @@
-{{extend 'main.html'}}
+{{extend 'layout.html'}}
 
-{{block center}}
+{{block content}}
 <!-- MAIN CONTENT -->
 
 <ul class="nav nav-tabs">
@@ -25,13 +25,13 @@
 					</tr>
 				</thead>
 				<tbody id="modules-tbody">
-					{{for mod in modules_data:}}
+					{{for ctr in ctr_data:}}
 					<tr>
-						<td>{{=modules_data[mod]['label']}}</td>
-						<td>{{=modules_data[mod]['description']}}</td>
-						<td><input class='span12' type="text" id="inputCustom" placeholder="Name" value="{{=modules_data[mod].get('custom', '')}}"></td>
+						<td>{{=ctr_data[ctr]['label']}}</td>
+						<td>{{=ctr_data[ctr]['description']}}</td>
+						<td><input class="form-control" type="text" id="inputCustom" placeholder="Name" value="{{=ctr_data[ctr].get('custom', '')}}"></td>
 						<td>
-							{{if modules_data[mod]['required'] == False:}}
+							{{if ctr_data[ctr]['required'] == False:}}
 							<a href="#"><i class='icon-trash'></i></a>
 							{{pass}}
 						</td>
@@ -126,68 +126,76 @@
 
 	<div class="tab-pane fade" id="import">
 		<h2>Import Data</h2>
-		<a href="#" class="btn" id="import-from-csv-btn">Import from CSV</a>
+		<button class="btn btn-default" id="import-from-csv-btn">Import from CSV</button>
 		<h2>Organize Crews</h2>
-		<a class="btn" href="#" id="organize-btn" style="margin-right: 10px" data-loading-text="Organizing...">
+		<button class="btn btn-default" id="organize-btn" style="margin-right: 10px" data-loading-text="Organizing...">
 			Organize Freshmen Crews
-		</a>
+		</button>
 	</div>
 
 </div>
 
 <!-- MODALS -->
 
-<div class="modal hide fade" id="add-user-modal">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h3>Add User</h3>
-	</div>
-	<div class="modal-body">
-		<form>
-			<fieldset>
-				<label class="control-label" for="lastname-field">Last Name</label>
-				<input type="text" id="lastname-field">
-				<label class="control-label" for="firstname-field">First Name</label>
-				<input type="text" id="firstname-field">
-			</fieldset>
-		</form>
-	</div>
-	<div class="modal-footer">
-		<a href="#" class="btn" data-dismiss="modal">Cancel</a>
-		<a href="#" class="btn btn-primary" id="add-user-button">Add User</a>
+<div class="modal fade" id="add-user-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>Add User</h3>
+			</div>
+			<div class="modal-body">
+				<form>
+					<fieldset>
+						<label class="control-label" for="lastname-field">Last Name</label>
+						<input type="text" id="lastname-field">
+						<label class="control-label" for="firstname-field">First Name</label>
+						<input type="text" id="firstname-field">
+					</fieldset>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<a href="#" class="btn" data-dismiss="modal">Cancel</a>
+				<a href="#" class="btn btn-primary" id="add-user-button">Add User</a>
+			</div>
+		</div>
 	</div>
 </div>
 
 <div class="modal hide fade" id="import-modal">
-	<form enctype="multipart/form-data" onsubmit="return false;" style="margin: 0"> 
-		<div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<h3>Import from CSV</h3>
-		</div>
-		<div class="modal-body">
-			<div class="fileupload fileupload-new" data-provides="fileupload">
-				<div class="input-append">
-					<div class="uneditable-input span3">
-						<i class="icon-file fileupload-exists"></i><span class="fileupload-preview"></span>
-					</div>
-					<span class="btn btn-file">
-						<span class="fileupload-new">Select file</span>
-						<span class="fileupload-exists">Change</span>
-						<input type="file" name="csv_file" id="csv_file"/>
-					</span><a href="#" class="btn fileupload-exists" data-dismiss="fileupload">Remove</a>
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form enctype="multipart/form-data" onsubmit="return false;" style="margin: 0"> 
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3>Import from CSV</h3>
 				</div>
-			</div>
-			<div>
-				<label class="checkbox inline">
-				  <input type="checkbox" id="leader_check"> Leaders?
-				</label>
-			</div>
+				<div class="modal-body">
+					<div class="fileupload fileupload-new" data-provides="fileupload">
+						<div class="input-append">
+							<div class="uneditable-input span3">
+								<i class="icon-file fileupload-exists"></i><span class="fileupload-preview"></span>
+							</div>
+							<span class="btn btn-file">
+								<span class="fileupload-new">Select file</span>
+								<span class="fileupload-exists">Change</span>
+								<input type="file" name="csv_file" id="csv_file"/>
+							</span><a href="#" class="btn fileupload-exists" data-dismiss="fileupload">Remove</a>
+						</div>
+					</div>
+					<div>
+						<label class="checkbox inline">
+						  <input type="checkbox" id="leader_check"> Leaders?
+						</label>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<a href="#" class="btn" data-dismiss="modal">Cancel</a>
+					<input type="submit" class="btn btn-primary disabled" id="import-button" data-loading-text="Importing..." value="Import">
+				</div>
+			</form>
 		</div>
-		<div class="modal-footer">
-			<a href="#" class="btn" data-dismiss="modal">Cancel</a>
-			<input type="submit" class="btn btn-primary disabled" id="import-button" data-loading-text="Importing..." value="Import">
-		</div>
-	</form>
+	</div>
 </div>
 
 <!-- JAVASCRIPT -->

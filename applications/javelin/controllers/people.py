@@ -11,7 +11,7 @@ __email__ = "jjacobson93@gmail.com"
 __data__ = {'name' : 'people', 'label' : 'People', 'description' : 'Keep track of people and edit their data', 
 	'icon' : 'user', 'u-icon' : u'\uf007', 'color': 'blue', 'required' : True}
 
-from applications.javelin.modules import modules_enabled, get_module_data
+from applications.javelin.ctr_data import ctr_enabled, get_ctr_data
 from applications.javelin.private.utils import flattenDict
 from gluon.contrib import simplejson as json
 from gluon.tools import Service
@@ -28,8 +28,8 @@ def index():
 
 	:returns: a dictionary to pass to the view with the list of modules_enabled, the active module ('people') and a dynamic form
 	"""
-	modules_data = get_module_data()
-	return dict(modules_enabled=modules_enabled, active_module='people', modules_data=modules_data)
+	ctr_data = get_ctr_data()
+	return dict(ctr_enabled=ctr_enabled, active_module='people', ctr_data=ctr_data)
 
 @auth.requires_login()
 @auth.requires_membership('standard')

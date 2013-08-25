@@ -8,10 +8,10 @@
 	<li class="dropdown">
 		<a class="dropdown-toggle" data-toggle="dropdown" href="#">Modules</a>
 		<ul class="dropdown-menu">
-			{{for module in modules_data:}}
-			<li class="{{if modules_data[module]['name'] == active_module:}}active{{pass}}">
-				<a href="/{{=modules_data[module]['name']}}">
-					<span class="module-name"><i class="icon-{{=modules_data[module]['icon']}}"></i> {{=modules_data[module]['labels']['cap']}}</span>
+			{{for ctr in ctr_data:}}
+			<li class="{{if ctr_data[ctr]['name'] == active_module:}}active{{pass}}">
+				<a href="/{{=ctr_data[ctr]['name']}}">
+					<span class="ctr-name"><i class="icon-{{=ctr_data[ctr]['icon']}}"></i> {{=ctr_data[ctr]['labels']['cap']}}</span>
 				</a>
 			</li>
 			{{pass}}

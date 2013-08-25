@@ -11,7 +11,7 @@ __email__ = "jjacobson93@gmail.com"
 __data__ = {'name' : 'jadmin', 'label' : 'Admin', 'description' : 'Only accessible to admins', 
 	'icon' : 'briefcase', 'u-icon' : u'\uf0b1', 'color':'orange', 'required' : True}
 
-from applications.javelin.modules import modules_enabled
+from applications.javelin.ctr_data import ctr_enabled, get_ctr_data
 from gluon.contrib import simplejson as json
 from gluon.tools import Service
 service = Service(globals())
@@ -23,11 +23,10 @@ def index():
 
 	:returns: a dictionary to pass to the view with the list of modules_enabled and the active module ('admin')
 	"""
-	from applications.javelin.modules import get_module_data
-	modules_data = get_module_data()
+	ctr_data = get_ctr_data()
 	users = db().select(db.auth_user.ALL)
 	approvals = db(db.auth_user.registration_key=='pending').select(db.auth_user.ALL)
-	return dict(modules_enabled=modules_enabled, modules_data=modules_data, active_module='jadmin', users=users, approvals=approvals)
+	return dict(ctr_enabled=ctr_enabled, ctr_data=ctr_data, active_module='jadmin', users=users, approvals=approvals)
 
 @auth.requires_login()
 @auth.requires_membership('admin')

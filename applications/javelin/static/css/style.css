@@ -20,7 +20,7 @@ a.brand {
 .javelin-brand {
 	font-family: big-noodle;
 	font-style: oblique;
-	font-size: 40px !important;
+	font-size: 48px !important;
 	line-height: 20px !important;
 	display: inline-block;
 	vertical-align: middle;
@@ -28,6 +28,7 @@ a.brand {
 
 .navbar-brand {
 	max-height: 50px;
+	padding: 15px 10px;
 }
 
 i {
@@ -61,6 +62,54 @@ table {
 
 #login-form table, #login-form form {
 	margin-bottom: 0;
+}
+
+.main-nav {
+	padding: 0 20px;
+	background-color: #0A66C6;
+	border-color: #0855A6;
+	box-shadow: 0 1px 0 rgba(255,255,255,.1);
+}
+
+.main-nav a.navbar-brand {
+	color: #BFD0E3;
+}
+
+.main-nav a:hover, .main-nav a:focus {
+	color: #ffffff !important;
+}
+
+.main-nav .navbar-nav > li > a {
+	color: #BFD0E3;
+	background-color: #0A66C6;
+}
+
+.main-nav .navbar-nav > .active > a,
+.main-nav .navbar-nav > .open > a, 
+.main-nav .navbar-nav > .active > a:hover,
+.main-nav .navbar-nav > .open > a:hover {
+	background-color: #0855A6 !important;
+}
+
+.main-nav .navbar-toggle {
+	border-color: #0855A6;
+}
+
+.main-nav .navbar-toggle:hover {
+	background-color: #0855A6;
+}
+
+.main-nav .navbar-collapse {
+	border-top-color: #0855A6;
+}
+
+.main-nav .dropdown-menu {
+	color: #ffffff;
+}
+
+#footer {
+	color: #BFD0E3 !important;
+	background-color: #0A66C6 !important;
 }
 
 /*.navbar {
@@ -119,6 +168,31 @@ th {
 	font-size: 16px;
 	font-weight: bold;
 	text-align: center;
+}
+
+.dataTables_filter input {
+	display: inline;
+	width: 100%;
+	height: 34px;
+	padding: 6px 12px;
+	font-size: 14px;
+	line-height: 1.428571429;
+	color: #555;
+	vertical-align: middle;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+	box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+	-webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+	transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}
+
+.dataTables_filter input:focus {
+  border-color: #66afe9;
+  outline: 0;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
 }
 
 .col-xs-1, .col-xs-2, .col-xs-3, 

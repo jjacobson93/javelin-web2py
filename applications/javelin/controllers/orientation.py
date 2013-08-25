@@ -11,7 +11,7 @@ __email__ = "jjacobson93@gmail.com"
 __data__ = {'name' : 'orientation', 'label' : 'Orientation', 'description' : 'The interface for Crusher Crew Orientation', 
 	'icon' : 'compass', 'u-icon' : u'\uf14e', 'color': 'yellow', 'required' : True}
 
-from applications.javelin.modules import modules_enabled, get_module_data
+from applications.javelin.ctr_data import ctr_enabled, get_ctr_data
 from applications.javelin.private.utils import flattenDict, cached
 from gluon.contrib import simplejson as json
 from gluon.tools import Service
@@ -24,9 +24,9 @@ def index():
 
 	:returns: a dictionary to pass to the view with the list of modules_enabled and the active module ('orientation')
 	"""
-	modules_data = get_module_data()
+	ctr_data = get_ctr_data()
 	existing_nametags = db().select(db.file.ALL)
-	return dict(modules_enabled=modules_enabled, modules_data=modules_data, active_module='orientation', existing_nametags=existing_nametags)
+	return dict(ctr_enabled=ctr_enabled, ctr_data=ctr_data, active_module='orientation', existing_nametags=existing_nametags)
 
 @auth.requires_login()
 @auth.requires_membership('standard')
@@ -438,7 +438,12 @@ def crews(id=None):
 @auth.requires_membership('standard')
 @service.json
 def crew_records(id):
-	return db(db.person.crew==id).select(db.person.ALL).as_list()
+	records = db(db.person.crew==id).select(db.person.ALL).as_list()
+	records = [dict([('actions','<button class="btn btn-small btn-primary" id="crew-move-person' + str(d['id']) + '">' +\
+					'<i class="icon-signout"></i>Move</button>' +\
+					'<button class="btn btn-small btn-danger" id="crew-remove-person-' + str(d['id']) + '" style="margin-left: 10px">' +\
+					'<i class="icon-trash"></i>Remove' + '</button>')] + [(k,v) for k,v in d.items()]) for d in records]
+	return records
 
 @auth.requires_login()
 @auth.requires_membership('standard')

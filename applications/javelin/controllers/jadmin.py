@@ -101,7 +101,8 @@ def create_doc(doctype, data):
 		people = [Storage(id=pid, last_name=db(db.person.id==pid).select(db.person.last_name).first().last_name,
 						first_name=db(db.person.id==pid).select(db.person.first_name).first().first_name,
 						courses=['{}: {}'.format(c.period, c.room) for c in db().select(db.course.period, db.course.room,
-						left=db.course_rec.on((db.course.id==db.course_rec.course_id) & (db.course_rec.student_id==pid)))]
+						join=db.course_rec.on((db.course.id==db.course_rec.course_id) & (db.course_rec.student_id==pid)),
+						orderby=db.course.period)]
 					) for pid in persons]
 
 		i = 0

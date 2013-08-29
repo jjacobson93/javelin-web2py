@@ -21,7 +21,7 @@ $(function() {
 		"oLanguage": {
 			"sEmptyTable": "0 items"
 		},
-		'sDom': "<'row'<'col-6 col-sm-6'<'table-header'>>" +
+		'sDom': "<'row'<'col-6 col-sm-6'<'#events-header'>>" +
 			"<'col-6 col-sm-6'<'form-group pull-right' f>>>" +
 			"<'row'<'col-12 col-sm-12'rt>><'row'<'col-6 col-sm-6'il><'col-6 col-sm-6'p>>",
 		'sAjaxSource': "/events/call/json/data",
@@ -45,18 +45,30 @@ $(function() {
 		}
 	});
 
+	$('#events-header').css({
+		'display': 'inline',
+		'margin-right' : '10px',
+		'font-weight': 'bold',
+		'font-size': '26px'
+	});
+
 	attendanceTable = $('#attendance-table').dataTable({
+		"aoColumnDefs": [
+			{ "bVisible": false, "aTargets": [5,6]}
+		],
 		'aoColumns': [
 			{'mData' : 'id'},
 			{'mData' : 'person_student_id'},
 			{'mData' : 'person_last_name'},
 			{'mData' : 'person_first_name'},
-			{'mData' : 'attendance_present'}
+			{'mData' : 'attendance_present'},
+			{'mData' : 'person_grade'},
+			{'mData' : 'person_leader'}
 		],
 		"oLanguage": {
 			"sEmptyTable": "0 items"
 		},
-		'sDom': "<'row'<'col-6 col-sm-6'<'table-header'>>" +
+		'sDom': "<'row'<'col-6 col-sm-6'<'fuelux'<'select filter' <'.table-header'>>>>" +
 			"<'col-6 col-sm-6'<'form-group pull-right' f>>>" +
 			"<'row'<'col-12 col-sm-12'rt>><'row'<'col-6 col-sm-6'il><'col-6 col-sm-6'p>>",
 		'sAjaxSource': "/orientation/call/json/attendance_data?event_id=0",
@@ -69,7 +81,7 @@ $(function() {
 			$(nRow).attr("id", data['id']);
 
 			var id = data['id']
-			var present = (data['attendance_present'] == true) ? true : false;
+			var present = (data['attendance_present']) ? true : false;
 			var checkbox = $('<div class="switch switch-small" id="present-check-' + id + 
 				'" data-on-label="YES" data-off-label="NO"><input type="checkbox"' + ((present) ? 'checked' : '') + '></div>');
 			
@@ -84,6 +96,53 @@ $(function() {
 
 			return nRow;
 		}
+	});
+
+	attendanceTable.dataTableExt.afnFiltering.push(
+		function( oSettings, aData, iDataIndex ) {
+			if (oSettings.sTableId == 'attendance-table') {
+				var value = $('.fuelux .select.filter').select('selectedItem').value;
+				switch(value) {
+					case 'leaders':
+						if(aData[5] && aData[5] != 9 && aData[6]) return true;
+						else return false;
+						break;
+					case 'freshmen':
+						if(aData[5] && aData[5] == 9) return true;
+						else return false;
+						break;
+					case 'non_leaders':
+						if(aData[5] && aData[5] != 9 && !aData[6]) return true;
+						else return false;
+						break;
+					default:
+						return true;
+						break;
+				}
+			} else {
+				return true;
+			}
+		}
+	);
+
+	$('#attendance-div .table-header').html("Attendance");
+
+	$('.fuelux .select').append("<div class='btn-group' style='margin-bottom: 8px'><button type='button' data-toggle='dropdown' class='btn btn-default dropdown-toggle' style='margin-top: -8px'>" +
+		"<span class='dropdown-label'></span><span class='caret'></span></button>" + 
+		"<ul class='dropdown-menu' role='menu'>" +
+		"<li data-value='all'><a href='#'>All</a></li>" + 
+		"<li data-value='freshmen'><a href='#'>Freshmen</a></li>" +
+		"<li data-value='leaders'><a href='#'>Leaders</a></li>" + 
+		"<li data-value='non_leaders'><a href='#'>Non-Leaders</a></li></ul></div>");
+
+	$('.fuelux .select').each(function() {
+		var $this = $(this);
+		if ($this.data('select')) return;
+			$this.select($this.data());
+
+		$(this).on('changed', function() {
+			attendanceTable.fnDraw();
+		});
 	});
 
 	crewsTable = $('#crews-table').dataTable({

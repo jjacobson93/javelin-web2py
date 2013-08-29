@@ -1,5 +1,5 @@
 var DOC_TYPES = {
-	CALLSLIP: {value: 0, label: "Call Slip"},
+	CALLSLIP: {value: 0, label: "Call Slips"},
 	ATTSHEETS: {value: 1, label: "Attendance Sheets"},
 	NAMETAGS: {value: 2, label: "Nametags"}
 }
@@ -79,7 +79,7 @@ function createDoc(doctype, data) {
 		dataType: 'json',
 		success: function(data) {
 			$('#loading-doc-modal').modal('hide');
-			$('#fields fieldset').slideUp(500);
+			$('#fields .form-group').slideUp(500);
 			$('#create-doc-btn').addClass('disabled');
 			$('#doc-type-select').select2('val','');
 			$('#add-person-select').select2('val','');
@@ -200,17 +200,16 @@ $(function() {
 
 	$('#doc-type-select').on('change', function(e) {
 		var val = e.val;
-		$('#fields fieldset').slideUp(500);
+		$('#fields .form-group').slideUp(500);
 		if (val == DOC_TYPES.CALLSLIP.value) {
 			$('#person-fields').slideDown(500);
 		}
 		else if (val == DOC_TYPES.ATTSHEETS.value) {
-			
+			$('#person-fields').slideDown(500);
 		}
 		else if (val == DOC_TYPES.NAMETAGS.value) {
-			
 			$('#person-fields').slideDown(500);
-			$('#nametag-fields').slideDown(500);
+			$('#nametag-fields .form-group').slideDown(500);
 		}
 	});
 

@@ -10,6 +10,15 @@
 	</div>
 
 	<div class="row">
+		<div class="col-12 col-md-12">
+			<button class="btn btn-primary disabled" onclick="printReceipt()" id="print-btn" style="margin-bottom: 15px">Print Receipt</button>
+			<applet name="jzebra" code="jzebra.PrintApplet.class" archive="{{=URL('static', 'jzebra/dist/jzebra.jar')}}" height="10px" width="10px">
+				<param name="printer" value="zebra">
+			</applet>
+		</div>
+	</div>
+
+	<div class="row">
 		<div class="input-group col-4 col-sm-4">
 			<input type="text" class="form-control" placeholder='Student ID' id="checkoutall_id_input" style="border-right: 0">
 			<span class="input-group-btn">
@@ -27,6 +36,43 @@
 
 <script type="text/javascript" src="{{=URL('static', 'js/default.js')}}"></script>
 <script type="text/javascript">
+var applet = undefined;
+var months = ['January', 'February', 'March', 'April',
+	'May', 'June', 'July', 'August', 'September',
+	'October', 'Novemder', 'December'];
+var receipt = undefined;
+
+String.prototype.decodeEscapeSequence = function() {
+    return this.replace(/\\x([0-9A-Fa-f]{2})/g, function() {
+        return String.fromCharCode(parseInt(arguments[1], 16));
+    });
+};
+
+// var img = new Image();
+// img.src = "http://javelinwebapp.com/static/images/vc2emblem.bmp"
+var imageData = 'data:image/bmp;base64,W29iamVjdCBIVE1MSW1hZ2VFbGVtZW50XQ=='
+
+function printReceipt() {
+	if (!$(this).hasClass('disabled')) {
+		var date = new Date();
+		var data = {
+			id: 1001,
+			date: months[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear()
+		};
+		$.getJSON('/studybuddies/call/json/print_receipt', 'data=' + JSON.stringify(data), function(data) {
+			// receipt = data.receipt.decodeEscapeSequence();
+			// receipt = JSON.parse('"' + data.receipt.replace(/([^\\]|^)\\x/g, '$1\\u00') + '"');
+			receipt = data.receipt;
+			applet.append("\x1b\x40");
+			// applet.append64('data:image/bmp;base64,W29iamVjdCBIVE1MSW1hZ2VFbGVtZW50XQ==');
+			applet.appendHex(receipt);
+			applet.append("\x1b\x40");
+			applet.print();
+			return;
+		});
+	}
+}
+
 $(function() {
 	setCurrentDate("{{=currdate}}");
 	loadCheckouts("{{=currdate}}");
@@ -45,6 +91,20 @@ $(function() {
 		if (e.keyCode == 13 && val != '')
 			$("#checkoutall_id_submit").click();
 	});
+
+	applet = document.jzebra;
+	if (applet.findPrinter) {
+		applet.findPrinter("Star_TSP654__STR_T_001_");
+		applet.useAlternatePrinting(true);
+		// applet.setEncoding("UTF-8");
+		// console.log(applet.getEncoding());
+	}
+
+	setTimeout(function() {
+		while (!applet && !applet.isDoneFinding());
+		$('#print-btn').removeClass("disabled");
+		displayFlash("Printer loaded");
+	}, 2000);
 });
 </script>
 {{end}}

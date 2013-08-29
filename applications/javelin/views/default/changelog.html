@@ -1,0 +1,46 @@
+{{extend 'layout.html'}}
+
+{{block content}}
+<style type="text/css">
+	.javelin-changes ul {
+		font-size: 15px;
+	}
+
+	.javelin-changes p {
+		font-size: 15px;
+	}
+</style>
+<div class="javelin-changes">
+	<h1>v1.1.0 <span class="label label-success">Latest</span></h1>
+	<h3>What's new</h3>
+	<ul>
+		<li><strong>New design</strong> using the new <a href="http://getbootstrap.com/">Bootstrap 3</a> HTML/CSS: a responsive, mobile first web design framework with a flat, sleek design.</li>
+		<li><strong>The sidebar has been removed</strong> and its contents are now in the topmost navigation bar for easy access with <strong>deference to content.</strong></li>
+		<li><strong>Dynamic Documents:</strong> A more powerful dynamic document creator with the ability to create nametags, attendance sheets, and call slips based on user input. (Currently, only for admins. Check it out in the 'Admin' controller.)</li>
+		<li><strong>Internal changes</strong> for faster access to data, easier viewing of content, and more control.</li>
+	</ul>
+</div>
+<hr>
+<div class="javelin-changes">
+	<h1>v1.0.0 and below</h1>
+	<h3>Overview</h3>
+	<p>Provides base functionality for management and organization of the community.</p>
+	<h3>Features</h3>
+	<ul>
+		<li>A full set of rich controllers:</li>
+		<ul>
+			<li><strong>People:</strong> Access and manage information about the people in the community.</li>
+			<li><strong>Groups:</strong> Organize people into groups.</li>
+			<li><strong>Events:</strong> Manage and create events.</li>
+			<li><strong>Messages:</strong> Send SMS messages to people and groups.</li>
+			<li><strong>Admin:</strong> An admin interface for customization and approving users.</li>
+		</ul>
+		<li>Specialized controllers for Crusher Crew:</li>
+		<ul>
+			<li><strong>Orientation:</strong> The interface for Crusher Crew Orientation</li>
+			<li><strong>Peer Support:</strong> Create and monitor Peer Support.</li>
+			<li><strong>Scores:</strong> The interface for scoring crews during training.</li>
+		</ul>
+	</ul>
+</div>
+{{end}}

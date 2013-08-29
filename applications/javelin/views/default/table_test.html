@@ -1,0 +1,63 @@
+{{extend 'layout.html'}}
+
+{{block content}}
+<style type="text/css">
+	th.jtable-sort {
+		cursor: pointer;
+	}
+
+	th.jtable-sort:after {
+		font-family: FontAwesome;
+		font-weight: normal;
+		font-style: normal;
+		text-decoration: inherit;
+		-webkit-font-smoothing: antialiased;
+		float: right;
+		opacity: 0.3;
+		filter: (alpha=30);
+		content: "\F0DC";
+	}
+
+	tr.jtable-loading td,
+	tr.jtable-empty td {
+		text-align: center;
+		font-size: 16px;
+		font-weight: bold;
+	}
+
+	.jtable-header {
+		display: inline-block;
+	}
+
+	.jtable-search {
+		margin-top: 20px;
+	}
+</style>
+
+<table class="table table-striped table-hover" id="test-table"></table>
+
+<script type="text/javascript" src="{{=URL('static', 'js/jtable.js')}}"></script>
+<script type="text/javascript">
+var testtable = undefined;
+$(function() {
+	testtable = $('#test-table').jTable({
+		columns: [
+			{
+				'key': 'id',
+				'label': 'ID'
+			},
+			{ 
+				'key': 'last_name',
+				'label': 'Last Name',
+			},
+			{
+				'key': 'first_name',
+				'label': 'First Name'
+			}
+		],
+		source: '/people/call/json/data',
+		title: 'People'
+	});
+});
+</script>
+{{end}}

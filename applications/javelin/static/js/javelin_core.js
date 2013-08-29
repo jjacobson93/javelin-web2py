@@ -11,11 +11,6 @@ $(function() {
 		}
 	});
 
-	$('.mainnav-collapse').overflowNavs({
-		"more" : "More",
-		"offset" : "325"
-	});
-
 	$(window).on('resize', function() {
 		if ($(window).width() > 780) {
 			$('.mainnav-collapse').overflowNavs({

@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+	<head></head>
+	<body>
+		<applet name="jzebra" code="jzebra.PrintApplet.class" archive="./jzebra.jar" height="50px" width="50px">
+			<param name="printer" value="zebra">
+		</applet>
+	</body>
+	<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+	<script type="text/javascript">
+	var applet = undefined;
+	var imageData = undefined;
+	function chr(i) {
+		return String.fromCharCode(i);
+	}
+
+	$(function() {
+		var canvas = document.createElement("canvas");
+		var ctx = canvas.getContext("2d"); 
+
+		var image = new Image(32, 32);
+		$(image).on('load', function() {
+			console.log(image);
+			// ctx.drawImage(image, 0, 0);
+			// imageData = ctx.getImageData(0, 0, 32, 32);
+			// console.log(imageData);
+		}).each(function(){
+			if(this.complete) {
+				$(this).trigger('load');
+			}
+		});
+		image.src = "http://javelinwebapp.com/static/images/vc2emblem.png?" + new Date().getTime();
+
+		// applet = document.jzebra;
+		// applet.findPrinter("Star_TSP654__STR_T_001_");
+
+		// while (!applet.isDoneFinding() && !image.complete);
+
+		// if (applet.getPrinterName() != null) {
+		// 	applet.useAlternatePrinting(true);
+		// 	applet.append("\x1b\x40");
+		// 	applet.append("\x1b\x1d\x61\x31");
+		// 	applet.append("\x1b\x4b" + image.);
+		// 	applet.append("STUDY BUDDIES" + "\x0a");
+		// 	applet.append("August 26, 2013" + "\x0a");
+		// 	applet.append("\x1b\x1d\x61\x30" + "\x0a");
+		// 	applet.append("Name: Jeremy Jacobson" + "\x0a");
+		// 	applet.append("Grade: 15" + "\x0a");
+		// 	applet.append("Subjects: Math, CS" + "\x0a");
+		// 	applet.append("\x1b\x1d\x61\x31");
+		// 	applet.append("powered by Javelin" + "\x0a");
+		// 	applet.append("(c)2013 Jacobson & Varni" + "\0xa");
+		// 	applet.append("\x0a\x0a\x0a");
+		// 	applet.append("\x1b\x64\x33");
+		// 	applet.append("\x1b\x40");
+		// 	applet.print();
+		// 	return;
+		// } 
+		// applet.append("\x1b\x40");
+		// applet.append("Hello, world!\n");
+		// applet.append("\n\n\n\n\n");
+		// applet.append("\x1b\x64\x00");
+		// applet.append("\x1b\x40");
+		// applet.print();
+		// jzebraDonePrinting();
+		// document.jzebra.getPrinter("Star_TSP654__STR_T_001_");
+	});
+	</script>
+</html>

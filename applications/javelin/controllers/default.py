@@ -44,6 +44,15 @@ def javelin_header():
 	content = content.split('\n')
 	return dict(header=header, recipient=recipient, content=content)
 
+@auth.requires_login()
+def changelog():
+	return dict(active_module='None')
+
+@auth.requires_login()
+@auth.requires_membership('standard')
+def table_test():
+	return dict()
+
 def user():
 	"""
 	exposes:

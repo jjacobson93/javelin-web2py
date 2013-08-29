@@ -6,39 +6,60 @@
 		background-color: #0A66C6;
 	}
 
+	.javelin-head {
+		text-align: center;
+	}
+
 	h1 {
 		font-family: big-noodle;
 		font-style: oblique;
-		text-align: center;
 		font-size: 50px;
 		color: #ffffff;
 	}
 
 	p.lead {
-		text-align: center;
 		color: #BFD0E3;
 		font-size: 16.099999999999998px;
 	}
 
+	.btn-javelin {
+		color: #fff;
+		background-color: transparent;
+		border-color: #BFD0E3;
+	}
+
+	.btn-javelin:hover, 
+	.btn-javelin:focus, 
+	.btn-javelin:active {
+		color: #0A66C6;
+		text-shadow: none;
+		background-color: #fff;
+		border-color: #fff;
+	} 
 
 	@media (min-width: 767px) {
-		h1 {
+		.javelin-head {
 			text-align: left;
+		}
+
+		h1 {
 			font-size: 115px;
 		}
 
 		p.lead {
-			text-align: left;
 			font-size: 30px;
 		}
 	}
 </style>
 
-<div class="container">
-	<div class="row">
-		<div class="col-12 col-sm-12">
-			<h1>Welcome to Javelin!</h1>
-			<p class="lead">Sleek, intuitive, and piercing web application for community management and organization.</p>
+<div class="javelin-head">
+	<div class="container">
+		<div class="row">
+			<div class="col-12 col-sm-12">
+				<h1>Welcome to Javelin!</h1>
+				<p class="lead">Sleek, intuitive, and piercing web application for community management and organization.</p>
+				<p><a class="btn btn-javelin btn-lg" href="{{=URL('default', 'changelog')}}">What's New</a></p>
+			</div>
 		</div>
 	</div>
 </div>

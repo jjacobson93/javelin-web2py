@@ -129,13 +129,9 @@
 				</div>
 
 				<!-- CONTENT -->
-
-				<div class="col-12 col-sm-12" id="main-content">
 				{{block content}}
 				{{include}}
 				{{end}}
-				</div>
-
 			</div>
 		</div>
 	</section>
@@ -144,7 +140,16 @@
 			 (Placed at the end of the document so the pages load faster) -->
 	<script src="{{=URL('static','js/jquery-ui-1.9.2.custom.js')}}"></script>
 	<script src="{{=URL('static','js/bootstrap.min.js')}}"></script>
+	<script src="{{=URL('static','js/bootstrap-overflow-navs.js')}}"></script>
 	<script src="{{=URL('static','js/web2py_bootstrap.js')}}"></script>
+	<script type="text/javascript">
+	$(function() {
+		$('.mainnav-collapse').overflowNavs({
+			"more" : "More",
+			"offset" : "325"
+		});
+	});
+	</script>
 	<script src="{{=URL('static','js/underscore-min.js')}}"></script>
 	<script src="{{=URL('static','js/util.js')}}"></script>
 	<script src="{{=URL('static','js/datagrid.js')}}"></script>
@@ -161,7 +166,6 @@
 	<script src="{{=URL('static','js/jquery.dataTables.js')}}"></script>
 	<script src="{{=URL('static','js/bootstrap-datatables.js')}}"></script>
 	<script src="{{=URL('static','js/datatables-js/DataTables.js')}}"></script>
-	<script src="{{=URL('static','js/bootstrap-overflow-navs.js')}}"></script>
 	<script src="{{=URL('static','js/javelin_core.js')}}"></script>
 	<!--[if lt IE 7 ]>
 			<script src="{{=URL('static','js/dd_belatedpng.js')}}"></script>
@@ -182,10 +186,13 @@
 </body>
 <footer id="footer" class="footer-inverse">
 	<div class="container">
-		<p class='credit'>
-			<span>&#169; {{=request.now.year}} Jacobson and Varni</span>
-			<span class="pull-right">v{{=__version__}}</span>
-		</p>
+		<ul class="footer-links">
+			<li><span>&#169; {{=request.now.year}} Jacobson and Varni</span></li>
+			<li><a href="{{=URL('bugs', 'default', 'index')}}">Bugs</a></li>
+			<li><a href="{{=URL('forms', 'default', 'index')}}">Forms</a></li>
+			<li><a href="{{=URL('studybuddies', 'default', 'index')}}">Study Buddies</a></li>
+			<li><span class="pull-right">v{{=__version__}}</span></li>
+		</ul>
 	</div>
 </footer>
 </html>

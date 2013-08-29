@@ -76,6 +76,8 @@
 										<th>Last Name</th>
 										<th>First Name</th>
 										<th>Present</th>
+										<th>Grade</th>
+										<th>Leader</th>
 									</thead>
 								</table>
 							</div>
@@ -178,4 +180,9 @@
 <script src="{{=URL('static', 'js/modules/crew_datasource.js') }}"></script>
 <script src="{{=URL('static', 'js/modules/crewrecord_datasource.js') }}"></script>
 <script src="{{=URL('static', 'js/modules/orientation.js') }}"></script>
+<script type="text/javascript">
+$(function() {
+	$('#events-header').html("Events");
+});
+</script>
 {{end}}

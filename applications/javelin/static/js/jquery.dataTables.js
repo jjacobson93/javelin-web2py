@@ -2489,7 +2489,7 @@
 	
 					// If it looks like there is an HTML entity in the string,
 					// attempt to decode it so sorting works as expected
-					if ( cellData.indexOf && cellData.indexOf('&') !== -1 ) {
+					if (cellData && cellData.indexOf && cellData.indexOf('&') !== -1 ) {
 						cellData = __filter_div.html( cellData ).text();
 					}
 	

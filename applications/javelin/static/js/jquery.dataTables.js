@@ -13644,11 +13644,14 @@
 	};
 	
 	var _stripHtml = function ( d ) {
+		console.log(d);
 		return d.replace( _re_html, '' );
 	};
 	
 	var _htmlNumeric = function ( d, formatted ) {
+		console.log(d);
 		var html = _isHtml( d );
+		console.log("Is html? " + html);
 		return ! html ?
 			null :
 			_isNumber( _stripHtml( d ), formatted ) ?

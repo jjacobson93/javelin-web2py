@@ -54,22 +54,49 @@ var imageData = 'data:image/bmp;base64,W29iamVjdCBIVE1MSW1hZ2VFbGVtZW50XQ=='
 
 function printReceipt() {
 	if (!$(this).hasClass('disabled')) {
-		var date = new Date();
-		var data = {
-			id: 1001,
-			date: months[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear()
-		};
-		$.getJSON('/studybuddies/call/json/print_receipt', 'data=' + JSON.stringify(data), function(data) {
-			// receipt = data.receipt.decodeEscapeSequence();
-			// receipt = JSON.parse('"' + data.receipt.replace(/([^\\]|^)\\x/g, '$1\\u00') + '"');
-			receipt = data.receipt;
-			applet.append("\x1b\x40");
-			// applet.append64('data:image/bmp;base64,W29iamVjdCBIVE1MSW1hZ2VFbGVtZW50XQ==');
-			applet.appendHex(receipt);
-			applet.append("\x1b\x40");
-			applet.print();
-			return;
-		});
+		applet.appendHex("1b40"); // RESET
+		// applet.appendHex('1b2a7241'); //Enter raster mode
+		// applet.appendHex('1b2a72510100'); //Set quality
+		// applet.appendHex('1b2a72503000'); //Set page length
+		// applet.appendHex('1b2a72451300'); //Set EOT mode
+		// applet.appendHex('1b2a72463800'); //Set FF mode
+		// applet.appendHex('620400807f7f7f') //Write line
+		// applet.appendHex('1b0a00');
+		// applet.appendHex('1b2a7242'); //Exit raster mode
+		// applet.appendHex("1b1d6131"); // CENTER
+		// var image = window.location.origin + "{{=URL('javelin', 'static', 'images/vc2emblem.bmp')}}";
+		var image = '/Users/Jeremy/Programming/javelin-web2py/applications/javelin/static/images/vc2emblem.png'
+		applet.appendImage(image);
+		// applet.appendHex('535455445920425544444945530a'); // STUDY BUDDIES
+		// applet.appendHex('4175677573742032362c20323031330a'); // August 26, 2013
+		// applet.appendHex("1b1d61300a"); // LEFT
+		// applet.appendHex('4e616d653a204a6572656d79204a61636f62736f6e0a'); // Name: Jeremy Jacobson
+		// applet.appendHex('47726164653a2031350a'); // Grade: 15
+		// applet.appendHex("1b1d6131"); // CENTER
+		applet.appendHex('706f7765726564206279204a6176656c696e0a'); // powered by Javelin
+		applet.appendHex('28632932303133204a61636f62736f6e2026205661726e6900'); // (c)2013 Jacobson & Varni
+		applet.appendHex("0a0a0a"); // LF LF LF
+		applet.appendHex("1b6433"); // CUT
+		applet.appendHex("1b40"); // RESET
+		applet.print();
+		return;
+
+		// var date = new Date();
+		// var data = {
+		// 	id: 1001,
+		// 	date: months[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear()
+		// };
+		// $.getJSON('/studybuddies/call/json/print_receipt', 'data=' + JSON.stringify(data), function(data) {
+		// 	// receipt = data.receipt.decodeEscapeSequence();
+		// 	// receipt = JSON.parse('"' + data.receipt.replace(/([^\\]|^)\\x/g, '$1\\u00') + '"');
+		// 	receipt = data.receipt;
+		// 	applet.append("\x1b\x40");
+		// 	// applet.append64('data:image/bmp;base64,W29iamVjdCBIVE1MSW1hZ2VFbGVtZW50XQ==');
+		// 	applet.appendHex(receipt);
+		// 	applet.append("\x1b\x40");
+		// 	applet.print();
+		// 	return;
+		// });
 	}
 }
 
@@ -96,8 +123,6 @@ $(function() {
 	if (applet.findPrinter) {
 		applet.findPrinter("Star_TSP654__STR_T_001_");
 		applet.useAlternatePrinting(true);
-		// applet.setEncoding("UTF-8");
-		// console.log(applet.getEncoding());
 	}
 
 	setTimeout(function() {

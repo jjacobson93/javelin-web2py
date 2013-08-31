@@ -43,6 +43,10 @@ table {
 	margin-top: 0;
 }
 
+hr {
+	margin-bottom: 0;
+}
+
 #login-form {
 	position: relative;
 	top: 50%;
@@ -214,8 +218,9 @@ th {
 
 .footer-links {
 	padding: 0;
-	margin: 20px 0;
+	margin: 0;
 	list-style-type: none;
+	text-align: left;
 }
 
 .footer-links li + li {
@@ -224,6 +229,10 @@ th {
 
 .footer-links li {
 	display: inline;
+}
+
+footer {
+	padding: 20px 0;
 }
 
 @media (max-width: 460px) {
@@ -276,8 +285,12 @@ th {
 		float: none !important;
 	}
 
-	section {
+	/*section {
 		padding: 65px 0px 30px !important;
+	}*/
+
+	.footer-links {
+		text-align: center;
 	}
 }
 

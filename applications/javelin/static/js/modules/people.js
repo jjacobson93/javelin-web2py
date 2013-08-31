@@ -138,81 +138,116 @@ function checkPictureForUpload() {
 }
 
 $(function() {
-	$.fn.dataTableExt.afnFiltering.push(
-		function( oSettings, aData, iDataIndex ) {
-			var value = $('.fuelux .select.filter').select('selectedItem').value;
-			switch(value) {
-				case 'leaders':
-					if(aData[5] && aData[5] != 9 && aData[7]) return true;
-					else return false;
-					break;
-				case 'freshmen':
-					if(aData[5] && aData[5] == 9) return true;
-					else return false;
-					break;
-				case 'non_leaders':
-					if(aData[5] && aData[5] != 9 && !aData[7]) return true;
-					else return false;
-					break;
-				default:
-					return true;
-					break;
+	// $.fn.dataTableExt.afnFiltering.push(
+	// 	function( oSettings, aData, iDataIndex ) {
+	// 		var value = $('.fuelux .select.filter').select('selectedItem').value;
+	// 		switch(value) {
+	// 			case 'leaders':
+	// 				if(aData[5] && aData[5] != 9 && aData[7]) return true;
+	// 				else return false;
+	// 				break;
+	// 			case 'freshmen':
+	// 				if(aData[5] && aData[5] == 9) return true;
+	// 				else return false;
+	// 				break;
+	// 			case 'non_leaders':
+	// 				if(aData[5] && aData[5] != 9 && !aData[7]) return true;
+	// 				else return false;
+	// 				break;
+	// 			default:
+	// 				return true;
+	// 				break;
+	// 		}
+	// 	}
+	// );
+
+	var peopleTable = $('#people-table').jTable({
+		columns: [
+			{
+				'key': 'id',
+				'label': 'ID'
+			},
+			{
+				'key': 'student_id',
+				'label': 'Student ID'
+			},
+			{ 
+				'key': 'last_name',
+				'label': 'Last Name',
+			},
+			{ 
+				'key': 'first_name',
+				'label': 'First Name',
+			},
+			{
+				'key': 'grade',
+				'label': 'Grade'
 			}
-		}
-	);
-
-	var peopleTable = $('#people-table').dataTable({
-		'sDom': "<'row'<'col-6 col-sm-6'<'fuelux'<'select filter' <'table-header'>>>>" +
-			"<'col-6 col-sm-6'<'form-group pull-right' f>>>" +
-			"<'row'<'col-12 col-sm-12'rt>><'row'<'col-6 col-sm-6'il><'col-6 col-sm-6'p>>",
-		'sAjaxSource': "/people/call/json/data",
-		'sAjaxDataProp' : "",
-		"sPaginationType": "bootstrap",
-		"bScrollCollapse": true,
-		"bLengthChange": false,
-		"sScrollY": "300px",
-		"aoColumnDefs": [
-			{ "bVisible": false, "aTargets": [4,6,7]}
 		],
-		'aoColumns': [
-			{'mData' : 'id'},
-			{'mData' : 'student_id'},
-			{'mData' : 'last_name'},
-			{'mData' : 'first_name'},
-			{'mData' : 'gender'},
-			{'mData' : 'grade'},
-			{'mData' : 'crew'},
-			{'mData' : 'leader'}
-		],
-		"oLanguage": {
-			"sEmptyTable": "0 items"
+		ajax: {
+			source: '/people/call/json/data',
+			error: function() {
+				displayError("Could not load data");
+			}
+		},
+		title: 'People',
+		pageSize: 100,
+		filter: {
+			fn: function(value, data) {
+				return _.filter(data, function (item) {
+					switch(value) {
+						case 'leaders':
+							if(item.grade != 9 && item.leader) return true;
+							break;
+						case 'freshmen':
+							if(item.grade == 9) return true;
+							break;
+						case 'non_leaders':
+							if(item.grade != 9 && !item.leader) return true;
+							break;
+						default:
+							return true;
+							break;
+					}
+				});
+			},
+			options: [
+				{'value': 'all','label': 'All'},
+				{'value': 'leaders','label': 'Leaders'},
+				{'value': 'freshmen','label': 'Freshmen'},
+				{'value': 'non_leaders','label': 'Neither'}
+			],
+			class: 'select2'
 		}
 	});
 
-	$('.table-header').css({
-		'display': 'inline',
-		'margin-right' : '10px',
-		'font-weight': 'bold',
-		'font-size': '26px'
-	});
+	// $('.select2').select2();
+	// $('.select2').css('margin', '-10px 0 0');
 
-	$('.fuelux .select').append("<div class='btn-group' style='margin-bottom: 8px'><button type='button' data-toggle='dropdown' class='btn btn-default dropdown-toggle' style='margin-top: -8px'>" +
-		"<span class='dropdown-label'></span><span class='caret'></span></button>" + 
-		"<ul class='dropdown-menu' role='menu'>" +
-		"<li data-value='all'><a href='#'>All</a></li>" + 
-		"<li data-value='freshmen'><a href='#'>Freshmen</a></li>" +
-		"<li data-value='leaders'><a href='#'>Leaders</a></li>" + 
-		"<li data-value='non_leaders'><a href='#'>Non-Leaders</a></li></ul></div>");
+	// $('.table-header').css({
+	// 	'display': 'inline',
+	// 	'margin-right' : '10px',
+	// 	'font-weight': 'bold',
+	// 	'font-size': '26px'
+	// });
 
-	$('.fuelux .select').each(function() {
-		var $this = $(this);
-		if ($this.data('select')) return;
-			$this.select($this.data());
+	// $('.fuelux .select').append("<div class='btn-group' style='margin-bottom: 8px'><button type='button' data-toggle='dropdown' class='btn btn-default dropdown-toggle' style='margin-top: -8px'>" +
+	// 	"<span class='dropdown-label'></span><span class='caret'></span></button>" + 
+	// 	"<ul class='dropdown-menu' role='menu'>" +
+	// 	"<li data-value='all'><a href='#'>All</a></li>" + 
+	// 	"<li data-value='freshmen'><a href='#'>Freshmen</a></li>" +
+	// 	"<li data-value='leaders'><a href='#'>Leaders</a></li>" + 
+	// 	"<li data-value='non_leaders'><a href='#'>Non-Leaders</a></li></ul></div>");
 
-		$(this).on('changed', function() {
-			peopleTable.fnDraw();
-		});
-	});
+	// $('.fuelux .select').each(function() {
+	// 	var $this = $(this);
+	// 	if ($this.data('select')) return;
+	// 		$this.select($this.data());
+
+	// 	$(this).on('changed', function() {
+	// 		peopleTable.fnDraw();
+	// 	});
+	// });
 
 	$('#person-pane').on('change', 'input', function() {
 		$('#save-button').removeClass('disabled');
@@ -257,7 +292,7 @@ $(function() {
 		
 		if ($('.carousel-inner .item:first').hasClass('active')) {
 			$('#prev-button').addClass('disabled');
-			peopleTable.fnDraw();
+			peopleTable.jTable('seamlessReload');
 		} 
 		else if ($('.carousel-inner .item:last').hasClass('active')) {
 			$('#add-button').addClass('disabled');

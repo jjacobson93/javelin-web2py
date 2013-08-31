@@ -5,9 +5,7 @@
 {{if request.args(0)!='register':}}
 <h1 style="text-align: center; font-size: 60px">{{=T( request.args(0).replace('_',' ').capitalize() )}}</h1>
 <div id="web2py_user_form" class='login-form'>
-	<div class="col-12 col-md-12">
-		{{=form}}
-	</div>
+	{{=form}}
 </div>
 {{elif request.args(0)=='register':}}
 <h2>{{=T( request.args(0).replace('_',' ').capitalize() )}}</h2>
@@ -25,9 +23,9 @@ $(function() {
 		window.alert("It appears that you are using Microsoft Internet Explorer. " + 
 			"Javelin frowns upon using an archaic browser such as this, " +
 			"since there are not only ascetic and programmatic defects, but " +
-			"serious security risks as well. We recommend Firefox or Chrome, which " +
-			"you can download here for Firefox: https://www.mozilla.org/firefox/, " +
-			"and here for Chrome: https://www.google.com/chrome/");
+			"serious security risks as well. We recommend Chrome, which " +
+			"you can download here: https://www.google.com/chrome/." +
+			"Firefox is also a supported browser: https://www.mozilla.org/firefox/.");
 	}
 });
 //--></script>

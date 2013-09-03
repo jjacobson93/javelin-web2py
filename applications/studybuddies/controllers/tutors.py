@@ -78,7 +78,8 @@ def signup():
 def alltable():
 	tutors = db().select(db.person.student_id, db.person.last_name, 
 			db.person.first_name, db.person.grade, db.study_buddy.ALL,
-		join=db.study_buddy.on(db.person.id==db.study_buddy.person_id))
+		join=db.study_buddy.on(db.person.id==db.study_buddy.person_id),
+		orderby=db.person.last_name|db.person.first_name)
 
 	return dict(tutors=tutors)
 

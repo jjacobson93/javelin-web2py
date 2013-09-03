@@ -68,7 +68,8 @@ def records(id):
 		db.person.id, 
 		db.person.last_name, 
 		db.person.first_name, 
-		join=db.person.on(db.person.id==db.group_rec.person_id)).as_list()
+		join=db.person.on(db.person.id==db.group_rec.person_id),
+		orderby=db.person.last_name|db.person.first_name).as_list()
 
 	result = [dict([('actions',
 						'<button class="btn btn-xs btn-danger" id="delete-row-' + str(d['id']) + '" style="margin-left: 10px">' +\

@@ -1,201 +1,54 @@
 var isMovePopoverVisible = false;
 var clickedAway = false;
 
-var eventsTable = undefined;
-var attendanceTable = undefined;
 var crewsTable = undefined;
 var crewRecTable = undefined;
 
 $(function() {
 
-	// setInterval(reloadAttendance, 5000);
-
-	eventsTable = $('#events-table').dataTable({
-		'aoColumns': [
-			{'mData' : 'id'},
-			{'mData' : 'title'},
-			{'mData' : 'start_time'},
-			{'mData' : 'end_time'},
-			{'mData' : 'allDay'}
+	crewsTable = $('#crews-table').jTable({
+		columns: [
+			{'key': 'id', 'label': 'ID'},
+			{'key': 'room', 'label': 'Room'},
+			{'key': 'wefsk', 'label': 'WEFSK'},
+			{'key': 'count', 'label': 'Count'}
 		],
-		"oLanguage": {
-			"sEmptyTable": "0 items"
-		},
-		'sDom': "<'row'<'col-6 col-sm-6'<'#events-header'>>" +
-			"<'col-6 col-sm-6'<'form-group pull-right' f>>>" +
-			"<'row'<'col-12 col-sm-12'rt>><'row'<'col-6 col-sm-6'il><'col-6 col-sm-6'p>>",
-		'sAjaxSource': "/events/call/json/data",
-		'sAjaxDataProp' : "",
-		"sPaginationType": "bootstrap",
-		"bScrollCollapse": true,
-		"bLengthChange": false,
-		"sScrollY": "300px",
-		"fnCreatedRow": function( nRow, data, iDisplayIndex, iDisplayIndexFull) {
-			$(nRow).attr("id", data['id']);
-
-			var startDate = new Date(data.start_time*1000);
-			var endDate = new Date(data.end_time*1000);
-
-			$('td:eq(2)', nRow).html(startDate.toLocaleDateString() + " " + startDate.toLocaleTimeString());
-			$('td:eq(3)', nRow).html(endDate.toLocaleDateString() + " " + endDate.toLocaleTimeString());
-			
-			$('td:eq(4)', nRow).html((data.allDay) ? "Yes" : "No");
-
-			return nRow;
-		}
-	});
-
-	$('#events-header').css({
-		'display': 'inline',
-		'margin-right' : '10px',
-		'font-weight': 'bold',
-		'font-size': '26px'
-	});
-
-	attendanceTable = $('#attendance-table').dataTable({
-		"aoColumnDefs": [
-			{ "bVisible": false, "aTargets": [5,6]}
-		],
-		'aoColumns': [
-			{'mData' : 'id'},
-			{'mData' : 'person_student_id'},
-			{'mData' : 'person_last_name'},
-			{'mData' : 'person_first_name'},
-			{'mData' : 'attendance_present'},
-			{'mData' : 'person_grade'},
-			{'mData' : 'person_leader'}
-		],
-		"oLanguage": {
-			"sEmptyTable": "0 items"
-		},
-		'sDom': "<'row'<'col-6 col-sm-6'<'fuelux'<'select filter' <'.table-header'>>>>" +
-			"<'col-6 col-sm-6'<'form-group pull-right' f>>>" +
-			"<'row'<'col-12 col-sm-12'rt>><'row'<'col-6 col-sm-6'il><'col-6 col-sm-6'p>>",
-		'sAjaxSource': "/orientation/call/json/attendance_data?event_id=0",
-		'sAjaxDataProp' : "",
-		"sPaginationType": "bootstrap",
-		"bScrollCollapse": true,
-		"bLengthChange": false,
-		"sScrollY": "300px",
-		"fnCreatedRow": function( nRow, data, iDisplayIndex, iDisplayIndexFull) {
-			$(nRow).attr("id", data['id']);
-
-			var id = data['id']
-			var present = (data['attendance_present']) ? true : false;
-			var checkbox = $('<div class="switch switch-small" id="present-check-' + id + 
-				'" data-on-label="YES" data-off-label="NO"><input type="checkbox"' + ((present) ? 'checked' : '') + '></div>');
-			
-			checkbox.find('input:checkbox').prop('checked', present);
-			$('td:eq(4)', nRow).html(checkbox);
-			checkbox.bootstrapSwitch().on('switch-change', function(e, data) {
-				var event_id = attendanceTable._event_id;
-				var person_id = $(data.el).parent().parent().parent().parent().attr("id");
-				var present = data.value;
-				quickAttendance(person_id, event_id, present, false);
-			});
-
-			return nRow;
-		}
-	});
-
-	attendanceTable.dataTableExt.afnFiltering.push(
-		function( oSettings, aData, iDataIndex ) {
-			if (oSettings.sTableId == 'attendance-table') {
-				var value = $('.fuelux .select.filter').select('selectedItem').value;
-				switch(value) {
-					case 'leaders':
-						if(aData[5] && aData[5] != 9 && aData[6]) return true;
-						else return false;
-						break;
-					case 'freshmen':
-						if(aData[5] && aData[5] == 9) return true;
-						else return false;
-						break;
-					case 'non_leaders':
-						if(aData[5] && aData[5] != 9 && !aData[6]) return true;
-						else return false;
-						break;
-					default:
-						return true;
-						break;
-				}
-			} else {
-				return true;
+		title: "Crews",
+		pageSize: 100,
+		ajax: {
+			source: "/orientation/call/json/crews",
+			error: function() {
+				displayError("Could not load crews.");
 			}
-		}
-	);
-
-	$('#attendance-div .table-header').html("Attendance");
-
-	$('.fuelux .select').append("<div class='btn-group' style='margin-bottom: 8px'><button type='button' data-toggle='dropdown' class='btn btn-default dropdown-toggle' style='margin-top: -8px'>" +
-		"<span class='dropdown-label'></span><span class='caret'></span></button>" + 
-		"<ul class='dropdown-menu' role='menu'>" +
-		"<li data-value='all'><a href='#'>All</a></li>" + 
-		"<li data-value='freshmen'><a href='#'>Freshmen</a></li>" +
-		"<li data-value='leaders'><a href='#'>Leaders</a></li>" + 
-		"<li data-value='non_leaders'><a href='#'>Non-Leaders</a></li></ul></div>");
-
-	$('.fuelux .select').each(function() {
-		var $this = $(this);
-		if ($this.data('select')) return;
-			$this.select($this.data());
-
-		$(this).on('changed', function() {
-			attendanceTable.fnDraw();
-		});
-	});
-
-	crewsTable = $('#crews-table').dataTable({
-		'aoColumns': [
-			{'mData' : 'id'},
-			{'mData' : 'room'},
-			{'mData' : 'wefsk'},
-			{'mData' : 'count'}
-		],
-		"oLanguage": {
-			"sEmptyTable": "0 items"
 		},
-		'sDom': "<'row'<'col-6 col-sm-6'<'table-header'>>" +
-			"<'col-6 col-sm-6'<'form-group pull-right' f>>>" +
-			"<'row'<'col-12 col-sm-12'rt>><'row'<'col-6 col-sm-6'il><'col-6 col-sm-6'p>>",
-		'sAjaxSource': "/orientation/call/json/crews",
-		'sAjaxDataProp' : "",
-		"sPaginationType": "bootstrap",
-		"bScrollCollapse": true,
-		"bLengthChange": false,
-		"sScrollY": "300px",
-		"fnCreatedRow": function( nRow, data, iDisplayIndex, iDisplayIndexFull) {
-			$(nRow).attr("id", data['id']);
-
-			return nRow;
+		createdRow: function(row, data) {
+			$(row).attr("id", data['id']);
+			return row
 		}
 	});
 
-	$('#crews-div .table-header').html("Crews");
-
-	crewRecTable = $('#crew-records-table').dataTable({
-		'aoColumns': [
-			{'mData' : 'student_id'},
-			{'mData' : 'last_name'},
-			{'mData' : 'first_name'},
-			{'mData' : 'actions'}
+	crewRecTable = $('#crew-records-table').jTable({
+		columns: [
+			{'key': 'student_id', 'label': 'ID'},
+			{'key': 'last_name', 'label': 'Last Name'},
+			{'key': 'first_name', 'label': 'First Name'},
+			{'key': 'actions', 'label': 'Actions'}
 		],
-		"oLanguage": {
-			"sEmptyTable": "0 items"
+		title: 'Crew Records',
+		pageSize: 25,
+		ajax: {
+			source: "/orientation/call/json/crew_records",
+			data: {
+				id: 0
+			},
+			error: function() {
+				displayError("Could not load crew records.");
+			}
 		},
-		'sDom': "<'row'<'col-6 col-sm-6'<'table-header'>>" +
-			"<'col-6 col-sm-6'<'form-group pull-right' f>>>" +
-			"<'row'<'col-12 col-sm-12'rt>><'row'<'col-6 col-sm-6'il><'col-6 col-sm-6'p>>",
-		'sAjaxSource': "/orientation/call/json/crew_records?id=0",
-		'sAjaxDataProp' : "",
-		"sPaginationType": "bootstrap",
-		"bScrollCollapse": true,
-		"bLengthChange": false,
-		"sScrollY": "300px",
-		"fnCreatedRow": function( nRow, data, iDisplayIndex, iDisplayIndexFull) {
-			$(nRow).attr("id", data['id']);
+		createdRow: function(row, data) {
+			$(row).attr("id", data['id']);
 
-			$(nRow).find('button[id^="crew-move-person"]').popover({
+			$(row).find('button[id^="crew-move-person"]').popover({
 				trigger:'manual', 
 				html: true,
 				placement: 'left',
@@ -238,51 +91,13 @@ $(function() {
 				});
 			});
 
-			return nRow;
+			return row;
 		}
 	});
 
 	$('#crew-records-table').on('click', 'td button[id^="crew-remove-person"]', function() {
-		// var person_id = $(this).attr("id").match(/[\d]+/)[0];
 		var person_id = $(this).parent().parent().attr('id');
 		removeFromCrew(person_id);
-	});
-
-	$(document).on('mouseleave', '.carousel', function() {
-		$(this).carousel('pause');
-	});
-
-	$('#events-div').on('click', '#events-table tr td', function() {
-		// row was clicked
-		if ($(this).html() !== "0 items") {
-			var event_id = $(this).parent().attr("id");
-			var title = $(this).parent().find('td').eq(1).html();
-
-			$('#main-container').carousel('next');
-			$('#main-container').carousel('pause');
-
-			setTimeout(loadRecord(event_id, title), 100);
-		}
-	});
-
-	$('#main-container').on('slid', function() {
-		$('.carousel-inner').css('overflow', 'visible');
-		$('#prev-button').removeClass('disabled');
-		$('#quick-att-btn').removeClass('disabled');
-		
-		if ($('#main-container .carousel-inner .item:first').hasClass('active')) {
-			$('#prev-button').addClass('disabled');
-			eventsTable.api().ajax.reload();
-			$('#quick-att-input').attr('readonly', true);
-			$('#quick-att-btn').addClass('disabled');
-		} 
-		else if ($('#main-container .carousel-inner .item:last').hasClass('active')) {
-			$('#quick-att-input').attr('readonly', false);
-		}
-	});
-
-	$('#main-container').on('slide', function() {
-		$('.carousel-inner').css('overflow', 'hidden');
 	});
 
 	$('#crews-div').on('click', '#crews-table tr td', function() {
@@ -306,7 +121,7 @@ $(function() {
 		
 		if ($('#crews-container .carousel-inner .item:first').hasClass('active')) {
 			$('#prev-button').addClass('disabled');
-			crewsTable.api().ajax.reload();
+			crewsTable.jTable('reload');
 		} 
 		else if ($('#crews-container .carousel-inner .item:last').hasClass('active')) {
 			$('#add-crew-btn').addClass('disabled');
@@ -323,114 +138,8 @@ $(function() {
 			 e.preventDefault();
 			 return false;
 		} else {
-			if ($('.nav-pills li.active a').attr('href') == "#attendance") {
-				$('#main-container').carousel('prev');
-			} else if ($('.nav-pills li.active a').attr('href') == "#crews") {
-				$('#crews-container').carousel('prev');
-			}
+			$('#crews-container').carousel('prev');
 		}
-	});
-
-	$('.nav-pills li a').on('click', function() {
-		var href = $(this).attr('href');
-		$('#prev-button').removeClass('disabled');
-		$('#quick-att-btn').removeClass('disabled');
-
-		if (href == '#attendance') {
-			if ($('#main-container .carousel-inner .item:first').hasClass('active')) {
-				$('#prev-button').addClass('disabled');
-				eventsTable.api().ajax.reload();
-				$('#quick-att-input').attr('readonly', true);
-				$('#quick-att-btn').addClass('disabled');
-			} 
-			else if ($('#main-container .carousel-inner .item:last').hasClass('active')) {
-				$('#quick-att-input').attr('readonly', false);
-			}
-		} else {
-			if ($('#crews-container .carousel-inner .item:first').hasClass('active')) {
-				$('#prev-button').addClass('disabled');
-				crewsTable.api().ajax.reload();
-			} 
-			else if ($('#crews-container .carousel-inner .item:last').hasClass('active')) {
-			}
-		}
-	});
-
-	$("#quick-att-input").on('keyup', function(event){
-		$('#quick-att-btn').removeClass('disabled');
-		if ($(this).val() === '') {
-			$('#quick-att-btn').addClass('disabled');
-		}
-
-		if (event.keyCode == 13 && $(this).val() !== ''){
-			$("#quick-att-btn").click();
-		} else if (event.keyCode == 13 && $(this).val() === '') {
-			displayError('Invalid ID');
-		}
-	});
-
-	$('#quick-att-btn').on('click', function() {
-		var student_id = $('#quick-att-input').val();
-		var event_id = $('div[id^="attendance-for-"]').attr("id").match(/[\d]+/)[0];
-		$('#quick-att-input').val('');
-		$('#quick-att-btn').addClass('disabled');
-		quickAttendance(student_id, event_id, true, true);
-	});
-
-	$('#quick-att-input').tooltip({'trigger':'manual', 'title': 'Please choose an event', 'placement': 'bottom'});
-	$('#quick-att-input').on('mouseover', function() {
-		if (this.readOnly) {
-			$(this).tooltip('show');
-		}
-	});
-
-	$('#quick-att-input').on('mouseleave', function() {
-		$(this).tooltip('hide');
-	});
-
-	$('.nav li a').on('click', function() {
-		var href = $(this).attr('href');
-		if (href == "#attendance") {
-			attendanceTable.api().ajax.reload();
-			$('#attendance-nav').fadeIn(500).css('display', 'block');
-			$('#crew-nav').fadeOut(500).css('display', 'none');
-		} else if (href == "#crews") {
-			crewsTable.api().ajax.reload();
-			$('#attendance-nav').fadeOut(500).css('display', 'none');
-			$('#crew-nav').fadeIn(500).css('display', 'block');
-		} else {
-			$('#attendance-nav').fadeOut(500).css('display', 'none');
-			$('#crew-nav').fadeOut(500).css('display', 'none');
-		}
-	});
-
-	$('#nametags-btn').on('click', function() {
-		var type = $('input[name="typeradios"]:checked').val().toLowerCase();
-		var event_name = $('#event_name').val();
-		var present = $('input[name="presentradios"]:checked').val();
-		var event_id = $('#eventatt_select').val();
-		$(this).button('loading');
-		makeNametags(type, event_name, present, event_id);
-	});
-
-	$('#eventatt_select').on('change', function() {
-		if ($(this).val() == -1)
-			$('input[name="presentradios"]').prop('disabled', true);
-		else
-			$('input[name="presentradios"]').prop('disabled', false);
-	});
-
-	$('#att-sheets-btn').on('click', function() {
-		makeAttSheets();
-	});
-
-	$('#callhome-btn').on('click', function() {
-		makeCallHomes();
-	});
-
-	$('#event_name').on('keyup', function() {
-		var val = $(this).val();
-		$('#event_name_text').html(val);
 	});
 
 	$('#add-crew-btn').on('click', function() {
@@ -495,15 +204,6 @@ $(function() {
 	});
 });
 
-function loadRecord(event_id, event_title) {
-	attendanceTable._event_id = event_id;
-
-	$('div[id^="attendance-for-"]').attr("id", "attendance-for-" + event_id);
-	$('#att-event-title').html(event_title);
-
-	attendanceTable.api().ajax.url("/orientation/call/json/attendance_data?event_id="+event_id).load();
-}
-
 function loadCrewRecord(crew_id, room, wefsk) {
 	crewRecTable._crew_id = crew_id;
 
@@ -512,48 +212,10 @@ function loadCrewRecord(crew_id, room, wefsk) {
 	$('#crew-room-field').val(room);
 	$('#crew-wefsk-field').val(wefsk);
 
-	crewRecTable.api().ajax.url("/orientation/call/json/crew_records?id="+crew_id).load();
-	crewRecTable.fnDraw();
+	crewRecTable.jTable('setTitle','Crew ' + crew_id);
+	crewRecTable.jTable('reload', {data: {id: crew_id}});
 
-	$('#crew-records-div .table-header').html('Crew ' + crew_id);
 	loadPeopleForTypeahead();
-}
-
-function quickAttendance(person_id, event_id, present, isStudentID) {
-	if (!isStudentID) {
-		var data = {
-			'person_id': person_id,
-			'event_id': event_id,
-			'present': present
-		}
-	} else {
-		var data = {
-			'student_id': person_id,
-			'event_id': event_id,
-			'present': present
-		}
-	}
-
-	$.ajax({
-		type: 'POST',
-		url: '/orientation/call/json/quick_attendance',
-		data: data,
-		dataType: 'json',
-		success: function(data) {
-			if (data.error) {
-				displayError('Could not take attendance for ' + ((isStudentID) ? student_id : person_id) + '.');
-			}
-		},
-		error: function() {
-			displayError('Could not take attendance for ' + ((isStudentID) ? student_id : person_id) + '.');
-		}
-	});
-}
-
-function reloadAttendance() {
-	if ($('#main-container .carousel-inner .item:last').hasClass('active') && $('.nav-pills li.active a').attr('href') == "#attendance") {
-		$('#attendance-table').datagrid('seamlessReload');
-	}
 }
 
 function makeNametags(type, event_name, present, event_id) {
@@ -645,7 +307,7 @@ function addCrew(room, wefsk, people) {
 				$('#add-crew-modal').modal('hide');
 				displaySuccess("The crew has been added");
 
-				crewsTable.api().ajax.reload();
+				crewsTable.jTable('reload');
 			} else {
 				displayError("Could not add crew.", true);
 			}
@@ -666,7 +328,7 @@ function addPeopleToCrew(id, people) {
 		},
 		success: function() {
 			$("#add-person-select").select2("val", "");
-			crewRecTable.api().ajax.reload();
+			crewRecTable.jTable('reload');
 			displaySuccess("Added people to crew");
 		},
 		error: function() {
@@ -683,7 +345,7 @@ function removeFromCrew(person_id) {
 			'person_id': person_id
 		},
 		success: function() {
-			crewRecTable.api().ajax.reload();
+			crewRecTable.jTable('reload');
 			displaySuccess("Removed from crew.");
 		},
 		error: function() {
@@ -701,7 +363,7 @@ function changeToCrew(crew_id, person_id) {
 			'id': crew_id
 		},
 		success: function() {
-			crewRecTable.api().ajax.reload();
+			crewRecTable.jTable('reload');
 			displaySuccess("Moved to Crew " + crew_id + ".");
 		},
 		error: function() {

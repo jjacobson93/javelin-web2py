@@ -13,6 +13,7 @@ __data__ = {'name' : 'events', 'label' : 'Events', 'description' : 'Manage and c
 	'icon' : 'calendar', 'u-icon' : u'\uf073', 'color':'red', 'required' : True}
 
 from applications.javelin.ctr_data import ctr_enabled, get_ctr_data
+from applications.javelin.private.utils import flattenDict
 from gluon.contrib import simplejson as json
 from gluon.tools import Service
 service = Service(globals())
@@ -106,6 +107,38 @@ def delete_event(id):
 	:returns: a dictionary with a response of success or failure
 	"""
 	response = db(db.events.id==id).delete()
+	return dict(response=response)
+
+@auth.requires_login()
+@auth.requires_membership('standard')
+@service.json
+def attendance_data(event_id):
+	data = db((db.person.grade==9) | (db.person.leader==True)).select(db.person.id, db.person.student_id, db.person.last_name, 
+		db.person.first_name, db.attendance.present, db.attendance.event_id, 
+		db.events.title, db.person.grade, db.person.leader,
+		left=[db.attendance.on((db.person.id==db.attendance.person_id) & (db.attendance.event_id==event_id)),
+		db.events.on(db.events.id==db.attendance.event_id)],
+		orderby=db.person.last_name|db.person.first_name).as_list()
+
+	data = [dict(('_'.join(k),v) if k != ('person','id') else ('id',v) for k,v in flattenDict(d).items()) for d in data]
+
+	return data
+
+@auth.requires_login()
+@auth.requires_membership('standard')
+@service.json
+def quick_attendance(event_id, person_id=None, student_id=None, present=True):
+	if person_id:
+		response = db.attendance.update_or_insert((db.attendance.person_id==person_id) & (db.attendance.event_id==event_id),
+			person_id=person_id, event_id=event_id, present=present)
+	elif student_id:
+		person = db(db.person.student_id==student_id).select().first()
+		if person:
+			response = db.attendance.update_or_insert((db.attendance.person_id==person.id) & (db.attendance.event_id==event_id),
+				person_id=person.id, event_id=event_id, present=present)
+		else:
+			return dict(error=True)
+
 	return dict(response=response)
 
 @auth.requires_login()

@@ -19,6 +19,9 @@ function loadRecord(id) {
 						$('#' + k).val("");
 			});
 
+			$('#person-pane li a[data-toggle="tab"]').parent().removeClass('disabled');
+			$('#person-pane a[href="#info"]').tab('show');
+
 			// var pic = data['pic']
 			// $('#person-pic').empty();
 			// if (pic != null) {
@@ -31,7 +34,7 @@ function loadRecord(id) {
 			// }
 		},
 		error: function() {
-			displayError("The record could not be loaded")
+			displayError("The record could not be loaded");
 			// $('#person-pic').empty();
 			// $('#person-pic').text("No picture");
 		}
@@ -138,29 +141,6 @@ function checkPictureForUpload() {
 }
 
 $(function() {
-	// $.fn.dataTableExt.afnFiltering.push(
-	// 	function( oSettings, aData, iDataIndex ) {
-	// 		var value = $('.fuelux .select.filter').select('selectedItem').value;
-	// 		switch(value) {
-	// 			case 'leaders':
-	// 				if(aData[5] && aData[5] != 9 && aData[7]) return true;
-	// 				else return false;
-	// 				break;
-	// 			case 'freshmen':
-	// 				if(aData[5] && aData[5] == 9) return true;
-	// 				else return false;
-	// 				break;
-	// 			case 'non_leaders':
-	// 				if(aData[5] && aData[5] != 9 && !aData[7]) return true;
-	// 				else return false;
-	// 				break;
-	// 			default:
-	// 				return true;
-	// 				break;
-	// 		}
-	// 	}
-	// );
-
 	var peopleTable = $('#people-table').jTable({
 		columns: [
 			{
@@ -221,7 +201,7 @@ $(function() {
 		}
 	});
 
-	// $('.select2').select2();
+	$('.select2').select2();
 	// $('.select2').css('margin', '-10px 0 0');
 
 	// $('.table-header').css({
@@ -229,24 +209,6 @@ $(function() {
 	// 	'margin-right' : '10px',
 	// 	'font-weight': 'bold',
 	// 	'font-size': '26px'
-	// });
-
-	// $('.fuelux .select').append("<div class='btn-group' style='margin-bottom: 8px'><button type='button' data-toggle='dropdown' class='btn btn-default dropdown-toggle' style='margin-top: -8px'>" +
-	// 	"<span class='dropdown-label'></span><span class='caret'></span></button>" + 
-	// 	"<ul class='dropdown-menu' role='menu'>" +
-	// 	"<li data-value='all'><a href='#'>All</a></li>" + 
-	// 	"<li data-value='freshmen'><a href='#'>Freshmen</a></li>" +
-	// 	"<li data-value='leaders'><a href='#'>Leaders</a></li>" + 
-	// 	"<li data-value='non_leaders'><a href='#'>Non-Leaders</a></li></ul></div>");
-
-	// $('.fuelux .select').each(function() {
-	// 	var $this = $(this);
-	// 	if ($this.data('select')) return;
-	// 		$this.select($this.data());
-
-	// 	$(this).on('changed', function() {
-	// 		peopleTable.fnDraw();
-	// 	});
 	// });
 
 	$('#person-pane').on('change', 'input', function() {
@@ -265,16 +227,26 @@ $(function() {
 		$(this).carousel('pause');
 	});
 
-	$('.table > tbody').on('click', 'tr', function() {
+	$('#people-table').on('click', 'tr', function() {
 		// row was clicked
 		if ($(this).find("td").html() !== "0 items") {
 			var td = $(this).find("td");
 			var p_id = td.eq(0).html();
 			
+			$('#person-pane a[href="#loading"]').tab('show');
+			$('#person-pane li a[data-toggle="tab"]').parent().addClass('disabled');
+
 			loadRecord(p_id);
 			
 			$('#main-container').carousel('next');
 			$('#main-container').carousel('pause');
+		}
+	});
+
+	$('#person-pane a[data-toggle="tab"]').on('click', function(e) {
+		if($(this).parent().hasClass('disabled')) {
+			 e.preventDefault();
+			 return false;
 		}
 	});
 

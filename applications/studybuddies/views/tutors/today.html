@@ -1,0 +1,73 @@
+<div class="row">
+	<div class="input-group col-6 col-md-6">
+		<input type="text" class="form-control" placeholder="Check In" id="checkin-input" style="border-right: 0">
+		<span class="input-group-btn">
+			<button id="checkin-submit" class="btn btn-primary disabled">Submit</button>
+		</span>
+	</div>
+</div>
+
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th>ID</th>
+			<th>Last Name</th>
+			<th>First Name</th>
+			<th>Nickname</th>
+			<th>Grade</th>
+			<th>In</th>
+			<th>Out</th>
+			<th>Subjects</th>
+		</tr>
+	</thead>
+	<tbody>
+	{{if students:}}
+		{{for t in students:}}
+		<tr class="{{='danger' if t.sb_att.is_out==None else 'success'}}">
+			<td>{{=t.person.student_id}}</td>
+			<td>{{=t.person.last_name}}</td>
+			<td>{{=t.person.first_name}}</td>
+			<td>{{=t.study_buddy.nickname}}</td>
+			<td>{{=t.person.grade}}</td>
+			<td class="time-cell" data-value="{{=t.in_time.strftime('%Y-%m-%d-%H-%M-%S') if t.in_time else None}}"></td>
+			<td class="time-cell" data-value="{{=t.out_time.strftime('%Y-%m-%d-%H-%M-%S') if t.out_time else None}}"></td>
+			<td>{{=t.subjects or '---'}}</td>
+		</tr>
+		{{pass}}
+	{{else:}}
+	<tr>
+		<td colspan='11'>
+			<h2 style="text-align: center">No Tutors</h2>
+		</td>
+	</tr>
+	{{pass}}
+	</tbody>
+</table>
+<script type="text/javascript">
+$(function() {
+	$('.time-cell').each(function(i, el) {
+		var value = $(el).attr('data-value');
+		if (value != "None") {
+			var date =  utcToLocal(value);
+			$(el).html(formatAMPM(date));
+		} else {
+			$(el).html("---");
+		}
+	});
+
+	$('#checkin-submit').on('click', function() {
+		var person_id = $('#checkin-input').val();
+		checkIn(person_id);
+	});
+
+	$('#checkin-input').on('keyup', function(e) {
+		var val = $(this).val();
+		$('#checkin-submit').removeClass('disabled');
+		if (val == '')
+			$('#checkin-submit').addClass('disabled');
+
+		if (e.keyCode == 13 && val != '')
+			$("#checkin-submit").click();
+	});
+});
+</script>

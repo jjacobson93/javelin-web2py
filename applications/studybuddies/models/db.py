@@ -127,12 +127,25 @@ db.define_table('person',
 	Field('grade', 'integer'),
 	Field('leader', 'boolean', default=False), migrate=False)
 
+db.define_table('groups',
+	Field('name', 'string', notnull=True, required=True, unique=True),
+	Field('description', 'string'), migrate=False)
+
+db.define_table('group_rec',
+	Field('group_id', 'reference groups', notnull=True, required=True),
+	Field('person_id', 'reference person', notnull=True, required=True), migrate=False)
+
 db.define_table('dept',
 	Field('title', 'string', notnull=True), migrate=False)
 
 db.define_table('sb_section',
 	Field('title', 'string'),
 	Field('dept_id', 'reference dept'))
+
+sb_section_titles = ['Math', 'Science', 'History', 'English', 'Test Taking', 'Foreign Language', 'Other']
+for sec in sb_section_titles:
+	if not db(db.sb_section.title==sec).select().first():
+		db.sb_section.insert(title=sec)
 
 db.define_table('sb_att',
 	Field('person_id', 'reference person'),
@@ -141,6 +154,30 @@ db.define_table('sb_att',
 	Field('out_time', 'datetime', default=None, update=request.now),
 	Field('studyhour', 'integer', default=0),
 	Field('is_out', 'boolean', default=False))
+
+class_list = [None, 'Pre-Algebra', 'Algebra I', 'Algebra II', 
+	'Geometry', 'Pre-Calculus', 'Geography', 'World History',
+	'U.S. History', "Gov't/Econ", 'English/Writing', 'Biology',
+	'Chemistry', 'Physics', 'AVID', 'French', 'German', 'Spanish',
+	'Sign Language']
+
+db.define_table('study_buddy',
+	Field('person_id', db.person, notnull=True, 
+		required=True, label="Student", 
+		requires=IS_IN_SET([
+			(p.id, p.last_name + ", " + p.first_name) 
+			for p in db(db.person.leader==True).select(db.person.ALL, orderby=[db.person.last_name, db.person.first_name])]
+		)),
+	Field('days', 'string', required=True, requires=IS_IN_SET([None, "Tuesday", "Thursday", "Both"])),
+	Field('semester', 'string', notnull=True, required=True, requires=IS_IN_SET(["Fall", "Spring", "Both"])),
+	Field('lunch', 'string', notnull=True, required=True, requires=IS_IN_SET(["Yes", "No"]), label="Mon/Wed/Fri Lunch?"),
+	Field('sport_season', 'list:string', notnull=True, required=True, default=None, requires=IS_IN_SET([None, "Fall", "Winter", "Spring", "Summer"], multiple=True)),
+	Field('academic_subject1', 'string', notnull=True, required=True, default=None, requires=IS_IN_SET(class_list, multiple=False)),
+	Field('academic_subject2', 'string', notnull=True, required=True, default=None, requires=IS_IN_SET(class_list, multiple=False)),
+	Field('academic_subject3', 'string', notnull=True, required=True, default=None, requires=IS_IN_SET(class_list, multiple=False)),
+	Field('nickname', 'string', default=None),
+	Field('grad_year', 'integer', notnull=True, required=True),
+	Field('second_language', 'string', default=None), migrate=False)
 
 def days_equal(dateone, datetwo):
 	return dateone.date() == datetwo.date()

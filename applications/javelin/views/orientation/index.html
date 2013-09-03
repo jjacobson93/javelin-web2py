@@ -15,125 +15,51 @@
 
 <div class="row">
 	<div class="col-12 col-md-12">
-		<a class="btn btn-default disabled pull-left" id="prev-button" href="#">
-			<i class="icon-arrow-left"></i> Back
+		<a class="btn btn-primary disabled" id="prev-button" href="#main-container" data-slide="prev">
+			<i class="icon-arrow-left"></i>Back
 		</a>
-		<ul class="nav nav-pills col-6 col-md-6">
-			<li class="active"><a href="#attendance" data-toggle="tab"><i class="icon-check"></i>Attendance</a></li>
-			<li><a href="#crews" data-toggle="tab"><i class="icon-group"></i>Crews</a></li>
-		</ul>
-		<div class="pull-right col-4 col-md-4" id="attendance-nav" style="line-height: 30px">
-			<div class="form-group">
-				<label style="margin-right: 10px; font-size: 15px; display: inline"><b>Quick Attendance</b> <small>(by Student ID)</small></label>
-				<div class="input-group">
-					<input class="form-control" type="number" id="quick-att-input" style="margin-right: 0" readonly>
-					<span class="input-group-btn">
-						<button class="btn btn-default disabled" type="button" id="quick-att-btn">Submit</button>
-					</span>
-				</div>
-			</div>
-		</div>
-		<div class="pull-right" id="crew-nav" style="display: none">
-			<a class="btn btn-success pull-right" href="#" id="add-crew-btn">
-				<i class="icon-plus"></i>Add Crew
-			</a>
-		</div>
+		<a class="btn btn-success pull-right" href="#" id="add-crew-btn">
+			<i class="icon-plus"></i>Add Crew
+		</a>
 	</div>
 </div>
 
 <!-- MAIN CONTAINER -->
 
 <div class="container">
-	<div class="col-12 col-md-12">
-		<div class="tab-content">
 
-			<!-- ATTENDANCE -->
+	<!-- CREWS -->
 
-			<div class="tab-pane fade active in" id="attendance">
-				<div class="carousel slide" id="main-container" data-interval="false">
-					<div class="carousel-inner" style="overflow:visible">
-						
-						<div class="item active" id="events-div">
-							<div style="width: 100%; margin-top: 15px">
-								<table id="events-table" class="table table-striped table-hover" width="100%">
-									<thead>
-										<th>ID</th>
-										<th>Title</th>
-										<th>From</th>
-										<th>To</th>
-										<th>All Day</th>
-									</thead>
-								</table>
-							</div>
+	<div class="col-12 col-md-12" id="crews">
+		<div id="crews">
+			<div class="carousel slide" id="crews-container" data-interval="false">
+				<div class="carousel-inner" style="overflow:visible">
+					
+					<div class="item active" id="crews-div">
+						<div style="width: 100%; margin-top: 15px">
+							<table id="crews-table" class="table table-striped table-hover"></table>
 						</div>
-
-						<div class="item" id="attendance-for-">
-							<div id="attendance-div" style="width: 100%; margin-top: 15px">
-								<table id="attendance-table" class="table table-striped table-hover" width="100%">
-									<thead>
-										<th>ID</th>
-										<th>Student ID</th>
-										<th>Last Name</th>
-										<th>First Name</th>
-										<th>Present</th>
-										<th>Grade</th>
-										<th>Leader</th>
-									</thead>
-								</table>
-							</div>
-						</div>
-
 					</div>
-				</div>
-			</div>
 
-			<!-- CREWS -->
-
-			<div class="tab-pane fade in" id="crews">
-				<div class="carousel slide" id="crews-container" data-interval="false">
-					<div class="carousel-inner" style="overflow:visible">
-						
-						<div class="item active" id="crews-div">
-							<div style="width: 100%; margin-top: 15px">
-								<table id="crews-table" class="table table-striped table-hover" width="100%">
-									<thead>
-										<th>ID</th>
-										<th>Room</th>
-										<th>WEFSK</th>
-										<th>Count</th>
-									</thead>
-								</table>
-							</div>
-						</div>
-
-						<div class="item" id="crew-records-for-">
-							<div class="row" style="margin-top: 15px">
-								<div class="col-4 col-md-4">
-									<div class="form-group">
-										<div class="input-group select2-bootstrap-append">
-											<input class="form-control select2-remote" type="hidden" id="add-person-select">
-											<span class="input-group-btn">
-												<button class="btn btn-default" type="button" id="add-person-btn">Add</button>
-											</span>
-										</div>
+					<div class="item" id="crew-records-for-">
+						<div class="row" style="margin-top: 15px">
+							<div class="col-4 col-md-4">
+								<div class="form-group">
+									<div class="input-group select2-bootstrap-append">
+										<input class="form-control select2-remote" type="hidden" id="add-person-select">
+										<span class="input-group-btn">
+											<button class="btn btn-default" type="button" id="add-person-btn">Add</button>
+										</span>
 									</div>
 								</div>
 							</div>
-							<div id="crew-records-div" style="width: 100%; margin-top: 15px">
-								<table id="crew-records-table" class="table table-striped table-hover" width="100%">
-									<thead>
-										<th>ID</th>
-										<th>Last Name</th>
-										<th>First Name</th>
-										<th>Actions</th>
-									</thead>
-								</table>
-							</div>
+						</div>
+						<div id="crew-records-div" style="width: 100%; margin-top: 15px">
+							<table id="crew-records-table" class="table table-striped table-hover"></table>
 						</div>
 					</div>
 				</div>
 			</div>
-
 		</div>
 	</div>
 </div>

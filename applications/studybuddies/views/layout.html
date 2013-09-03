@@ -40,20 +40,12 @@
 	<script src="{{=URL('static','js/modernizr.custom.js')}}"></script>
 
 	<!-- include stylesheets -->
-	{{  
-	response.files.append(URL('static','css/bootstrap.css'))
-	response.files.append(URL('static','css/font-awesome.min.css'))
-	}}
+	<link rel="stylesheet" type="text/css" href="{{=URL('javelin', 'static','css/bootstrap.min.css')}}">
+	<link rel="stylesheet" type="text/css" href="{{=URL('javelin', 'static','css/font-awesome.min.css')}}">
+	<link rel="stylesheet" type="text/css" href="{{=URL('javelin', 'static','css/select2.css')}}">
+	<link rel="stylesheet" type="text/css" href="{{=URL('javelin', 'static','css/select2-bootstrap.css')}}">
 
 	{{include 'web2py_ajax.html'}}
-
-	{{
-	# using sidebars need to know what sidebar you want to use
-	left_sidebar_enabled = globals().get('left_sidebar_enabled',False)
-	right_sidebar_enabled = globals().get('right_sidebar_enabled',False)
-	middle_columns = {0:'span12',1:'span9',2:'span6'}[
-	(left_sidebar_enabled and 1 or 0)+(right_sidebar_enabled and 1 or 0)]
-	}}
 
 	<style type="text/css">
 		body {
@@ -194,6 +186,9 @@
 						<li {{if request.controller == 'archive':}}class="active"{{pass}}>
 							<a href="{{=URL('archive', 'index')}}">Archive</a>
 						</li>
+						<li {{if request.controller == 'tutors':}}class="active"{{pass}}>
+							<a href="{{=URL('tutors', 'index')}}">Tutors</a>
+						</li>
 					</ul>
 					<ul class="nav navbar-nav pull-right">
 						{{='auth' in globals() and auth.navbar(mode="dropdown") or ''}}
@@ -214,8 +209,9 @@
 	{{end}}
 	</section>
 
-	<script src="{{=URL('static','js/bootstrap.js')}}"></script>
-	<script src="{{=URL('static','js/web2py_bootstrap.js')}}"></script>
+	<script src="{{=URL('javelin', 'static','js/bootstrap.min.js')}}"></script>
+	<script src="{{=URL('javelin', 'static','js/web2py_bootstrap.js')}}"></script>
+	<script src="{{=URL('javelin', 'static','js/select2.min.js')}}"></script>
 	<script src="{{=URL('static','js/appcore.js')}}"></script>
 	<script type="text/javascript">
 		$(function() { displayFlash("{{=response.flash or ''}}"); });

@@ -4,32 +4,24 @@ var groupsTable = undefined;
 var recordsTable = undefined;
 
 function initGroupTable() {
-	groupsTable = $('#groups-table').dataTable({
-		'aoColumnDefs': [
-			{ "bVisible": false,  "aTargets": [0] }
+	groupsTable = $('#groups-table').jTable({
+		columns: [
+			{'key': 'name', 'label': 'Name'},
+			{'key': 'description', 'label': 'Description'},
+			{'key': 'count', 'label': 'Count'},
+			{'key': 'actions', 'label': 'Actions'}
 		],
-		'aoColumns': [
-			{'mData' : 'id'},
-			{'mData' : 'name'},
-			{'mData' : 'description'},
-			{'mData' : 'count'},
-			{'mData' : 'actions'}
-		],
-		"oLanguage": {
-			"sEmptyTable": "0 items"
+		ajax: {
+			source: '/groups/call/json/data',
+			error: function() {
+				displayError("Could not load data.");
+			}
 		},
-		'sDom': "<'row'<'col-6 col-sm-6'<'table-header'>>" +
-			"<'col-6 col-sm-6'<'form-group pull-right' f>>>" +
-			"<'row'<'col-12 col-sm-12'rt>><'row'<'col-6 col-sm-6'il><'col-6 col-sm-6'p>>",
-		'sAjaxSource': "/groups/call/json/data",
-		'sAjaxDataProp' : "",
-		"sPaginationType": "bootstrap",
-		"bScrollCollapse": true,
-		"bLengthChange": false,
-		"sScrollY": "300px",
-		"fnCreatedRow": function( nRow, data, iDisplayIndex, iDisplayIndexFull) {
-			$(nRow).attr("id", data['id']);
-			return nRow;
+		title: 'Groups',
+		pageSize: 100,
+		createdRow: function(row, data) {
+			$(row).attr('id', data['id']);
+			return row;
 		}
 	});
 
@@ -42,32 +34,22 @@ function initGroupTable() {
 }
 
 function initRecordsTable() {
-	recordsTable = $('#records-table').dataTable({
-		'sDom': "<'row'<'col-6 col-sm-6'<'#group-legend'>>" +
-			"<'col-6 col-sm-6'<'form-group pull-right' f>>>" +
-			"<'row'<'col-12 col-sm-12'rt>><'row'<'col-6 col-sm-6'il><'col-6 col-sm-6'p>>",
-		'sAjaxSource': "/groups/call/json/records?id=0",
-		'sAjaxDataProp' : "",
-		"sPaginationType": "bootstrap",
-		"bScrollCollapse": true,
-		"bLengthChange": false,
-		"sScrollY": "300px",
-		'aoColumns': [
-			{'mData' : 'id'},
-			{'mData' : 'last_name'},
-			{'mData' : 'first_name'},
-			{'mData' : 'actions'}
+	recordsTable = $('#records-table').jTable({
+		columns: [
+			{'key': 'id', 'label': 'ID'},
+			{'key': 'last_name', 'label': 'Last Name'},
+			{'key': 'first_name', 'label': 'First Name'},
+			{'key': 'actions', 'label': 'Actions'}
 		],
-		"oLanguage": {
-			"sEmptyTable": "0 items"
+		ajax: {
+			source: '/groups/call/json/records',
+			data: {
+				id: 0
+			},
+			error: function() {
+				displayError("Could not load records");
+			}
 		}
-	});
-
-	$('#group-legend').css({
-		'display': 'inline',
-		'margin-right' : '10px',
-		'font-weight': 'bold',
-		'font-size': '26px'
 	});
 }
 
@@ -103,8 +85,7 @@ function loadRecordsTable(id) {
 		}
 	});
 
-	recordsTable.api().ajax.url("/groups/call/json/records?id="+id).load();
-	recordsTable.fnDraw();
+	recordsTable.jTable('reload', {data: {id: id}});
 }
 
 function addGroup(name, description, values) {
@@ -123,7 +104,7 @@ function addGroup(name, description, values) {
 				$('#add-group-modal').modal('hide');
 				displaySuccess("The group has been added");
 
-				groupsTable.api().ajax.reload();
+				groupsTable.jTable('reload');
 			} else {
 				displayError("A group with that name already exists.", true);
 			}
@@ -146,7 +127,7 @@ function addPeopleToGroup(group_id, people) {
 		},
 		success: function() {
 			$('#add-person-select').select2('val', '');
-			recordsTable.api().ajax.url("/groups/call/json/records?id="+group_id).load();
+			recordsTable.jTable('reload', {data: {id: group_id}});
 			displaySuccess("The person/people has been added.");
 		},
 		error: function() {
@@ -173,7 +154,7 @@ function addPerson() {
 				$("#delete-person-done-btn").attr("href", "#");
 				displaySuccess("The group has been deleted.");
 			
-				groupsTable.api().ajax.reload();
+				groupsTable.jTable('reload');
 
 			},
 			error: function() {
@@ -203,7 +184,7 @@ function editGroup(id) {
 				$('#edit-group-modal').modal('hide');
 				displaySuccess("The group has been edited.");
 
-				groupsTable.api().ajax.reload();
+				groupsTable.jTable('reload');
 			} else {
 				displayError("Could not edit group. A group already exists with that name.", true);
 			}
@@ -228,7 +209,7 @@ function deleteGroup(id) {
 			$("#delete-done-btn").attr("href", "#");
 			displaySuccess("The group has been deleted.");
 		
-			groupsTable.api().ajax.reload();
+			groupsTable.jTable('reload');
 		},
 		error: function() {
 			// $("#delete-group-modal").modal("hide");
@@ -252,7 +233,7 @@ function deletePersonFromGroup(p_id, g_id) {
 			$("#delete-person-done-btn").attr("data-person", "");
 			displaySuccess("Person has been deleted from the group.");
 
-			recordsTable.api().ajax.url("/groups/call/json/records?id="+g_id).load();
+			recordsTable.jTable('reload', {data: {id: g_id}});
 		},
 		error: function() {
 			$("#delete-person-modal").modal("hide");
@@ -272,9 +253,7 @@ $(function() {
 
 		if ($('.carousel-inner .item:first').hasClass('active')) {
 			$('#prev-button').addClass('disabled');
-			groupsTable.api().ajax.reload();
-
-			groupsTable.fnDraw();
+			groupsTable.jTable('reload');
 		} else if ($('.carousel-inner .item:last').hasClass('active')) {
 			$('#add-group-btn').addClass('disabled');
 		}
@@ -312,14 +291,12 @@ $(function() {
 			var id = $(this).parent().attr("id");
 			var name = $(this).parent().find("td").eq(0).html();
 
-			$('#group-legend').html(name);
+			recordsTable.jTable('setTitle', name);
 
 			loadRecordsTable(id);
 
 			$('#main-container').carousel('next');
 			$('#main-container').carousel('pause');
-
-			// recordsTable.fnDraw();
 		} else {
 			console.log("OOPS");
 		}

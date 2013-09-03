@@ -1,5 +1,11 @@
-$(document).ready(function() {
-	$('#event-calendar').fullCalendar({
+var eventsTable = undefined;
+var attendanceTable = undefined;
+
+$(function() {
+
+	/************* CALENDAR *************/
+
+	$('#calendar').fullCalendar({
 		header: {
 			left: 'agendaDay,agendaWeek,month',
 			center: 'title'
@@ -23,17 +29,6 @@ $(document).ready(function() {
 			$('#edit-event-modal').modal('show');
 		}
 	});
-
-	// $('#cal-tabs').on('click', 'a', function(e) {
-	// 	e.preventDefault();
-	// 	$(this).tab('show');
-	// 	if ($(this).html().indexOf('Events') != -1) {
-	// 		$('#event-calendar').fullCalendar('render');
-	// 	} else if ($(this).html().indexOf('Schedules') != -1) {
-	// 		$('#schedule-calendar').fullCalendar('render');
-	// 		renderPersonDropdown();
-	// 	}
-	// });
 	
 	$("#inputFrom").datetimepicker({
 		autoclose: true,
@@ -129,7 +124,215 @@ $(document).ready(function() {
 		var id = $(this).attr('data-event-id');
 		deleteEvent(id);
 	});
+
+	/************* ATTENDANCE *************/
+
+	setInterval(reloadAttendance, 5000);
+
+	eventsTable = $('#events-table').jTable({
+		columns: [
+			{'key': 'id', 'label': 'ID'},
+			{'key': 'title', 'label': 'Title'},
+			{'key': 'start_time', 'label': 'From'},
+			{'key': 'end_time', 'label': 'To'}
+		],
+		title: 'Events',
+		pageSize: 100,
+		ajax: {
+			source: "/events/call/json/data"
+		},
+		createdRow: function(row, data) {
+			$(row).attr("id", data['id']);
+
+			var startDate = new Date(data.start_time*1000);
+			var endDate = new Date(data.end_time*1000);
+
+			$('td:eq(2)', row).html(startDate.toLocaleDateString() + " " + startDate.toLocaleTimeString());
+			$('td:eq(3)', row).html(endDate.toLocaleDateString() + " " + endDate.toLocaleTimeString());
+			
+			$('td:eq(4)', row).html((data.allDay) ? "Yes" : "No");
+
+			return row;
+		}
+	});
+
+	attendanceTable = $('#attendance-table').jTable({
+		columns: [
+			{'key': 'id', 'label': 'ID'},
+			{'key': 'person_student_id', 'label': 'Stud.ID'},
+			{'key': 'person_last_name', 'label': 'Last Name'},
+			{'key': 'person_first_name', 'label': 'First Name'},
+			{'key': 'attendance_present', 'label': 'Present?'}
+		],
+		title: "Attendance",
+		pageSize: 100,
+		ajax: {
+			source: "/events/call/json/attendance_data",
+			data: {
+				event_id: 0
+			},
+			error: function() {
+				displayError("Could not load events.");
+			}
+		},
+		createdRow: function(row, data) {
+			$(row).attr("id", data['id']);
+
+			var id = data['id']
+			var present = (data['attendance_present']) ? true : false;
+			var checkbox = $('<div class="switch switch-small" id="present-check-' + id + 
+				'" data-on-label="YES" data-off-label="NO"><input type="checkbox"' + ((present) ? 'checked' : '') + '></div>');
+			
+			checkbox.find('input:checkbox').prop('checked', present);
+			$('td:eq(4)', row).html(checkbox);
+			checkbox.bootstrapSwitch().on('switch-change', function(e, data) {
+				var event_id = attendanceTable._event_id;
+				var person_id = $(data.el).parent().parent().parent().parent().attr("id");
+				var present = data.value;
+				quickAttendance(person_id, event_id, present, false);
+			});
+
+			return row;
+		},
+		filter: {
+			fn: function(value, data) {
+				return _.filter(data, function (item) {
+					switch(value) {
+						case 'leaders':
+							if(item.person_grade != 9 && item.person_leader) return true;
+							break;
+						case 'freshmen':
+							if(item.person_grade == 9) return true;
+							break;
+						default:
+							return true;
+							break;
+					}
+				});
+			},
+			options: [
+				{'value': 'all','label': 'All'},
+				{'value': 'leaders','label': 'Leaders'},
+				{'value': 'freshmen','label': 'Freshmen'}
+			],
+			class: 'select2'
+		}
+	});
+
+	$('.select2').select2();
+
+	$(document).on('mouseleave', '.carousel', function() {
+		$(this).carousel('pause');
+	});
+
+	$('#events-div').on('click', '#events-table tr td', function() {
+		// row was clicked
+		if ($(this).html() !== "0 items") {
+			var event_id = $(this).parent().attr("id");
+			var title = $(this).parent().find('td').eq(1).html();
+
+			$('#main-container').carousel('next');
+			$('#main-container').carousel('pause');
+
+			setTimeout(loadRecord(event_id, title), 100);
+		}
+	});
+
+	$('#main-container').on('slid', function() {
+		$('.carousel-inner').css('overflow', 'visible');
+		$('#prev-button').removeClass('disabled');
+		$('#quick-att-btn').removeClass('disabled');
+		
+		if ($('#main-container .carousel-inner .item:first').hasClass('active')) {
+			$('#prev-button').addClass('disabled');
+			eventsTable.jTable('reload');
+			$('#quick-att-input').attr('readonly', true);
+			$('#quick-att-btn').addClass('disabled');
+		} 
+		else if ($('#main-container .carousel-inner .item:last').hasClass('active')) {
+			$('#quick-att-input').attr('readonly', false);
+		}
+	});
+
+	$('#main-container').on('slide', function() {
+		$('.carousel-inner').css('overflow', 'hidden');
+	});
+
+	$('#prev-button').on('click', function(e) {
+		if($(this).hasClass('disabled')) {
+			 e.preventDefault();
+			 return false;
+		} else {
+			$('#main-container').carousel('prev');
+		}
+	});
+
+	// $('.nav-pills li a').on('click', function() {
+	// 	var href = $(this).attr('href');
+	// 	$('#prev-button').removeClass('disabled');
+	// 	$('#quick-att-btn').removeClass('disabled');
+
+	// 	if (href == '#attendance') {
+	// 		if ($('#main-container .carousel-inner .item:first').hasClass('active')) {
+	// 			$('#prev-button').addClass('disabled');
+	// 			eventsTable.jTable('reload');
+	// 			$('#quick-att-input').attr('readonly', true);
+	// 			$('#quick-att-btn').addClass('disabled');
+	// 		} 
+	// 		else if ($('#main-container .carousel-inner .item:last').hasClass('active')) {
+	// 			$('#quick-att-input').attr('readonly', false);
+	// 		}
+	// 	} else {
+
+	// 	}
+	// });
+
+	$("#quick-att-input").on('keyup', function(event){
+		$('#quick-att-btn').removeClass('disabled');
+		if ($(this).val() === '') {
+			$('#quick-att-btn').addClass('disabled');
+		}
+
+		if (event.keyCode == 13 && $(this).val() !== ''){
+			$("#quick-att-btn").click();
+		} else if (event.keyCode == 13 && $(this).val() === '') {
+			displayError('Invalid ID');
+		}
+	});
+
+	$('#quick-att-btn').on('click', function() {
+		var student_id = $('#quick-att-input').val();
+		var event_id = $('div[id^="attendance-for-"]').attr("id").match(/[\d]+/)[0];
+		$('#quick-att-input').val('');
+		$('#quick-att-btn').addClass('disabled');
+		quickAttendance(student_id, event_id, true, true);
+	});
+
+	$('.nav li a').on('click', function() {
+		var href = $(this).attr('href');
+		if (href == "#attendance") {
+			// attendanceTable.jTable('reload');
+			$('#attendance-nav').fadeIn(500).css('display', 'block');
+			$('#cal-nav').fadeOut(500).css('display', 'none');
+		} else {
+			$('#attendance-nav').fadeOut(500).css('display', 'none');
+			$('#cal-nav').fadeIn(500).css('display', 'block');
+		}
+	});
+
+	// $('#quick-att-input').tooltip({'trigger':'manual', 'title': 'Please choose an event', 'placement': 'bottom'});
+	// $('#quick-att-input').on('mouseover', function() {
+	// 	if (this.readOnly) {
+	// 		$(this).tooltip('show');
+	// 	}
+	// });
+
+	// $('#quick-att-input').on('mouseleave', function() {
+	// 	$(this).tooltip('hide');
+	// });
 });
+
+/************* CALENDAR *************/
 
 function addEvent(title, start, end, notes, allDay) {
 	$.ajax({
@@ -146,7 +349,7 @@ function addEvent(title, start, end, notes, allDay) {
 		success: function(data) {
 			if (!data.exists) {
 				$('#add-event-modal').modal('hide');
-				$('#event-calendar').fullCalendar('refetchEvents');
+				$('#calendar').fullCalendar('refetchEvents');
 				displaySuccess("The event has been added.");
 			} else {
 				displayError("Could not add event. An event already exists with that name.", true);
@@ -168,7 +371,7 @@ function deleteEvent(id) {
 		dataType: 'json',
 		success: function(data) {
 			$('#delete-event-modal').modal('hide');
-			$('#event-calendar').fullCalendar('refetchEvents');
+			$('#calendar').fullCalendar('refetchEvents');
 			displaySuccess("The event has been deleted.");
 		},
 		error: function() {
@@ -206,4 +409,52 @@ function renderPersonDropdown() {
 			return person['last_name'] + ', ' + person['first_name'];
 		}
 	});
+}
+
+/************* ATTENDANCE *************/
+
+function loadRecord(event_id, event_title) {
+	attendanceTable._event_id = event_id;
+
+	$('div[id^="attendance-for-"]').attr("id", "attendance-for-" + event_id);
+	attendanceTable.jTable('setTitle', event_title);
+
+	attendanceTable.jTable('reload', {data: {event_id: parseInt(event_id)}});
+}
+
+function quickAttendance(person_id, event_id, present, isStudentID) {
+	if (!isStudentID) {
+		var data = {
+			'person_id': person_id,
+			'event_id': event_id,
+			'present': present
+		}
+	} else {
+		var data = {
+			'student_id': person_id,
+			'event_id': event_id,
+			'present': present
+		}
+	}
+
+	$.ajax({
+		type: 'POST',
+		url: '/events/call/json/quick_attendance',
+		data: data,
+		dataType: 'json',
+		success: function(data) {
+			if (data.error) {
+				displayError('Could not take attendance for ' + ((isStudentID) ? student_id : person_id) + '.');
+			}
+		},
+		error: function() {
+			displayError('Could not take attendance for ' + ((isStudentID) ? student_id : person_id) + '.');
+		}
+	});
+}
+
+function reloadAttendance() {
+	if ($('#main-container .carousel-inner .item:last').hasClass('active') && $('.nav-pills li.active a').attr('href') == "#attendance") {
+		attendanceTable.jTable('seamlessReload');
+	}
 }

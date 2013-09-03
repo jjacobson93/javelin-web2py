@@ -31,38 +31,6 @@ def index():
 @auth.requires_login()
 @auth.requires_membership('standard')
 @service.json
-def attendance_data(event_id):
-	data = db((db.person.grade==9) | (db.person.leader==True)).select(db.person.id, db.person.student_id, db.person.last_name, 
-		db.person.first_name, db.attendance.present, db.attendance.event_id, 
-		db.events.title, db.person.grade, db.person.leader,
-		left=[db.attendance.on((db.person.id==db.attendance.person_id) & (db.attendance.event_id==event_id)),
-		db.events.on(db.events.id==db.attendance.event_id)],
-		orderby=db.person.id).as_list()
-
-	data = [dict(('_'.join(k),v) if k != ('person','id') else ('id',v) for k,v in flattenDict(d).items()) for d in data]
-
-	return data
-
-@auth.requires_login()
-@auth.requires_membership('standard')
-@service.json
-def quick_attendance(event_id, person_id=None, student_id=None, present=True):
-	if person_id:
-		response = db.attendance.update_or_insert((db.attendance.person_id==person_id) & (db.attendance.event_id==event_id),
-			person_id=person_id, event_id=event_id, present=present)
-	elif student_id:
-		person = db(db.person.student_id==student_id).select().first()
-		if person:
-			response = db.attendance.update_or_insert((db.attendance.person_id==person.id) & (db.attendance.event_id==event_id),
-				person_id=person.id, event_id=event_id, present=present)
-		else:
-			return dict(error=True)
-
-	return dict(response=response)
-
-@auth.requires_login()
-@auth.requires_membership('standard')
-@service.json
 def make_labels(event_name, type, present=None, event_id=None):
 	import time
 	import os
@@ -438,10 +406,10 @@ def crews(id=None):
 @auth.requires_membership('standard')
 @service.json
 def crew_records(id):
-	records = db(db.person.crew==id).select(db.person.ALL).as_list()
-	records = [dict([('actions','<button class="btn btn-small btn-primary" id="crew-move-person' + str(d['id']) + '">' +\
+	records = db(db.person.crew==id).select(db.person.ALL, orderby=db.person.last_name|db.person.first_name).as_list()
+	records = [dict([('actions','<button class="btn btn-xs btn-primary" id="crew-move-person' + str(d['id']) + '">' +\
 					'<i class="icon-signout"></i>Move</button>' +\
-					'<button class="btn btn-small btn-danger" id="crew-remove-person-' + str(d['id']) + '" style="margin-left: 10px">' +\
+					'<button class="btn btn-xs btn-danger" id="crew-remove-person-' + str(d['id']) + '" style="margin-left: 10px">' +\
 					'<i class="icon-trash"></i>Remove' + '</button>')] + [(k,v) for k,v in d.items()]) for d in records]
 	return records
 
@@ -465,13 +433,15 @@ def people_not_in_crew(id, query):
 			((db.person.leader==True) | (db.person.grade==9)) & 
 				((db.person.last_name.contains(query)) |
 				 (db.person.first_name.contains(query)))).select(
-			db.person.id, db.person.last_name, db.person.first_name).as_list()
+			db.person.id, db.person.last_name, db.person.first_name, 
+			orderby=db.person.last_name|db.person.first_name).as_list()
 	else:
 		return db((db.person.crew == None) & 
 			(((db.person.leader==True) | (db.person.grade==9)) & 
 				((db.person.last_name.contains(query)) | 
 					(db.person.first_name.contains(query))))).select(
-			db.person.id, db.person.last_name, db.person.first_name).as_list()
+			db.person.id, db.person.last_name, db.person.first_name,
+			orderby=db.person.last_name|db.person.first_name).as_list()
 
 @auth.requires_login()
 @auth.requires_membership('standard')

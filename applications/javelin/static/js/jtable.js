@@ -44,7 +44,11 @@
 					filter.find('select').append('<option value="' + e.value + '">' + e.label + '</option>');
 				});
 				filter.find('select').on('change', function(e) {
-					options.filter.fn($(this).val());
+					if (!table.isLoading) {
+						var newData = options.filter.fn($(this).val(), table.options.data);
+						table.currentData = newData;
+						table.render(newData);
+					}
 				});
 				this.$filter = filter;
 				header.children('div:last').prepend(filter);
@@ -185,6 +189,8 @@
 				var row = $('<tr/>')
 				$.each(table.options.columns, function(j, e) {
 					row.append('<td>' + ((d[e.key] != undefined) ? d[e.key] : '') + '</td>');
+					if (table.options.createdRow)
+						row = table.options.createdRow(row, d);
 				});
 				newTbody.append(row);
 			});
@@ -273,15 +279,16 @@
 		if (!data)
 			data = {};
 		$.ajax({
-			type: "GET",
+			type: "POST",
 			url: source,
 			data: data,
+			dataType: 'json',
 			success: function(data) {
 				table.currentData = data;
 				table.options.data = data;
 				table.render(data);
 			},
-			error: function() {
+			error: function(e) {
 				error();
 				table.currentData = [];
 				table.options.data = [];

@@ -13,8 +13,12 @@
 
 <!-- NAV -->
 <div class="container">
+	
+	<!-- ALERTS -->
 
-	<div id="nav">
+	<div class="alert-container"></div>
+
+	<div class="row" id="nav">
 		<a class="btn btn-primary disabled" id="prev-button" href="#main-container" data-slide="prev">
 			<i class="icon-arrow-left"></i>Back
 		</a>
@@ -22,27 +26,19 @@
 			<i class="icon-plus"></i>Add {{=labels['sing']}}
 		</a>
 	</div>
-	<hr>
 
-	<!-- ALERTS -->
+</div>
 
-	<div class="alert-container"></div>
+<hr>
 
 <!-- MAIN CONTAINER -->
 
+<div class="container">
 	<div class="carousel slide" id="main-container" data-interval="false">
 		<div class="carousel-inner" style="overflow: visible">
 			<div class="item active" id="table">
 				<div style="width: 100%">
-					<table id="groups-table" class="table table-striped table-hover" width="100%">
-						<thead>
-							<th>ID</th>
-							<th>Name</th>
-							<th>Description</th>
-							<th>Count</th>
-							<th>Actions</th>
-						</thead>
-					</table>
+					<table id="groups-table" class="table table-striped table-hover"></table>
 				</div>
 			</div>
 			<div class="item" id="records-for-">
@@ -59,19 +55,11 @@
 					</div>
 				</div>
 				<div style="width: 100%">
-					<table id="records-table" class="table table-striped table-hover" width="100%">
-						<thead>
-							<th>ID</th>
-							<th>Last Name</th>
-							<th>First Name</th>
-							<th>Actions</th>
-						</thead>
-					</table>
+					<table id="records-table" class="table table-striped table-hover"></table>
 				</div>
 			</div>
 		</div>
 	</div>
-
 </div>
 
 <!-- MODALS -->
@@ -132,9 +120,9 @@
 				<form>
 					<fieldset>
 						<label class="control-label" for="name-field">Name</label>
-						<input type="text" id="name-field">
+						<input class="form-control" type="text" id="name-field">
 						<label class="control-label" for="desc-field">Description</label>
-						<input type="text" id="desc-field">
+						<input class="form-control" type="text" id="desc-field">
 					</fieldset>
 				</form>
 				<!-- <select id="edit-people-select" multiple="multiple"></select> -->

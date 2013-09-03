@@ -46,7 +46,9 @@ def data(str_filter=None):
 			(db.person.first_name.contains(str_filter)) |
 			(db.person.id.contains(str_filter))).as_list()
 	else:
-		people = db().select(db.person.ALL, db.crew.room, left=db.crew.on(db.person.crew==db.crew.id), orderby=db.person.last_name).as_list()
+		people = db().select(db.person.ALL, db.crew.room, 
+			left=db.crew.on(db.person.crew==db.crew.id), 
+			orderby=db.person.last_name|db.person.first_name).as_list()
 
 	people = [dict((k[-1],v) for k,v in flattenDict(d).items()) for d in people]
 	return people
@@ -62,7 +64,8 @@ def leaders(query=None):
 	"""
 	return [{'id':'all_leaders', 'last_name':'All Leaders', 'first_name' : ''}] + db((db.person.leader==True) 
 		& ((db.person.last_name.contains(query)) | (db.person.first_name.contains(query))) ).select(
-			db.person.id, db.person.last_name, db.person.first_name, orderby=db.person.id).as_list()
+			db.person.id, db.person.last_name, db.person.first_name, 
+			orderby=db.person.last_name|db.person.first_name).as_list()
 
 @auth.requires_login()
 @auth.requires_membership('standard')

@@ -47,9 +47,9 @@ def data():
 		groupby=db.groups.id,
 		orderby=db.groups.name).as_list()
 
-	groups = [dict([('actions', '<button class="btn btn-small btn-primary" id="edit-row-' + str(d['groups']['id']) + '">' +\
+	groups = [dict([('actions', '<button class="btn btn-xs btn-primary" id="edit-row-' + str(d['groups']['id']) + '">' +\
 						'<i class="icon-edit"></i>Edit' + '</button>' +\
-					'<button class="btn btn-small btn-danger" id="delete-row-' + str(d['groups']['id']) + '" style="margin-left: 10px">' +\
+					'<button class="btn btn-xs btn-danger" id="delete-row-' + str(d['groups']['id']) + '" style="margin-left: 10px">' +\
 						'<i class="icon-trash"></i>Delete' + \
 					'</button>')] + [(k[-1],v) for k,v in flattenDict(d).items()]) for d in groups]
 	
@@ -70,10 +70,8 @@ def records(id):
 		db.person.first_name, 
 		join=db.person.on(db.person.id==db.group_rec.person_id)).as_list()
 
-	result = [dict([('actions', '<button class="btn btn-small btn-primary" id="view-row-' + str(d['id']) + '">' +\
-						'<i class="icon-eye-open"></i>View' +\
-						'</button>' +\
-						'<button class="btn btn-small btn-danger" id="delete-row-' + str(d['id']) + '" style="margin-left: 10px">' +\
+	result = [dict([('actions',
+						'<button class="btn btn-xs btn-danger" id="delete-row-' + str(d['id']) + '" style="margin-left: 10px">' +\
 						'<i class="icon-trash"></i>Delete</button>')] + [(k,v) for k,v in d.items()]) for d in result]
 	
 	return result

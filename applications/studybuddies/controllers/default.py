@@ -23,9 +23,10 @@ def sections():
 	start = request.vars.get('start', None)
 	end = request.vars.get('end', None)
 	if start and end:
-		return dict(counts=counts(start, end))
+		sections = dict(('_'.join(s.title.lower().split()), s.id) for s in db().select(db.sb_section.id, db.sb_section.title))
+		return dict(sections=sections, counts=counts(start, end))
 	else:
-		return dict(counts=dict())
+		return dict(sections=[], counts=dict())
 		
 
 @auth.requires_login()
@@ -50,20 +51,19 @@ def table():
 
 @auth.requires_login()
 @service.json
-def checkin(person_id, section_id):
+def checkin(person_id, section_id=None):
 	student = db((db.person.student_id==person_id) | 
 		(db.person.id==person_id)).select().first()
 	result = None
 	error = None
 
-	if student:
+	if student and section_id:
 		person_id = student.id
 
 		check = db((db.sb_att.is_out==False) & 
 			(db.sb_att.person_id==person_id) &
 			(db.sb_att.sb_section_id==section_id)).select().first()
 
-		
 		if not check:
 			checktwo = db((db.sb_att.person_id==person_id) & 
 				(db.sb_att.is_out==False)).select()
@@ -75,10 +75,35 @@ def checkin(person_id, section_id):
 		else:
 			result = 'Already exists'
 			error = True
-	else:
-		result = "No person exists with ID"
-		error = True
 
+		return dict(response=result, error=error)
+
+	elif student and not section_id:
+		person_id = student.id
+		
+		section = db(db.sb_section.title=="Other").select(db.sb_section.id).first()
+		if section:
+			check = db((db.sb_att.is_out==False) & 
+				(db.sb_att.person_id==person_id) &
+				(db.sb_att.sb_section_id==section.id)).select().first()
+
+			if not check:
+				checktwo = db((db.sb_att.person_id==person_id) & 
+				(db.sb_att.is_out==False)).select()
+				if checktwo:
+					for c in checktwo:
+						update = db((db.sb_att.person_id==person_id) & 
+							(db.sb_att.id==c.id)).update(studyhour=calc_hour(c.in_time), is_out=True) # if not checked out of other section, check out
+				result = db.sb_att.insert(person_id=person_id, sb_section_id=section.id)
+			else:
+				result = 'Already exists'
+				error = True
+
+			return dict(response=result, error=error)
+	
+	
+	result = "No person exists with ID"
+	error = True
 	return dict(response=result, error=error)
 
 @auth.requires_login()

@@ -35,14 +35,15 @@ def table():
 				db.person.ALL, db.sb_att.ALL, db.sb_section.ALL,
 				join=[db.sb_att.on((db.person.id==db.sb_att.person_id) & (db.person.id==id)),
 					db.sb_section.on(db.sb_section.id==db.sb_att.sb_section_id)],
-				orderby=[db.person.last_name, db.person.first_name])
+				orderby=db.person.last_name|db.person.first_name)
 
 		students = list()
 		for p in records:
-			s = Storage(subjects=[],totalhours=[], in_time=None, out_time=None, **dict((c,v) for c, v in p.items()))
+			s = Storage(subjects=[],sb_att_ids=[], sb_void=[], in_time=None, out_time=None, **dict((c,v) for c, v in p.items()))
 			for r in recordsfor(p.person.id):
 				s.subjects.append(str(r.sb_section.title))
-				s.totalhours.append(r.sb_att.studyhour)
+				s.sb_att_ids.append(int(r.sb_att.id))
+				s.sb_void.append(r.sb_att.void)
 				if not s.in_time or (r.sb_att.in_time and r.sb_att.in_time < s.in_time):
 					s.in_time = r.sb_att.in_time
 
@@ -50,10 +51,11 @@ def table():
 					s.out_time = r.sb_att.out_time
 
 			s.subjects = ', '.join(s.subjects)
-			s.totalhours = sum(s.totalhours) if sum(s.totalhours) <= 2 else 2
+			s.totaltime = s.out_time - s.in_time
 
 			students.append(s)
 
+		students = sorted(students, key=lambda s: s.person.last_name)
 
 		return dict(students=students)
 

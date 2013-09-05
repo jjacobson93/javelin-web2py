@@ -6,7 +6,7 @@
 			<th>First Name</th>
 			<th>In</th>
 			<th>Out</th>
-			<th>Hours</th>
+			<th>Total Time</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -15,12 +15,12 @@
 		</tr>
 		{{for s in students:}}
 		<tr {{if s.sb_att.is_out:}}class="sb-out-hide"{{pass}}>
-			<td>{{=s.person.id}}</td>
+			<td>{{=s.person.student_id}}</td>
 			<td>{{=s.person.last_name}}</td>
 			<td>{{=s.person.first_name}}</td>
 			<td class="time-cell" data-value="{{=s.sb_att.in_time.strftime('%Y-%m-%d-%H-%M-%S')}}"></td>
 			<td class="time-cell" data-value="{{=s.sb_att.out_time.strftime('%Y-%m-%d-%H-%M-%S') if s.sb_att.out_time else None}}"></td>
-			<td>{{=s.sb_att.studyhour}}</td>
+			<td>{{=(s.sb_att.out_time - s.sb_att.in_time) if s.sb_att.out_time else '---'}}</td>
 		</tr>
 		{{pass}}
 	</tbody>
@@ -34,7 +34,7 @@ $(function() {
 			var date =  utcToLocal(value);
 			$(el).html(formatAMPM(date));
 		} else {
-			$(el).html("None");
+			$(el).html("---");
 		}
 	});
 });

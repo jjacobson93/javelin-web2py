@@ -153,7 +153,8 @@ db.define_table('sb_att',
 	Field('in_time', 'datetime', default=request.now),
 	Field('out_time', 'datetime', default=None, update=request.now),
 	Field('studyhour', 'integer', default=0),
-	Field('is_out', 'boolean', default=False))
+	Field('is_out', 'boolean', default=False),
+	Field('void', 'boolean', default=False))
 
 class_list = [None, 'Pre-Algebra', 'Algebra I', 'Algebra II', 
 	'Geometry', 'Pre-Calculus', 'Geography', 'World History',

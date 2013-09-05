@@ -1,8 +1,6 @@
 {{extend 'layout.html'}}
 
 {{block content}}
-<link rel="stylesheet" type="text/css" href="{{=URL('static', 'css/datetimepicker.css')}}">
-
 <div class="container">
 	<div class="row" style="margin-bottom: 20px">
 		<div class="col-12 col-sm-12">
@@ -16,7 +14,6 @@
 </div>
 
 <script type="text/javascript" src="{{=URL('static', 'js/archive.js')}}"></script>
-<script type="text/javascript" src="{{=URL('static', 'js/bootstrap-datetimepicker.min.js')}}"></script>
 <script type="text/javascript">
 $(function() {
 	setCurrentDate("{{=currdate}}");

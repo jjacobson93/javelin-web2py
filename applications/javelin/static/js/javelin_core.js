@@ -11,6 +11,9 @@ $(function() {
 		}
 	});
 
+	if ($(window).width() < 780)
+		$('.mainnav-collapse').overflowNavs("destroy");
+
 	$(window).on('resize', function() {
 		if ($(window).width() > 780) {
 			$('.mainnav-collapse').overflowNavs({

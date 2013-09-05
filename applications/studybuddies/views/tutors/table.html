@@ -1,12 +1,3 @@
-<div class="row">
-	<div class="input-group col-6 col-md-6">
-		<input type="text" class="form-control" placeholder="Check In" id="checkin-input" style="border-right: 0">
-		<span class="input-group-btn">
-			<button id="checkin-submit" class="btn btn-primary disabled">Submit</button>
-		</span>
-	</div>
-</div>
-
 <table class="table table-striped">
 	<thead>
 		<tr>
@@ -18,12 +9,13 @@
 			<th>In</th>
 			<th>Out</th>
 			<th>Subjects</th>
+			<th>Cell Phone</th>
 		</tr>
 	</thead>
 	<tbody>
 	{{if students:}}
 		{{for t in students:}}
-		<tr class="{{='danger' if t.sb_att.is_out==None else 'success'}}">
+		<tr class="{{='danger' if t.in_time==None else 'success'}}">
 			<td>{{=t.person.student_id}}</td>
 			<td>{{=t.person.last_name}}</td>
 			<td>{{=t.person.first_name}}</td>
@@ -32,6 +24,7 @@
 			<td class="time-cell" data-value="{{=t.in_time.strftime('%Y-%m-%d-%H-%M-%S') if t.in_time else None}}"></td>
 			<td class="time-cell" data-value="{{=t.out_time.strftime('%Y-%m-%d-%H-%M-%S') if t.out_time else None}}"></td>
 			<td>{{=t.subjects or '---'}}</td>
+			<td>{{=t.person.cell_phone or 'N/A'}}</td>
 		</tr>
 		{{pass}}
 	{{else:}}
@@ -53,21 +46,6 @@ $(function() {
 		} else {
 			$(el).html("---");
 		}
-	});
-
-	$('#checkin-submit').on('click', function() {
-		var person_id = $('#checkin-input').val();
-		checkIn(person_id);
-	});
-
-	$('#checkin-input').on('keyup', function(e) {
-		var val = $(this).val();
-		$('#checkin-submit').removeClass('disabled');
-		if (val == '')
-			$('#checkin-submit').addClass('disabled');
-
-		if (e.keyCode == 13 && val != '')
-			$("#checkin-submit").click();
 	});
 });
 </script>

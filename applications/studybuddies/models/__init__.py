@@ -1,0 +1,1 @@
+from applications.javelin.models import __version__

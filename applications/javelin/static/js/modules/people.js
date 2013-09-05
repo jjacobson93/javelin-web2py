@@ -56,7 +56,8 @@ function loadSchedule(id) {
 			$.each(data, function(i,row) {
 				tbody.append($('<tr><td>' + row.course.period + '</td>' + 
 				'<td>' + row.course.title + '</td>' +
-				'<td>' + row.teacher.teacher_name + '</td></tr>'));
+				'<td>' + row.teacher.teacher_name + '</td>' +
+				'<td>' + row.course.room + '</td></tr>'));
 			});
 			$('#schedule-table tbody').replaceWith(tbody);
 		},

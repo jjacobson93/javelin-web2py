@@ -176,10 +176,11 @@ def checkout_table():
 					s.out_time = r.sb_att.out_time
 
 			s.subjects = ', '.join(s.subjects)
-			s.totalhours = sum(s.totalhours) if sum(s.totalhours) <= 2 else 2
+			s.totaltime = s.out_time - s.in_time
 
 			students.append(s)
 
+		students = sorted(students, key=lambda s: s.person.last_name)
 
 		return dict(students=students)
 
@@ -223,6 +224,15 @@ def counts(start, end):
 		return counts
 	else:
 		return dict()
+
+@auth.requires_login()
+@service.json
+def make_void(record_ids):
+	record_ids = json.loads(record_ids)
+	for r in record_ids:
+		db(db.sb_att.id==r).update(void=True)
+
+	return dict(success=True)
 
 @auth.requires_login()
 @service.json

@@ -21,7 +21,7 @@ function loadTable(date) {
 		success: function(content) {
 			window.history.pushState({"html":content, "pageTitle": "Javelin Study Buddies"},"", "");
 			$('#sb-table-content').html(content);
-			$('#sb-table-content').css("height", $(window).height() - $('.navbar').outerHeight() - 100);
+			$('#sb-table-content').css("height", $(window).height() - $('.navbar').outerHeight() - 200);
 		}
 	});
 }
@@ -59,7 +59,7 @@ $(function() {
 		}
 	};
 
-	$('#sb-table-content').css("height", $(window).height() - $('.navbar').outerHeight() - 100);
+	$('#sb-table-content').css("height", $(window).height() - $('.navbar').outerHeight() - 200);
 
 	$("#date-btn").datetimepicker({
 		format: 'yyyy-mm-dd-hh-ii-ss',

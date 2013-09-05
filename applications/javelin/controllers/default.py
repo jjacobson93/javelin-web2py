@@ -18,7 +18,6 @@ def index():
 	if you need a simple wiki simple replace the two lines below with:
 	return auth.wiki()
 	"""
-	d = dir()
 	ctr_data = get_ctr_data()
 	return dict(ctr_enabled=ctr_enabled, active_module='None', ctr_data=ctr_data)
 

@@ -6,7 +6,7 @@
 			<th>First Name</th>
 			<th>In</th>
 			<th>Out</th>
-			<th>Hours</th>
+			<th>Total Time</th>
 			<th>Subjects</th>
 		</tr>
 	</thead>
@@ -16,12 +16,12 @@
 		</tr>
 		{{for s in students:}}
 		<tr {{if s.sb_att.is_out:}}class="sb-out-hide"{{pass}}>
-			<td>{{=s.person.id}}</td>
+			<td>{{=s.person.student_id}}</td>
 			<td>{{=s.person.last_name}}</td>
 			<td>{{=s.person.first_name}}</td>
-			<td class="time-cell" data-value="{{=s.sb_att.in_time.strftime('%Y-%m-%d-%H-%M-%S')}}"></td>
-			<td class="time-cell" data-value="{{=s.sb_att.out_time.strftime('%Y-%m-%d-%H-%M-%S') if s.sb_att.out_time else None}}"></td>
-			<td>{{=s.totalhours}}</td>
+			<td class="time-cell" data-value="{{=s.in_time.strftime('%Y-%m-%d-%H-%M-%S')}}"></td>
+			<td class="time-cell" data-value="{{=s.out_time.strftime('%Y-%m-%d-%H-%M-%S') if s.out_time else '---'}}"></td>
+			<td>{{=s.totaltime}}</td>
 			<td>{{=s.subjects}}</td>
 		</tr>
 		{{pass}}

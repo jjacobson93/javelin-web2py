@@ -7,8 +7,11 @@
 			<li>
 				<a href="{{=URL('tutors', 'index')}}">Today</a>
 			</li>
+			<li>
+				<a href="{{=URL('tutors', 'archive')}}">Archive</a>
+			</li>
 			<li class="active">
-				<a href="{{=URL('tutors', 'alltable')}}">All</a>
+				<a href="{{=URL('tutors', 'all')}}">All</a>
 			</li>
 			<li>
 				<a href="{{=URL('tutors', 'signup')}}">Signup</a>
@@ -31,12 +34,13 @@
 						<th>Subjects</th>
 						<th>Sports</th>
 						<th>Second Lang.</th>
+						<th>Edit</th>
 					</tr>
 				</thead>
 				<tbody>
 				{{if tutors:}}
 					{{for t in tutors:}}
-					<tr>
+					<tr id="{{=t.person.id}}">
 						<td>{{=t.person.student_id}}</td>
 						<td>{{=t.person.last_name}}</td>
 						<td>{{=t.person.first_name}}</td>
@@ -48,6 +52,9 @@
 						<td>{{=', '.join([t.study_buddy.academic_subject1,t.study_buddy.academic_subject2,t.study_buddy.academic_subject3])}}</td>
 						<td>{{=t.study_buddy.sport_season}}</td>
 						<td>{{=t.study_buddy.second_language}}</td>
+						<td>
+							<a class="btn btn-xs btn-success" href="{{=URL('tutors', 'edit_tutor', vars=dict(tutor_id=t.study_buddy.id))}}">Edit</a>
+						</td>
 					</tr>
 					{{pass}}
 				{{else:}}

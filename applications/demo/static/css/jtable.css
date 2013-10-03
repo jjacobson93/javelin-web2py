@@ -1,0 +1,111 @@
+th.jtable-sort {
+	cursor: pointer;
+}
+
+th.jtable-sort:after {
+	font-family: FontAwesome;
+	font-weight: normal;
+	font-style: normal;
+	text-decoration: inherit;
+	-webkit-font-smoothing: antialiased;
+	float: right;
+	opacity: 0.3;
+	filter: (alpha=30);
+	content: "\F0DC";
+}
+
+th.jtable-sort-asc:after {
+	opacity: 1;
+	filter: (alpha=1);
+	content: "\F0DE";
+}
+
+th.jtable-sort-desc:after {
+	opacity: 1;
+	filter: (alpha=1);
+	content: "\F0DD";
+}
+
+tr.jtable-loading td,
+tr.jtable-empty td {
+	text-align: center;
+	font-size: 16px;
+	font-weight: bold;
+}
+
+.jtable-title {
+	display: inline-block;
+}
+
+.jtable-search {
+	margin-top: 20px;
+	float: right;
+}
+
+.jtable-table-head {
+	/*width: 100%;*/
+	/*margin: 0;*/
+}
+
+.jtable-table-head table  {
+	width: 100%;
+}
+
+.jtable-table-head thead > tr > th {
+	padding: 8px;
+	border-bottom: 2px solid #ddd;
+}
+
+.jtable-table-body {
+	overflow-y: scroll;
+	/*margin: 0;*/
+}
+
+.jtable-table-body tbody > tr > td {
+	border-top: none;
+}
+
+.jtable-thead-clone {
+	height: 0px;
+}
+
+.jtable-thead-clone .jtable-sort {
+	margin: 0;
+	padding: 0;
+}
+
+.jtable-info {
+	padding: 28px 0 0;
+	margin-right: 15px;
+}
+
+.jtable-sizing {
+	margin: 20px 0 0;
+}
+
+.jtable-pagination {
+	margin: 20px 0 0;
+}
+
+.jtable-filter {
+	margin-top: 20px;
+	/*margin: -10px 10px 0;*/
+	display: inline-block;
+	float: none;
+	/*width: 200px;*/
+}
+
+@media (max-width: 767px) {
+	.jtable-search {
+		margin: 10px 0;
+		float: none;
+	}
+
+	.jtable-pagination {
+		float: left !important;
+	}
+
+	.jtable-filter {
+		margin-top: 0;
+	}
+}

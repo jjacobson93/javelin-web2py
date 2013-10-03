@@ -22,11 +22,13 @@ function checkIn(person_id) {
 }
 
 function checkOut(person_id) {
+	var today = new Date();
 	$.ajax({
 		type: 'POST',
 		url: '/studybuddies/call/json/checkout',
 		data: {
-			'person_id': person_id
+			'person_id': person_id,
+			'time_offset': today.getTimezoneOffset()
 		},
 		dataType: 'json',
 		success: function() {

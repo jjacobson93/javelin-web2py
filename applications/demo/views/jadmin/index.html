@@ -1,0 +1,231 @@
+{{extend 'layout.html'}}
+
+{{block content}}
+<!-- MAIN CONTENT -->
+
+<ul class="nav nav-tabs">
+	<li class="active"><a href="#modules" data-toggle="tab"><i class="icon-puzzle-piece icon-large"></i>Modules</a></li>
+	<li><a href="#users" data-toggle="tab"><i class="icon-group icon-large"></i>Users</a></li>
+	<li><a href="#docs" data-toggle="tab"><i class="icon-paste icon-large"></i>Dynamic Documents</a></li>
+</ul>
+
+<div class="tab-content container">
+
+	<!-- MODULES TAB -->
+	<div class="tab-pane fade active in" id="modules">
+		<div id="modules-div">
+			<table class="table table-striped" id="modules-table" style="font-size: 14px !important">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Custom Name</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody id="modules-tbody">
+					{{for ctr in ctr_data:}}
+					<tr>
+						<td>{{=ctr_data[ctr]['label']}}</td>
+						<td>{{=ctr_data[ctr]['description']}}</td>
+						<td><input class="form-control" type="text" id="inputCustom" placeholder="Name" value="{{=ctr_data[ctr].get('custom', '')}}"></td>
+						<td>
+							{{if ctr_data[ctr]['required'] == False:}}
+							<a href="#"><i class='icon-trash'></i></a>
+							{{pass}}
+						</td>
+					</tr>
+					{{pass}}
+				</tbody>
+			</table>
+			<div class="form-actions">
+				<a href="#" class="btn btn-primary pull-right" id="save-button" data-loading-text="Saving...">Save changes</a>
+			</div>
+		</div>
+	</div>
+
+	<!-- USERS TAB -->
+	<div class="tab-pane fade" id="users">
+		<div id="users-div">
+			<table class="table table-striped" id="user-table" style="font-size: 14px !important">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Last Name</th>
+						<th>First Name</th>
+						<th>Username</th>
+						<th>Email</th>
+						<th>Admin</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{for user in users:}}
+					<tr>
+						<td>{{=user.id}}</td>
+						<td>{{=user.last_name}}</td>
+						<td>{{=user.first_name}}</td>
+						<td>{{=user.username}}</td>
+						<td>{{=user.email}}</td>
+						<td><div class="switch switch-small"><input type="checkbox" {{if auth.has_membership('admin', user.id):}}checked{{pass}}></div></td>
+					</tr>
+					{{pass}}
+				</tbody>
+			</table>
+		</div>
+		<!-- <a class="btn btn-success pull-right" href="#" id="add-user-button"><i class="icon-plus-sign"></i>Add User</a> -->
+	</div>
+
+
+	<!-- DOCS TAB -->
+
+	<div class="tab-pane fade" id="docs">
+		<h2>Dynamic Documents</h2>
+		<form onsubmit="javascript: return false;" role="form">
+			<div class="row">
+				<div class="form-group">
+					<div class="col-12 col-md-12">
+						<label for="doc-type-select">Type</label>
+						<select class="form-control" id="doc-type-select">
+							<option></option>
+							{{for d in doctypes:}}
+							<option value='{{=doctypes[d].value}}'>{{=doctypes[d].label}}</option>
+							{{pass}}
+						</select>
+					</div>
+				</div>
+				<div id="fields">
+					<div class="form-group" id="person-fields" style="display: none">
+						<div class="col-12 col-md-12">
+							<label for="add-person-select">Person(s)/Group(s)</label>
+							<select class="form-control" id="add-person-select" multiple></select>
+						</div>
+					</div>
+					<div id="nametag-fields">
+						<div class="form-group" style="display: none">
+							<div class="col-12 col-md-12">
+								<label for="event_name">Event Name</label>
+								<input class="form-control" type='text' placeholder="Event Name" id="event_name_input" style="height: 36px; padding: 6px 12px">
+							</div>
+						</div>
+						<div class="form-group" style="display: none">
+							<div class="col-6 col-md-6">
+								<label for="eventatt_select">Based on Attendance for</label>
+								<select class="form-control" type='text' placeholder="Attendance for Event(s)" id="eventatt_select" multiple>
+									<option value="-1">None</option>
+									{{for e in db().select(db.events.ALL):}}
+									<option value="{{=e.id}}">{{=e.title}}</option>
+									{{pass}}
+								</select>
+							</div>
+						</div>
+						<div class="form-group" style="display: none">
+							<div class="col-6 col-md-6">
+								<label>By Present?</label>
+								<div>
+									<label class="radio-inline">
+										<input type="radio" name="presentradios" id="present_yes" value="true" checked disabled> Yes
+									</label>
+									<label class="radio-inline">
+										<input type="radio" name="presentradios" id="present_no" value="false" disabled> No
+									</label>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="form-group" id="callslip-fields" style="display: none">
+						<div class="col-12 col-md-12">
+							<label>Message</label>
+							<textarea class="form-control" rows='6' id="message-field"></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+			<button class="btn btn-primary disabled" id="create-doc-btn" style="margin-top: 10px">Create Document</button>
+		</form>
+	</div>
+
+</div>
+
+<!-- MODALS -->
+
+<div class="modal fade" id="add-user-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>Add User</h3>
+			</div>
+			<div class="modal-body">
+				<form>
+					<fieldset>
+						<label class="control-label" for="lastname-field">Last Name</label>
+						<input type="text" id="lastname-field">
+						<label class="control-label" for="firstname-field">First Name</label>
+						<input type="text" id="firstname-field">
+					</fieldset>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<a href="#" class="btn" data-dismiss="modal">Cancel</a>
+				<a href="#" class="btn btn-primary" id="add-user-button">Add User</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="import-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form enctype="multipart/form-data" onsubmit="return false;" style="margin: 0"> 
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3>Import from CSV</h3>
+				</div>
+				<div class="modal-body">
+					<div class="fileupload fileupload-new" data-provides="fileupload">
+						<div class="input-append">
+							<div class="uneditable-input col-3 col-sm-3">
+								<i class="icon-file fileupload-exists"></i><span class="fileupload-preview"></span>
+							</div>
+							<span class="btn btn-default btn-file">
+								<span class="fileupload-new">Select file</span>
+								<span class="fileupload-exists">Change</span>
+								<input type="file" name="csv_file" id="csv_file"/>
+							</span><a href="#" class="btn btn-danger fileupload-exists" data-dismiss="fileupload">Remove</a>
+						</div>
+					</div>
+					<div>
+						<label class="checkbox inline">
+						  <input type="checkbox" id="leader_check"> Leaders?
+						</label>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<a href="#" class="btn btn-default" data-dismiss="modal">Cancel</a>
+					<input type="submit" class="btn btn-primary disabled" id="import-button" data-loading-text="Importing..." value="Import">
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="loading-doc-modal" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3>Creating Document</h3>
+			</div>
+			<div class="modal-body" style="text-align: center">
+				<p>Do NOT close, move from, or reload this page while processing.</p>
+				<span id="loading-text">
+					<i class="icon-spinner icon-spin" style="font-size: 50px"></i>
+				</span>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- JAVASCRIPT -->
+
+<script src="{{=URL('static', 'js/modules/admin.js')}}"></script>
+{{end}}

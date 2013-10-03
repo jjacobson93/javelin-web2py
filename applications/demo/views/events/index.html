@@ -1,0 +1,252 @@
+{{extend 'layout.html'}}
+
+{{block content}}
+<link rel="stylesheet" type="text/css" href="{{=URL('static','css/fullcalendar.css')}}">
+<link rel="stylesheet" type="text/css" href="{{=URL('static','css/datetimepicker.css')}}">
+<style type='text/css'>
+	#calendar {
+		margin-top: 15px;
+	}
+
+	#calendar-div {
+		padding-bottom: 60px;
+	}
+
+	#header {
+		font-family: inherit;
+		font-size: 30px; /* 31.5px */
+		font-weight: bold;
+		/* padding-bottom: 10px; */
+	}
+
+	.fc-today {
+		background-color: rgb(238, 238, 238);
+		font-weight: bold;
+		color: rgb(27,121,243);
+	}
+
+	.fc-event {
+		background-color: #428bca;
+		border-color: #357ebd;
+		color: #ffffff;
+
+		/*background-image: -moz-linear-gradient(top, #149bdf, #0480be);
+		background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#149bdf), to(#0480be));
+		background-image: -webkit-linear-gradient(top, #149bdf, #0480be);
+		background-image: -o-linear-gradient(top, #149bdf, #0480be);
+		background-image: linear-gradient(to bottom, #149bdf, #0480be);
+		background-repeat: repeat-x;
+		filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff149bdf', endColorstr='#ff0480be', GradientType=0);
+		-webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+		-moz-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+		box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+		-webkit-box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		box-sizing: border-box;*/
+	}
+
+	.datetimepicker th.has-switch {
+		display: table-cell;
+	}
+
+	#inputFrom, #inputTo {
+		font-weight: bold;
+		cursor: pointer;
+	}
+
+	@media (max-width: 992px) {
+		#attendance-nav {
+			margin-top: 10px;
+		}
+	}
+</style>
+
+<!-- NAV -->
+
+<div class="container">
+	<div class="row">
+		<div class="col-8 col-md-8">
+			<ul class="nav nav-pills" id="cal-tabs">
+				<li class="active">
+					<a href="#calendar" data-toggle="tab">
+						<i class="icon-calendar"></i> Calendar
+					</a>
+				</li>
+				<li>
+					<a href="#attendance" data-toggle="tab">
+						<i class="icon-check"></i>Attendance
+					</a>
+				</li>
+			</ul>
+		</div>
+		<div class="col-4 col-md-4" id="cal-nav">
+			<a href="#" class="btn btn-success pull-right" id="add-event-btn">
+				<i class="icon-plus"></i>Add Event
+			</a>
+		</div>
+		<div class="col-4 col-md-4" id="attendance-nav" style="display: none">
+			<div class="form-group">
+				<div class="input-group">
+					<input class="form-control" placeholder="Quick Attendance" id="quick-att-input" style="margin-right: 0" readonly>
+					<span class="input-group-btn">
+						<button class="btn btn-default disabled" type="button" id="quick-att-btn">Submit</button>
+					</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container">
+	<div class="row" id="events">
+		<div class="tab-content">
+
+			<!-- CALENDAR -->
+
+			<div class="tab-pane active fade in col-12 col-md-12" id="calendar"></div>
+
+			<!-- ATTENDANCE -->
+
+			<div class="tab-pane fade in col-12 col-md-12" id="attendance">
+				<div class="carousel slide" id="main-container" data-interval="false">
+					<div class="carousel-inner" style="overflow:visible">
+						
+						<div class="row item active" id="events-div">
+							<div class="col-12 col-md-12" style="width: 100%; margin-top: 15px">
+								<table id="events-table" class="table table-striped table-hover"></table>
+							</div>
+						</div>
+
+						<div class="row item" id="attendance-for-">
+							<a class="btn btn-default disabled" id="prev-button" href="#">
+								<i class="icon-arrow-left"></i> Back
+							</a>
+							<div class="col-12 col-md-12" id="attendance-div" style="width: 100%">
+								<table id="attendance-table" class="table table-striped table-hover"></table>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- MODALS -->
+
+<div class="modal fade" id="edit-event-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 id="event-title"></h4>
+				<!-- <span><b id="start-end">8:00am - 10:00am</b></span> -->
+			</div>
+			<div class="modal-body">
+				<div class="row-fluid">
+					<div class="row-fluid">
+						<fieldset class="span4">
+							<span><h5>From</h5></span>
+							<span id="start-time"></span>
+						</fieldset>
+						<fieldset class="span4">
+							<span><h5>To</h5></span>
+							<span id="end-time"></span>
+						</fieldset>
+						<fieldset class="span4">
+							<span><h5>All Day</h5></span>
+							<div class="switch" data-on-label="YES" data-off-label="NO" id="all-day-switch"><input type="checkbox"></div>
+						</fieldset>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<a href="#" class="btn btn-danger pull-left" id="delete-event-btn">Delete Event</a>
+				<a href="#" class="btn btn-primary" data-dismiss="modal">Done</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="add-event-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Add Event</h4>
+			</div>
+			<div class="modal-body">
+				<form role='form'>
+					<div class="row">
+						<div class="col-12 col-md-12">
+							<fieldset>
+								<label class="control-label" for="inputTitle">Title</label>
+								<input class="form-control" type="text" id="inputTitle" placeholder="Title">
+							</fieldset>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-12 col-md-12">
+							<fieldset>
+								<label class="control-label" for="inputAllDay">All Day</label>
+								<div class="switch" data-on-label="YES" data-off-label="NO" id="inputAllDay" style="margin-top: 5px">
+									<input type="checkbox">
+								</div>
+							</fieldset>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-6 col-md-6">
+							<fieldset>
+								<label class="control-label" for="inputFrom">From</label>
+								<input class="btn btn-default btn-block" href="#" id="inputFrom" readonly>
+							</fieldset>
+						</div>
+						<div class="col-6 col-md-6">
+							<fieldset>
+								<label class="control-label" for="inputTo">To</label>
+								<input class="btn btn-default btn-block" href="#" id="inputTo" readonly>
+							</fieldset>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-12 col-md-12">
+							<fieldset>
+								<label class="control-label" for="inputNotes">Notes</label>
+								<textarea class="form-control" id="inputNotes" rows="4" placeholder="Notes"></textarea>
+							</fieldset>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<a href="#" class="btn btn-default" data-dismiss="modal">Cancel</a>
+				<a href="#" class="btn btn-primary disabled" id="add-complete-btn">Add</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="delete-event-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Delete Event</h4>
+			</div>
+			<div class="modal-body">
+				<span>Are you sure you would like to delete <b id="event-to-delete"></b>?</span>
+			</div>
+			<div class="modal-footer">
+				<a href="#" class="btn btn-default" data-dismiss="modal">Cancel</a>
+				<a href="#" class="btn btn-danger" id="delete-confirm-btn">Delete</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script src="{{=URL('static', 'js/fullcalendar.js') }}"></script>
+<script src="{{=URL('static', 'js/bootstrap-datetimepicker.js') }}"></script>
+<script src="{{=URL('static', 'js/modules/events.js') }}"></script>
+{{end}}

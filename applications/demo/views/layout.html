@@ -1,0 +1,204 @@
+<!--[if HTML5]><![endif]-->
+<!DOCTYPE html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]><html class="ie ie6 ie-lte9 ie-lte8 ie-lte7 no-js" lang="{{=T.accepted_language or 'en'}}"> <![endif]-->
+<!--[if IE 7]><html class="ie ie7 ie-lte9 ie-lte8 ie-lte7 no-js" lang="{{=T.accepted_language or 'en'}}"> <![endif]-->
+<!--[if IE 8]><html class="ie ie8 ie-lte9 ie-lte8 no-js" lang="{{=T.accepted_language or 'en'}}"> <![endif]-->
+<!--[if IE 9]><html class="ie9 ie-lte9 no-js" lang="{{=T.accepted_language or 'en'}}"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html class="no-js" lang="{{=T.accepted_language or 'en'}}"> <!--<![endif]-->
+<head>
+<title>{{=response.title or request.application}}</title>
+	<!--[if !HTML5]>
+			<meta http-equiv="X-UA-Compatible" content="IE=edge{{=not request.is_local and ',chrome=1' or ''}}">
+	<![endif]-->
+	<!-- www.phpied.com/conditional-comments-block-downloads/ -->
+	<!-- Always force latest IE rendering engine
+			 (even in intranet) & Chrome Frame
+			 Remove this if you use the .htaccess -->
+		 
+	<meta charset="utf-8" />
+
+	<!-- http://dev.w3.org/html5/markup/meta.name.html -->
+	<meta name="application-name" content="{{=request.application}}" />
+
+	<!-- Speaking of Google, don't forget to set your site up:
+			 http://google.com/webmasters -->
+	<meta name="google-site-verification" content="" />
+
+	<!--  Mobile Viewport Fix
+				j.mp/mobileviewport & davidbcalhoun.com/2010/viewport-metatag
+				device-width: Occupy full width of the screen in its current orientation
+				initial-scale = 1.0 retains dimensions instead of zooming out if page height > device height
+				user-scalable = yes allows the user to zoom in -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+	<link rel="shortcut icon" href="{{=URL('static','images/favicon.ico')}}" type="image/x-icon">
+	<link rel="apple-touch-icon" href="{{=URL('static','images/favicon.png')}}">
+
+	<!-- All JavaScript at the bottom, except for Modernizr which enables
+			 HTML5 elements & feature detects -->
+	<script src="{{=URL('static','js/modernizr.custom.js')}}"></script>
+
+	<!-- include stylesheets -->
+	<!-- <link rel="stylesheet" type="text/css" href="{{=URL('static','css/web2py.css')}}"> -->
+	<link rel="stylesheet" type="text/css" href="{{=URL('static','css/bootstrap.min.css')}}">
+	<!-- <link rel="stylesheet" type="text/css" href="{{=URL('static','css/web2py_bootstrap.css')}}"> -->
+	<!-- <link rel="stylesheet" type="text/css" href="{{=URL('static','css/bootstrap-responsive.min.css')}}"> -->
+	<link rel="stylesheet" type="text/css" href="{{=URL('static','css/bootstrap3-stickyfooter.css')}}">
+	<link rel="stylesheet" type="text/css" href="{{=URL('static','css/fuelux.css')}}">
+	<link rel="stylesheet" type="text/css" href="{{=URL('static','css/fuelux-responsive.css')}}">
+	<link rel="stylesheet" type="text/css" href="{{=URL('static','css/font-awesome.min.css')}}">
+	<link rel="stylesheet" type="text/css" href="{{=URL('static','css/select2.css')}}">
+	<link rel="stylesheet" type="text/css" href="{{=URL('static','css/select2-bootstrap.css')}}">
+	<link rel="stylesheet" type="text/css" href="{{=URL('static','css/jquery-picklist.css')}}">
+	<link rel="stylesheet" type="text/css" href="{{=URL('static','css/bootstrap-fileupload.css')}}">
+	<link rel="stylesheet" type="text/css" href="{{=URL('static','css/bootstrap-switch.css')}}">
+	<!-- <link rel="stylesheet" type="text/css" href="{{=URL('static','css/jquery.dataTables.css')}}"> -->
+	<link rel="stylesheet" type="text/css" href="{{=URL('static','css/DT_bootstrap.css')}}">
+	<link rel="stylesheet" type="text/css" href="{{=URL('static', 'css/jtable.css')}}">
+	<link rel="stylesheet" type="text/css" href="{{=URL('static','css/style.css')}}">
+	<!--[if IE 7]><link rel="stylesheet" type="text/css" href="{{=URL('static','css/font-awesome-ie7.min.css')}}"><![endif]-->
+
+	{{include 'web2py_ajax.html'}}
+
+	{{
+	# using sidebars need to know what sidebar you want to use
+	left_sidebar_enabled = globals().get('left_sidebar_enabled',False)
+	right_sidebar_enabled = globals().get('right_sidebar_enabled',False)
+	middle_columns = {0:'span12',1:'span9',2:'span6'}[
+		(left_sidebar_enabled and 1 or 0)+(right_sidebar_enabled and 1 or 0)]
+	}}
+
+	<noscript><link href="{{=URL('static', 'css/web2py_bootstrap_nojs.css')}}" rel="stylesheet" type="text/css" /></noscript>
+	{{block head}}{{end}}
+</head>
+
+<body>
+<div id="wrap">
+
+	<!-- NAV -->
+	<header class="navbar navbar-inverse navbar-fixed-top main-nav">
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="navbar-header">
+					<button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".mainnav-collapse">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".user-collapse" style="margin-right: 10px; padding-top: 6px; max-height: 34px">
+						<span><b style="color: #ffffff;">User</b></span>
+					</button>
+					<a href="{{=URL('default','index')}}" class="navbar-brand">
+						<span class="javelin-brand">Javelin</span>
+					</a>
+				</div>
+				{{if request.function != 'user':}}
+				<ul class="collapse navbar-collapse mainnav-collapse nav navbar-nav">
+					{{ctr_data = get_ctr_data()}}
+					{{if 'active_module' not in globals(): active_module = 'None'}}
+					{{for ctr in ctr_data:}}
+					<li class="{{if ctr_data[ctr]['name'] == active_module:}}active{{pass}}">
+						<a href="{{=URL(ctr_data[ctr]['name'], 'index')}}">
+							<span class="ctr-name"><i class="icon-{{=ctr_data[ctr]['icon']}} icon-large"></i> {{=ctr_data[ctr]['labels']['cap']}}</span>
+						</a>
+					</li>
+					{{pass}}
+				</ul>
+				{{pass}}
+				<ul class="collapse navbar-collapse user-collapse nav navbar-nav pull-right">
+					{{='auth' in globals() and auth.navbar(mode='dropdown') or ''}}
+				</ul>
+			</div>
+		</div>
+	</header>
+	
+	<!-- <div id="top-margin"></div> -->
+
+	<!-- MAIN CONTAINER -->
+	
+	<section style="padding: 70px 15px 30px">
+		<div class="container">
+			<div class="row">
+				
+				<!-- ALERTS -->
+
+				<div class="alert-container"></div>
+				<div class="alert alert-info alert-dismissable fade in" id="flash_alert" style="display: none">
+					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+					<span id="response_flash"></span>
+				</div>
+
+				<!-- CONTENT -->
+				{{block content}}
+				{{include}}
+				{{end}}
+			</div>
+		</div>
+	</section>
+
+	<!-- The javascript =============================================
+			 (Placed at the end of the document so the pages load faster) -->
+	<script src="{{=URL('static','js/jquery-ui-1.9.2.custom.js')}}"></script>
+	<script src="{{=URL('static','js/bootstrap.min.js')}}"></script>
+	<script src="{{=URL('static','js/bootstrap-overflow-navs.js')}}"></script>
+	<script src="{{=URL('static','js/web2py_bootstrap.js')}}"></script>
+	<script type="text/javascript">
+	$(function() {
+		$('.mainnav-collapse').overflowNavs({
+			"more" : "More",
+			"offset" : "400"
+		});
+	});
+	</script>
+	<script src="{{=URL('static', 'js/jtable.js')}}"></script>
+	<!-- <script src="{{=URL('static','js/underscore-min.js')}}"></script> -->
+	<script src="{{=URL('static','js/underscore.js')}}"></script>
+	<script src="{{=URL('static','js/util.js')}}"></script>
+	<script src="{{=URL('static','js/datagrid.js')}}"></script>
+	<script src="{{=URL('static','js/datagrid_override.js')}}"></script>
+	<script src="{{=URL('static','js/select.js')}}"></script>
+	<script src="{{=URL('static','js/combobox.js')}}"></script>
+	<script src="{{=URL('static','js/search.js')}}"></script>
+	<script src="{{=URL('static','js/select2.min.js')}}"></script>
+	<script src="{{=URL('static','js/wizard.js')}}"></script>
+	<script src="{{=URL('static','js/bootstrap-fileupload.min.js')}}"></script>
+	<script src="{{=URL('static','js/bootstrap-inputmask.min.js')}}"></script>
+	<script src="{{=URL('static','js/bootstrap-switch.min.js')}}"></script>
+	<script src="{{=URL('static','js/jquery-picklist.js')}}"></script>
+	<script src="{{=URL('static', 'js/jTable.js')}}"></script>
+	<!-- <script src="{{=URL('static','js/jquery.dataTables.js')}}"></script>
+	<script src="{{=URL('static','js/bootstrap-datatables.js')}}"></script>
+	<script src="{{=URL('static','js/datatables-js/DataTables.js')}}"></script> -->
+	<script src="{{=URL('static','js/javelin_core.js')}}"></script>
+	<!--[if lt IE 7 ]>
+			<script src="{{=URL('static','js/dd_belatedpng.js')}}"></script>
+			<script> DD_belatedPNG.fix('img, .png_bg'); //fix any <img> or .png_bg background-images </script>
+			<![endif]-->
+	
+	{{if response.google_analytics_id:}}
+	<script src="{{=URL('static','js/analytics.min.js')}}"></script>
+	<script type="text/javascript">
+	analytics.initialize({
+		'Google Analytics':{trackingId:'{{=response.google_analytics_id}}'} 
+	});</script>
+	{{pass}}
+	<script type="text/javascript">
+		$(function() { displayFlash("{{=response.flash or ''}}"); });
+	</script>
+</div>
+</body>
+<footer id="footer" class="footer-inverse">
+	<div class="container">
+		<ul class="footer-links">
+			<li><span>Currently v{{=__version__}}</span></li>
+			<li><a href="{{=URL('bugs', 'default', 'index')}}">Bugs</a></li>
+			<li><a href="{{=URL('forms', 'default', 'index')}}">Forms</a></li>
+			<li><a href="{{=URL('studybuddies', 'default', 'index')}}">Study Buddies</a></li>
+			<li><a href="{{=URL('default', 'changelog')}}">Changelog</a></li>
+			<li><span>&#169; {{=request.now.year}} Jacobson and Varni</span></li>
+		</ul>
+	</div>
+</footer>
+</html>
+

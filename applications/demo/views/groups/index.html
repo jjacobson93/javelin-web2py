@@ -1,0 +1,166 @@
+{{extend 'layout.html'}}
+
+{{block content}}
+<style>
+	div.dataTables_scrollBody tr td {
+		vertical-align: middle;
+	}
+
+	.select2-offscreen {
+		display: none !important;
+	}
+</style>
+
+<!-- NAV -->
+<div class="container">
+	
+	<!-- ALERTS -->
+
+	<div class="alert-container"></div>
+
+	<div class="row" id="nav">
+		<a class="btn btn-primary disabled" id="prev-button" href="#main-container" data-slide="prev">
+			<i class="icon-arrow-left"></i>Back
+		</a>
+		<a class="btn btn-success pull-right" href="#" id="add-group-btn">
+			<i class="icon-plus"></i>Add {{=labels['sing']}}
+		</a>
+	</div>
+
+</div>
+
+<hr>
+
+<!-- MAIN CONTAINER -->
+
+<div class="container">
+	<div class="carousel slide" id="main-container" data-interval="false">
+		<div class="carousel-inner" style="overflow: visible">
+			<div class="item active" id="table">
+				<div style="width: 100%">
+					<table id="groups-table" class="table table-striped table-hover"></table>
+				</div>
+			</div>
+			<div class="item" id="records-for-">
+				<div class="row">
+					<div class="col-4 col-md-4">
+						<div class="form-group">
+							<div class="input-group select2-bootstrap-append">
+								<input class="form-control select2-remote" type="hidden" id="add-person-select">
+								<span class="input-group-btn">
+									<button class="btn btn-default" type="button" id="add-person-btn">Add</button>
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div style="width: 100%">
+					<table id="records-table" class="table table-striped table-hover"></table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- MODALS -->
+
+<div class="modal fade" id="add-group-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Add {{=ctr_data['groups']['labels']['sing']}}</h4>
+			</div>
+			<div class="modal-body">
+				<form role="form">
+					<fieldset>
+						<label class="control-label" for="inputName">Name</label>
+						<input class="form-control" type="text" id="inputName" placeholder="Name" />
+						<label class="control-label" for="inputDescription">Description</label>
+						<input class="form-control" type="text" id="inputDescription" placeholder="Description" />
+						<!-- <p>The {{=labels['sing'].lower()}} can't have no one! Let's add some people!</p>
+						<select id="people-select" multiple="multiple"></select> -->
+					</fieldset>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<a href="#" class="btn btn-default" data-dismiss="modal">Cancel</a>
+				<a href="#" class="btn btn-primary" id="add-done-btn">Done</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="delete-group-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Delete {{=ctr_data['groups']['labels']['sing']}}</h4>
+			</div>
+			<div class="modal-body">
+				<p>Are you sure you want to delete <strong id="group-name-delete"></strong>?</p>
+			</div>
+			<div class="modal-footer">
+				<a href="#" class="btn btn-default" data-dismiss="modal">Cancel</a>
+				<a href="#" class="btn btn-danger" id="delete-done-btn">Delete</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="edit-group-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Edit <span id="group-name-edit"></span></h4>
+			</div>
+			<div class="modal-body">
+				<form>
+					<fieldset>
+						<label class="control-label" for="name-field">Name</label>
+						<input class="form-control" type="text" id="name-field">
+						<label class="control-label" for="desc-field">Description</label>
+						<input class="form-control" type="text" id="desc-field">
+					</fieldset>
+				</form>
+				<!-- <select id="edit-people-select" multiple="multiple"></select> -->
+			</div>
+			<div class="modal-footer">
+				<a href="#" class="btn btn-default" data-dismiss="modal">Cancel</a>
+				<a href="#" class="btn btn-primary" id="edit-done-btn">Done</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="delete-person-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Delete from {{=ctr_data['groups']['labels']['sing']}}</h4>
+			</div>
+			<div class="modal-body">
+				<p>Are you sure you want to delete <strong id="person-name-delete"></strong> from <strong id="from-group"></strong>?</p>
+			</div>
+			<div class="modal-footer">
+				<a href="#" class="btn btn-default" data-dismiss="modal">Cancel</a>
+				<a href="#" class="btn btn-danger" id="delete-person-done-btn">Delete</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- JAVASCRIPT -->
+
+<script src="{{=URL('static', 'js/modules/groups_datasource.js')}}"></script>
+<script src="{{=URL('static', 'js/modules/records_datasource.js')}}"></script>
+<script src="{{=URL('static', 'js/modules/groups.js')}}"></script>
+<script type="text/javascript">
+$(function() {
+	$('.table-header').html("{{=ctr_data['groups']['labels']['cap']}}");
+});
+</script>
+{{end}}

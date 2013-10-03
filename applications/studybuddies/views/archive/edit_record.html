@@ -1,0 +1,132 @@
+{{extend 'layout.html'}}
+
+{{block content}}
+<style type="text/css">
+	tr td {
+		vertical-align: middle !important;
+	}
+</style>
+<div class="container">
+	<div class="row">
+		<div class="col-12 col-md-12">
+			<h2>Edit Records</h2>
+			<table class="table table-striped" id="archive-table">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Last Name</th>
+						<th>First Name</th>
+						<th>In</th>
+						<th>Out</th>
+						<th>Total Time</th>
+						<th>Subjects</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{if records:}}
+					{{for r in records:}}
+					<tr>
+						<td>{{=r.person.student_id}}</td>
+						<td>{{=r.person.last_name}}</td>
+						<td>{{=r.person.first_name}}</td>
+						<td class="time-cell" data-value="{{=r.sb_att.in_time.strftime('%s')}}">
+							<input id="in-time-{{=r.sb_att.id}}" class="form-control" readonly>
+						</td>
+						<td class="time-cell" data-value="{{=r.sb_att.out_time.strftime('%s') if r.sb_att.out_time else None}}">
+							<input id="out-time-{{=r.sb_att.id}}" class="form-control" readonly>
+						</td>
+						<td id="total-{{=r.sb_att.id}}">{{=(r.sb_att.out_time - r.sb_att.in_time) if r.sb_att.out_time else '---'}}</td>
+						<td>{{=r.sb_section.title}}</td>
+					</tr>
+					{{pass}}
+					{{pass}}
+				</tbody>
+			</table>
+			<button class="btn btn-lg btn-primary pull-right">Save</button>
+		</div>
+	</div>
+</div>
+
+
+<script type="text/javascript">
+var now = undefined;
+$(function() {
+	// var times = $('select');
+	// var currDate = new Date();
+	// currDate.setHours(8,0,0,0);
+	// for (var i = 0; i < 109; i++) {
+	// 	times.append('<option value="' + 
+	// 		(new Date(currDate.toUTCString()).getTime()/1000) + 
+	// 		'">' + currDate.toLocaleTimeString() + '</option>');
+	// 	currDate.setMinutes(currDate.getMinutes() + 5);
+	// };
+	// var  monthNames = ['January', 'February', 'March', 'April',
+	// 	'May', 'June', 'July', 'August', 'September', 'October',
+	// 	'November', 'December'];
+	// now = new Date(parseInt("{{=start.strftime('%s')}}")*1000);
+	// now.setMinutes(now.getMinutes() + (new Date()).getTimezoneOffset());
+
+	// $('.time-cell').each(function(i, el) {
+	// 	var value = $(el).attr('data-value');
+	// 	if (value != "None") {
+	// 		// var date =  utcToLocal(value);
+	// 		var date = new Date(parseInt(value)*1000);
+	// 		date.setMinutes(date.getMinutes() - now.getTimezoneOffset());
+	// 		var formatted = formatAMPM(date);
+	// 		$(el).find('input').val(formatted);
+	// 	} else {
+	// 		$(el).find('input').val("---");
+	// 	}
+	// });
+
+	$('.time-cell').each(function(i, el) {
+		var value = $(el).attr('data-value');
+		if (value != "None") {
+			var date = moment.utc(parseInt(value)*1000);
+			
+		} else {
+
+		}
+	});
+
+
+	// $('input[id^="in-time"], input[id^="out-time"]').each(function(i,e) { 
+	// 	var val = $(e).val();
+	// 	var date = new Date(monthNames[now.getMonth()] + " " + 
+	// 		now.getDate() + ", " + now.getFullYear() + " " + val);
+
+	// 	var eid = $(e).attr('id');
+	// 	var sb_att_id = eid.match(/[\d]+/);
+
+	// 	$(e).datetimepicker({
+	// 		format: 'h:ii P',
+	// 		showMeridian: true,
+	//         autoclose: true,
+	//         startView: 1,
+	//         minView: 0,
+	//         maxView: 1,
+	//         initialDate: date
+	//     }).on('changeDate', function(ev) {
+	//     	var localDate = new Date(ev.date.valueOf() + ev.date.getTimezoneOffset()*60000);
+	// 		var date = new Date(localDate.valueOf() + localDate.getTimezoneOffset()*60000);
+	// 		$(e).parent().attr('data-value', parseInt(date.valueOf()/1000));
+	// 		if (eid.indexOf('in-time') >= 0) {
+	// 			$('#out-time-' + sb_att_id).datetimepicker('setStartDate', localDate);
+	// 		} 
+
+	// 		var startTime = parseInt($('#in-time-' + sb_att_id).parent().attr('data-value'));
+	// 		var endTime = parseInt($('#out-time-' + sb_att_id).parent().attr('data-value'));
+	// 		var diff = endTime - startTime;
+
+	// 		$('#total-' + sb_att_id).html(diff);
+	//     }).on('show', function() {
+	//     	var val = $(e).val();
+	// 		var date = new Date(monthNames[now.getMonth()] + " " + 
+	// 			now.getDate() + ", " + now.getFullYear() + " " + val);
+	//     	$(e).datetimepicker('update', date);
+	//     });
+ //    });
+});
+</script>
+
+{{end}}

@@ -1,0 +1,23 @@
+{{extend 'layout.html'}}
+
+{{block content}}
+<style type="text/css">
+	td.w2p_fl label {
+		font-weight: bold !important;
+	}
+
+	td.w2p_fl, td.w2p_fw {
+		padding: 0;
+	}
+</style>
+<a class="btn btn-primary" href="{{=URL('peersupport', 'index')}}"><i class="icon-arrow-left"></i>Back</a>
+<h1>Follow Up</h1>
+{{=form}}
+
+<script type="text/javascript">
+$(function() {
+	$('input#student_issue_need_follow_up.boolean').wrap('<div class="switch />').parent().bootstrapSwitch();
+	$('input#student_issue_refer.boolean').wrap('<div class="switch />').parent().bootstrapSwitch();
+});
+</script>
+{{end}}

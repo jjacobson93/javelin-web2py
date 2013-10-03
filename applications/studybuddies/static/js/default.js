@@ -106,14 +106,16 @@ function checkIn(person_id, section_id) {
 }
 
 function checkOut(person_id, any) {
+	var today = new Date();
 	$.ajax({
 		type: 'POST',
 		url: '/studybuddies/call/json/checkout',
 		data: {
-			'person_id': person_id
+			'person_id': person_id,
+			'time_offset': today.getTimezoneOffset()
 		},
 		dataType: 'json',
-		success: function() {
+		success: function(data) {
 			if (!any) {
 				$('#checkout_id_input').val('');
 				$('#checkout_id_submit').addClass('disabled');
@@ -127,12 +129,22 @@ function checkOut(person_id, any) {
 				var date = $('#currdate-input').val();
 				loadCheckouts(date);
 			}
+			console.log(data);
+			callReceipt(data);
 		},
 		error: function() {
 			displayError("Could not check in Student ID " + person_id + ".");
 		}
 	});
 }
+
+function callReceipt(data) {
+	var date = new Date();
+	data.date = months[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear();
+	$.getJSON('/studybuddies/call/json/print_receipt', 'data=' + JSON.stringify(data), function(data) {
+		printReceipt(data.receipt);
+	});
+} 
 
 // function loadDates() {
 // 	$.ajax({

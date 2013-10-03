@@ -1,0 +1,56 @@
+{{extend 'layout.html'}}
+
+{{block content}}
+<link rel="stylesheet" type="text/css" href="{{=URL('static', 'css/bootstrap-sortable.css')}}">
+{{if crews:}}
+<table class="table table-condensed sortable" style="margin-bottom: 50px">
+	<thead>
+		<tr>
+			<th>#</th>
+			<th>Leaders</th>
+			<th>AIM</th>
+		</tr>
+	</thead>
+	<tbody>
+		{{for c in crews:}}
+		{{
+			if c['score'] == 'None':
+				row_type = ''
+				data_value = -1
+			elif c['score'] == 'A':
+				row_type = 'success'
+				data_value = 3
+			elif c['score'] == 'I':
+				row_type = 'warning'
+				data_value = 2
+			elif c['score'] == 'M':
+				row_type = 'error'
+				data_value = 1
+			pass
+		}}
+		<tr class="{{=row_type}}" data-id="{{=c['id']}}">
+			<td data-attr="{{=c['id']}}">{{=c['id']}}</td>
+			<td data-attr="{{=c['leaders']}}"><small>{{=c['leaders']}}</small></td>
+			<td data-attr="{{=c['score']}}" data-value="{{=data_value}}">
+				<div class="fuelux">
+					<div class="select btn-group" id="aim_select_{{=c['id']}}">
+						<button type="button" data-toggle="dropdown" class="btn dropdown-toggle"><span class="dropdown-label"></span><span class="caret"></span></button>
+						<ul class="dropdown-menu" style="min-width: 50px;">
+							<li data-value="None" {{='data-selected=true' if c['score']=='None' else ''}}><a href="#">None</a></li>
+							<li data-value="A" {{='data-selected=true' if c['score']=='A' else ''}}><a href="#">A</a></li>
+							<li data-value="I" {{='data-selected=true' if c['score']=='I' else ''}}><a href="#">I</a></li>
+							<li data-value="M" {{='data-selected=true' if c['score']=='M' else ''}}><a href="#">M</a></li>
+						</ul>
+					</div>
+				</div>
+			</td>
+		</tr>
+		{{pass}}
+	</tbody>
+</table>
+{{else:}}
+<div class="alert alert-info">No crews</div>
+{{pass}}
+<script type="text/javascript" src="{{=URL('static', 'js/bootstrap-sortable.js')}}"></script>
+<script type="text/javascript" src="{{=URL('static', 'js/modules/scores.js')}}"></script>
+{{end}}

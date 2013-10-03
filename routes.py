@@ -42,7 +42,8 @@ routers = dict(
 			'javelinwebapp.com' : 'javelin',
 			'bugs.javelinwebapp.com' : 'bugs',
 			'forms.javelinwebapp.com' : 'forms',
-			'sb.javelinwebapp.com' : 'studybuddies'
+			'sb.javelinwebapp.com' : 'studybuddies',
+			'demo.javelinwebapp.com': 'demo'
 		}
 	)
 )

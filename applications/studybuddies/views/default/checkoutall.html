@@ -9,14 +9,14 @@
 		</div>
 	</div>
 
-	<!-- <div class="row">
+	<div class="row">
 		<div class="col-12 col-md-12">
-			<button class="btn btn-primary disabled" onclick="printReceipt()" id="print-btn" style="margin-bottom: 15px">Print Receipt</button>
+			<button class="btn btn-primary" onclick="testPrint();">Test Print</button>
 			<applet name="jzebra" code="jzebra.PrintApplet.class" archive="{{=URL('static', 'jzebra/dist/jzebra.jar')}}" height="10px" width="10px">
 				<param name="printer" value="zebra">
 			</applet>
 		</div>
-	</div> -->
+	</div>
 
 	<div class="row">
 		<div class="input-group col-4 col-sm-4">
@@ -40,65 +40,35 @@ var applet = undefined;
 var months = ['January', 'February', 'March', 'April',
 	'May', 'June', 'July', 'August', 'September',
 	'October', 'Novemder', 'December'];
-var receipt = undefined;
+// var receipt = undefined;
 
 // String.prototype.decodeEscapeSequence = function() {
 //     return this.replace(/\\x([0-9A-Fa-f]{2})/g, function() {
 //         return String.fromCharCode(parseInt(arguments[1], 16));
 //     });
-// };
+// };--
 
-// // var img = new Image();
-// // img.src = "http://javelinwebapp.com/static/images/vc2emblem.bmp"
-// var imageData = 'data:image/bmp;base64,W29iamVjdCBIVE1MSW1hZ2VFbGVtZW50XQ=='
 
-// function printReceipt() {
-// 	if (!$(this).hasClass('disabled')) {
-// 		applet.appendHex("1b40"); // RESET
-// 		// applet.appendHex('1b2a7241'); //Enter raster mode
-// 		// applet.appendHex('1b2a72510100'); //Set quality
-// 		// applet.appendHex('1b2a72503000'); //Set page length
-// 		// applet.appendHex('1b2a72451300'); //Set EOT mode
-// 		// applet.appendHex('1b2a72463800'); //Set FF mode
-// 		// applet.appendHex('620400807f7f7f') //Write line
-// 		// applet.appendHex('1b0a00');
-// 		// applet.appendHex('1b2a7242'); //Exit raster mode
-// 		// applet.appendHex("1b1d6131"); // CENTER
-// 		// var image = window.location.origin + "{{=URL('javelin', 'static', 'images/vc2emblem.bmp')}}";
-// 		var image = '/Users/Jeremy/Programming/javelin-web2py/applications/javelin/static/images/vc2emblem.png'
-// 		applet.appendImage(image);
-// 		// applet.appendHex('535455445920425544444945530a'); // STUDY BUDDIES
-// 		// applet.appendHex('4175677573742032362c20323031330a'); // August 26, 2013
-// 		// applet.appendHex("1b1d61300a"); // LEFT
-// 		// applet.appendHex('4e616d653a204a6572656d79204a61636f62736f6e0a'); // Name: Jeremy Jacobson
-// 		// applet.appendHex('47726164653a2031350a'); // Grade: 15
-// 		// applet.appendHex("1b1d6131"); // CENTER
-// 		applet.appendHex('706f7765726564206279204a6176656c696e0a'); // powered by Javelin
-// 		applet.appendHex('28632932303133204a61636f62736f6e2026205661726e6900'); // (c)2013 Jacobson & Varni
-// 		applet.appendHex("0a0a0a"); // LF LF LF
-// 		applet.appendHex("1b6433"); // CUT
-// 		applet.appendHex("1b40"); // RESET
-// 		applet.print();
-// 		return;
+function printReceipt(receipt) {
+	if (receipt) {
+		applet.appendHex("1b40"); // RESET
+		applet.appendHex(receipt);
+		applet.appendHex("1b40"); // RESET
+		applet.print();
+	}
+	return false;
+}
 
-// 		// var date = new Date();
-// 		// var data = {
-// 		// 	id: 1001,
-// 		// 	date: months[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear()
-// 		// };
-// 		// $.getJSON('/studybuddies/call/json/print_receipt', 'data=' + JSON.stringify(data), function(data) {
-// 		// 	// receipt = data.receipt.decodeEscapeSequence();
-// 		// 	// receipt = JSON.parse('"' + data.receipt.replace(/([^\\]|^)\\x/g, '$1\\u00') + '"');
-// 		// 	receipt = data.receipt;
-// 		// 	applet.append("\x1b\x40");
-// 		// 	// applet.append64('data:image/bmp;base64,W29iamVjdCBIVE1MSW1hZ2VFbGVtZW50XQ==');
-// 		// 	applet.appendHex(receipt);
-// 		// 	applet.append("\x1b\x40");
-// 		// 	applet.print();
-// 		// 	return;
-// 		// });
-// 	}
-// }
+function testPrint() {
+	console.log("TEST PRINT");
+	applet.appendHex("1b40"); // RESET
+	applet.appendHex('48656c6c6f20576f726c64210a0a0a0a0a');
+	applet.appendHex('1b6433'); //CUT
+	applet.appendHex("1b40"); // RESET
+	applet.print();
+	// "1b401b1d613156494e54414745204352555348455220435245570a535455445920425544444945530a53657074656d6265722031392c20323031330a0a1b1d61301b454e616d653a1b46204c61736861776e61204a61636b736f6e0a1b4547726164653a1b462031300a1b45496e2054696d653a1b462030353a32393a323220414d0a1b454f75742054696d653a1b462031313a32393a323320414d0a1b45546f74616c2054696d653a1b4620363a303a310a1b455375626a656374733a1b460a20202020201b454f746865723a1b4620363a303a310a0a0a0a1b1d6131415454454e54494f4e2053545544454e5453210a416674657220796f752073686f772074686973207469636b65740a746f20796f757220706172656e747320616e642074656163686572732c0a6272696e672069742062792053533220647572696e67206c756e636820746f0a656e74657220696e20746865205374756479204275646469657320726166666c65210a0a1b620601024031323334351e0d0a706f7765726564206279204a6176656c696e0a2863292032303133204a61636f62736f6e2026205661726e690a0a1b64331b40"
+	return;
+}
 
 $(function() {
 	setCurrentDate("{{=currdate}}");
@@ -119,17 +89,18 @@ $(function() {
 			$("#checkoutall_id_submit").click();
 	});
 
-	// applet = document.jzebra;
-	// if (applet.findPrinter) {
-	// 	applet.findPrinter("Star_TSP654__STR_T_001_");
-	// 	applet.useAlternatePrinting(true);
-	// }
+	applet = document.jzebra;
+	if (applet.findPrinter) {
+		applet.findPrinter();
+	}
 
-	// setTimeout(function() {
-	// 	while (!applet && !applet.isDoneFinding());
-	// 	$('#print-btn').removeClass("disabled");
-	// 	displayFlash("Printer loaded");
-	// }, 2000);
+	setTimeout(function() {
+		while (!applet && !applet.isDoneFinding());
+		var printer = applet.getPrinter();
+		// applet.useAlternatePrinting(true);
+		alert(printer == null ? "Printer not found" : "Printer \"" + printer + "\" found");
+		displayFlash("Printer loaded");
+	}, 2000);
 });
 </script>
 {{end}}

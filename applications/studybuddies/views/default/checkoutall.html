@@ -98,9 +98,9 @@ $(function() {
 		while (!applet && !applet.isDoneFinding());
 		var printer = applet.getPrinter();
 		// applet.useAlternatePrinting(true);
-		alert(printer == null ? "Printer not found" : "Printer \"" + printer + "\" found");
+		// alert(printer == null ? "Printer not found" : "Printer \"" + printer + "\" found");
 		displayFlash("Printer loaded");
-	}, 2000);
+	}, 5000);
 });
 </script>
 {{end}}

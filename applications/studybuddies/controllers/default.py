@@ -116,10 +116,11 @@ def checkout(person_id, time_offset=None):
 	first_in = None
 	last_out = None
 
-	today = datetime.datetime.now()
-	today = today.replace(hour=0, minute=0, second=0, microsecond=0)
+	today = datetime.datetime.now() # get current UTC time
 	if time_offset:
-		today = today + datetime.timedelta(minutes=int(time_offset))
+		today = today - datetime.timedelta(minutes=int(time_offset)) # subtract offset to get current client day
+		today = today.replace(hour=0, minute=0, second=0, microsecond=0) # get the beginning of the client day
+		today = today + datetime.timedelta(minutes=int(time_offset)) # move back to UTC (client day beginning in UTC)
 
 	if student:
 		person_id = student.id

@@ -129,7 +129,6 @@ function checkOut(person_id, any) {
 				var date = $('#currdate-input').val();
 				loadCheckouts(date);
 			}
-			console.log(data);
 			callReceipt(data);
 		},
 		error: function() {
@@ -139,11 +138,29 @@ function checkOut(person_id, any) {
 }
 
 function callReceipt(data) {
+	var postData = {
+		'id': data['response']['id'], 
+		'in_time': data['response']['in_time'], 
+		'out_time': data['response']['out_time'],
+		'totaltime': data['response']['totaltime'],
+		'subjects': JSON.stringify(data['response']['subjects'])
+	};
 	var date = new Date();
-	data.date = months[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear();
-	$.getJSON('/studybuddies/call/json/print_receipt', 'data=' + JSON.stringify(data), function(data) {
-		printReceipt(data.receipt);
+	postData.date = months[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear();
+
+	$.ajax({
+		type: "POST",
+		url: "/studybuddies/call/json/print_receipt",
+		data: postData,
+		dataType: "json",
+		success: function(data) {
+			printReceipt(data.receipt);
+		}
 	});
+
+	// $.getJSON('/studybuddies/call/json/print_receipt', 'data=' + JSON.stringify(data), function(data) {
+	// 	printReceipt(data.receipt);
+	// });
 } 
 
 // function loadDates() {

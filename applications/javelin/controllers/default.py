@@ -23,18 +23,6 @@ def index():
 
 @auth.requires_login()
 @auth.requires_membership('standard')
-def query():
-	results = db((db.person.grade==9) & 
-			(db.course.code.belongs('EN228', 'EN135', 'EN137'))).select(
-		db.person.id, db.person.crew, db.course.title, db.teacher.teacher_name, db.course.period,
-		left=[db.course_rec.on(db.person.id==db.course_rec.student_id),
-			db.course.on(db.course.id==db.course_rec.course_id),
-			db.teacher.on(db.teacher.id==db.course.teacher_id)],
-		orderby=[db.person.crew, db.person.id])
-	return dict(results=results)
-
-@auth.requires_login()
-@auth.requires_membership('standard')
 def javelin_header():
 	header = 'Vintage Crusher Crew'
 	recipient = 'Jeremy'
@@ -46,11 +34,6 @@ def javelin_header():
 @auth.requires_login()
 def changelog():
 	return dict(active_module='None')
-
-@auth.requires_login()
-@auth.requires_membership('standard')
-def table_test():
-	return dict()
 
 def user():
 	"""

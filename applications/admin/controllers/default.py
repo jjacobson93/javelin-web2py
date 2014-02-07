@@ -11,9 +11,11 @@ import re
 from gluon.admin import *
 from gluon.fileutils import abspath, read_file, write_file
 from gluon.utils import web2py_uuid
+from gluon.tools import Config
 from glob import glob
 import shutil
 import platform
+
 try:
     import git
     if git.__version__ < '0.3.1':
@@ -86,10 +88,11 @@ def safe_write(a, value, b='w'):
 
 def get_app(name=None):
     app = name or request.args(0)
-    if app and (not MULTI_USER_MODE or is_manager() or
-                db(db.app.name == app)(db.app.owner == auth.user.id).count()):
+    if (app and os.path.exists(apath(app, r=request)) and
+        (not MULTI_USER_MODE or is_manager() or
+         db(db.app.name == app)(db.app.owner == auth.user.id).count())):
         return app
-    session.flash = T('App does not exist or your are not authorized')
+    session.flash = T('App does not exist or you are not authorized')
     redirect(URL('site'))
 
 
@@ -105,7 +108,7 @@ def index():
     if session.authorized:
         redirect(send)
     elif request.vars.password:
-        if verify_password(request.vars.password):
+        if verify_password(request.vars.password[:1024]):
             session.authorized = True
             login_record(True)
 
@@ -194,7 +197,7 @@ def site():
 
     class IS_VALID_APPNAME(object):
         def __call__(self, value):
-            if not re.compile('\w+').match(value):
+            if not re.compile('^\w+$').match(value):
                 return (value, T('Invalid application name'))
             if not request.vars.overwrite and \
                     os.path.exists(os.path.join(apath(r=request), value)):
@@ -296,8 +299,8 @@ def site():
         apps = [f for f in apps if f in FILTER_APPS]
 
     apps = sorted(apps, lambda a, b: cmp(a.upper(), b.upper()))
-
-    return dict(app=None, apps=apps, myversion=myversion,
+    myplatform = platform.python_version()
+    return dict(app=None, apps=apps, myversion=myversion, myplatform=myplatform,
                 form_create=form_create, form_update=form_update)
 
 
@@ -494,9 +497,8 @@ def enable():
         os.unlink(filename)
         return SPAN(T('Disable'), _style='color:green')
     else:
-        safe_open(filename, 'wb').write(time.ctime())
+        safe_open(filename, 'wb').write('disabled: True\ntime-disabled: %s' % request.now)
         return SPAN(T('Enable'), _style='color:red')
-
 
 def peek():
     """ Visualize object code """
@@ -560,12 +562,17 @@ def edit():
     """ File edit handler """
     # Load json only if it is ajax edited...
     app = get_app(request.vars.app)
+    app_path = apath(app, r=request)
+    editor_defaults={'theme':'web2py', 'editor': 'default', 'closetag': 'true'}
+    config = Config(os.path.join(request.folder, 'settings.cfg'),
+                    section='editor', default_values=editor_defaults)
+    preferences = config.read()
 
-    if not(request.ajax):	
+    if not(request.ajax):
         # return the scaffolding, the rest will be through ajax requests
-        response.title = T('Editing %s' % app)
+        response.title = T('Editing %s') % app
         editarea_preferences = {}
-       	editarea_preferences['FONT_SIZE'] = '10'
+        editarea_preferences['FONT_SIZE'] = '10'
         editarea_preferences['FULL_SCREEN'] = 'false'
         editarea_preferences['ALLOW_TOGGLE'] = 'true'
         editarea_preferences['REPLACE_TAB_BY_SPACES'] = '4'
@@ -573,8 +580,22 @@ def edit():
         for key in editarea_preferences:
             if key in globals():
                 editarea_preferences[key] = globals()[key]
-        return response.render ('default/edit.html', dict(app=request.args[0], editarea_preferences=editarea_preferences))
-	
+        return response.render ('default/edit.html', dict(app=request.args[0], editor_settings=preferences, editarea_preferences=editarea_preferences))
+
+    # show settings tab and save prefernces
+    if 'settings' in request.vars:
+        if request.post_vars:        #save new preferences
+            if config.save(request.post_vars.items()):
+                response.headers["web2py-component-flash"] = T('Preferences saved correctly')
+            else:
+                response.headers["web2py-component-flash"] = T('Preferences saved on session only')
+            response.headers["web2py-component-command"] = "update_editor('%s', '%s', '%s');jQuery('a[href=#editor_settings] button.close').click();" % (config.read()['theme'], config.read()['editor'], config.read()['closetag'])
+            return
+        else:
+            details = {'filename':'settings', 'id':'editor_settings', 'force': False}
+            details['plain_html'] = response.render('default/editor_settings.html', {'editor_settings':preferences})
+            return response.json(details)
+
     """ File edit handler """
     # Load json only if it is ajax edited...
     app = get_app(request.vars.app)
@@ -584,7 +605,7 @@ def edit():
         path = abspath(filename)
     else:
         path = apath(filename, r=request)
-     # Try to discover the file type
+    # Try to discover the file type
     if filename[-3:] == '.py':
         filetype = 'python'
     elif filename[-5:] == '.html':
@@ -680,7 +701,6 @@ def edit():
                                  offset and ' ' +
                                  T('at char %s', offset) or '',
                                  PRE(str(e)))
-
     if data_or_revert and request.args[1] == 'modules':
         # Lets try to reload the modules
         try:
@@ -722,7 +742,7 @@ def edit():
                 vf = os.path.split(v)[-1]
                 vargs = "/".join([viewpath.replace(os.sep, "/"), vf])
                 editviewlinks.append(A(vf.split(".")[0],
-                                       _class="editor_filelink",	
+                                       _class="editor_filelink",
                                        _href=URL('edit', args=[vargs])))
 
     if len(request.args) > 2 and request.args[1] == 'controllers':
@@ -746,11 +766,11 @@ def edit():
                     view_link=view_link,
                     editviewlinks=editviewlinks,
                     id=IS_SLUG()(filename)[0],
-					force= True if (request.vars.restore or request.vars.revert) else False)
+                    force= True if (request.vars.restore or request.vars.revert) else False)
         plain_html = response.render('default/edit_js.html', file_details)
         file_details['plain_html'] = plain_html
         return response.json(file_details)
-		
+
 
 def resolve():
     """
@@ -1017,8 +1037,9 @@ def design():
     privates.sort()
 
     # Get all static files
+    MAXNFILES = 1000
     statics = listdir(apath('%s/static/' % app, r=request), '[^\.#].*')
-    statics = [x.replace('\\', '/') for x in statics]
+    statics = [x.replace('\\', '/') for x in statics[:MAXNFILES]]
     statics.sort()
 
     # Get all languages
@@ -1770,4 +1791,3 @@ def git_push():
             session.flash = T("Push failed, there are unmerged entries in the cache. Resolve merge issues manually and try again.")
             redirect(URL('site'))
     return dict(app=app, form=form)
-

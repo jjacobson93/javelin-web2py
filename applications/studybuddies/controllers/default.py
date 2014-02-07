@@ -164,8 +164,6 @@ def checkout(person_id, time_offset=None):
 
 		s.update(student.as_dict())
 
-		logger.debug(s)
-
 		result = s
 
 	return dict(response=result, error=error)
@@ -275,18 +273,30 @@ def make_void(record_ids):
 
 @auth.requires_login()
 @service.json
-def print_receipt(data):
-	data = json.loads(data)
+def print_receipt():
+	# {'id': 12345, 'in_time': '3:15:05 PM', 'out_time': '4:20:15 PM', 'totaltime': '1:04:40', 'subjects': [['English', "1:04:40"]]}
 
-	if data:
+	id = request.vars.get('id')
+	in_time = request.vars.get('in_time')
+	out_time = request.vars.get('out_time')
+	totaltime = request.vars.get('totaltime')
+	date = request.vars.get('date')
+
+	try:
+		subjects = json.loads(request.vars.get('subjects'))
+	except:
+		subjects = None
+
+	person = db(db.person.id==id).select(db.person.ALL).first()
+
+	if person and in_time and out_time and totaltime and subjects and date:
 		ESC = '\x1B'
 		LF = '\x0A'
 		RESET = ESC + '\x40'
 		L_ALIGN = ESC + '\x1D\x61\x30'
 		C_ALIGN = ESC + '\x1D\x61\x31'
 		CUT = '\x1B\x64\x33'
-
-		# person = db(db.person.id==data['id']).select(db.person.ALL).first()
+		
 		receipt = ''
 		# receipt = RESET
 
@@ -294,19 +304,19 @@ def print_receipt(data):
 		receipt += C_ALIGN
 		receipt += "VINTAGE CRUSHER CREW" + LF
 		receipt += "STUDY BUDDIES" + LF
-		receipt += str(data['date']) + LF + LF
+		receipt += str(date) + LF + LF
 		
 		receipt += L_ALIGN
 
 		# Print data
-		receipt += "\x1b\x45Name:\x1b\x46 {}".format(' '.join([data['response']['first_name'],data['response']['last_name']])) + LF
-		receipt += "\x1b\x45Grade:\x1b\x46 {}".format(data['response']['grade']) + LF
-		receipt += "\x1b\x45In Time:\x1b\x46 {}".format(data['response']['in_time']) + LF
-		receipt += "\x1b\x45Out Time:\x1b\x46 {}".format(data['response']['out_time']) + LF
-		receipt += "\x1b\x45Total Time:\x1b\x46 {}".format(data['response']['totaltime']) + LF
+		receipt += "\x1b\x45Name:\x1b\x46 {}".format(' '.join([person.first_name, person.last_name])) + LF
+		receipt += "\x1b\x45Grade:\x1b\x46 {}".format(person.grade) + LF
+		receipt += "\x1b\x45In Time:\x1b\x46 {}".format(in_time) + LF
+		receipt += "\x1b\x45Out Time:\x1b\x46 {}".format(out_time) + LF
+		receipt += "\x1b\x45Total Time:\x1b\x46 {}".format(totaltime) + LF
 		receipt += "\x1b\x45Subjects:\x1b\x46" + LF
 		# receipt += ESC + '\x44\x00
-		for s in data['response']['subjects']:
+		for s in subjects:
 			receipt += "     \x1b\x45{}:\x1b\x46 {}".format(s[0], s[1]) + LF
 		receipt += LF + LF + LF
 
@@ -317,16 +327,16 @@ def print_receipt(data):
 		receipt += "bring it by SS2 during lunch to" + LF
 		receipt += "enter in the Study Buddies raffle!" + LF + LF
 		#			ESC  b   n1  n2  n3  n4
-		receipt += "\x1b\x62\x06\x01\x02\x40{}\x1e\r\n".format(data['response']['id'])
+		receipt += "\x1b\x62\x06\x01\x02\x40{}\x1e\r\n".format(id)
 		receipt += "powered by Javelin" + LF
 		receipt += "(c) 2013 Jacobson & Varni" + LF + LF
 
 		receipt += CUT
 		# receipt += RESET
 
-		return dict(receipt=receipt.encode('hex'))
+		return dict(receipt=receipt.encode('hex'), person=person)
 	else:
-		return dict(receipt=None)
+		return dict(receipt=None, person=person)
 
 # @auth.requires_login()
 # @service.json

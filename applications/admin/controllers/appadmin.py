@@ -32,7 +32,8 @@ except:
 
 if request.env.http_x_forwarded_for or request.is_https:
     session.secure()
-elif (remote_addr not in hosts) and (remote_addr != "127.0.0.1"):
+elif (remote_addr not in hosts) and (remote_addr != "127.0.0.1") and \
+    (request.function != 'manage'):
     raise HTTP(200, T('appadmin is disabled because insecure channel'))
 
 if request.function == 'manage':
@@ -49,11 +50,11 @@ if request.function == 'manage':
     auth.requires_membership(manager_role)(lambda: None)()
     menu = False
 elif (request.application == 'admin' and not session.authorized) or \
-        (request.application != 'admin' and not gluon.fileutils.check_credentials(request)):    
+        (request.application != 'admin' and not gluon.fileutils.check_credentials(request)):
     redirect(URL('admin', 'default', 'index',
                  vars=dict(send=URL(args=request.args, vars=request.vars))))
 else:
-    response.subtitle = 'Database Administration (appadmin)'
+    response.subtitle = T('Database Administration (appadmin)')
     menu = True
 
 ignore_rw = True
@@ -539,30 +540,30 @@ def table_template(table):
 
 def bg_graph_model():
     graph = pgv.AGraph(layout='dot',  directed=True,  strict=False,  rankdir='LR')
-    
-    subgraphs = dict()    
+
+    subgraphs = dict()
     for tablename in db.tables:
         if hasattr(db[tablename],'_meta_graphmodel'):
             meta_graphmodel = db[tablename]._meta_graphmodel
         else:
             meta_graphmodel = dict(group='Undefined', color='#ECECEC')
-        
-        group = meta_graphmodel['group'].replace(' ', '') 
+
+        group = meta_graphmodel['group'].replace(' ', '')
         if not subgraphs.has_key(group):
             subgraphs[group] = dict(meta=meta_graphmodel, tables=[])
             subgraphs[group]['tables'].append(tablename)
         else:
-            subgraphs[group]['tables'].append(tablename)        
-      
+            subgraphs[group]['tables'].append(tablename)
+
         graph.add_node(tablename, name=tablename, shape='plaintext',
                        label=table_template(tablename))
-    
-    for n, key in enumerate(subgraphs.iterkeys()):        
+
+    for n, key in enumerate(subgraphs.iterkeys()):
         graph.subgraph(nbunch=subgraphs[key]['tables'],
                     name='cluster%d' % n,
                     style='filled',
                     color=subgraphs[key]['meta']['color'],
-                    label=subgraphs[key]['meta']['group'])   
+                    label=subgraphs[key]['meta']['group'])
 
     for tablename in db.tables:
         for field in db[tablename]:
@@ -576,17 +577,17 @@ def bg_graph_model():
                 graph.add_edge(n1, n2, color="#4C4C4C", label='')
 
     graph.layout()
-    #return graph.draw(format='png', prog='dot')
     if not request.args:
+        response.headers['Content-Type'] = 'image/png'
         return graph.draw(format='png', prog='dot')
-    else:       
+    else:
         response.headers['Content-Disposition']='attachment;filename=graph.%s'%request.args(0)
-        if request.args(0) == 'dot':        
+        if request.args(0) == 'dot':
             return graph.string()
         else:
             return graph.draw(format=request.args(0), prog='dot')
 
-def graph_model():    
+def graph_model():
     return dict(databases=databases, pgv=pgv)
 
 def manage():
@@ -623,7 +624,10 @@ def manage():
             orderby = 'role' if not request.args(3) or '.group_id' not in request.args(3) else None
         elif table == auth.table_permission():
             orderby = 'group_id'
-    grid = SQLFORM.smartgrid(table, args=request.args[:2], user_signature=True,
-                             orderby=orderby, linked_tables=linked_tables,
-                             maxtextlength=1000, formname=formname)
+    kwargs = dict(user_signature=True, maxtextlength=1000,
+                  orderby=orderby, linked_tables=linked_tables)
+    smartgrid_args = manager_action.get('smartgrid_args', {})
+    kwargs.update(**smartgrid_args.get('DEFAULT', {}))
+    kwargs.update(**smartgrid_args.get(table._tablename, {}))
+    grid = SQLFORM.smartgrid(table, args=request.args[:2], formname=formname, **kwargs)
     return grid

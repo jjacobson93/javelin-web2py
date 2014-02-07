@@ -184,4 +184,4 @@ db.define_table('form',
 	Field('created', 'datetime', default=request.now, writable=False),
 	Field('verification_code', 'string', notnull=True, required=True),
 	Field('uuid', 'string', notnull=True, default=uuid.uuid4(), writable=False, readable=False),
-	Field('db_table', 'string', notnull=True, required=True, label='Table', requires=IS_IN_SET(filter(lambda k: 'auth' not in k, db.tables))))
+	Field('db_table', 'string', notnull=True, required=True, label='Table', requires=IS_IN_SET(filter(lambda k: 'auth' not in k, db.tables))), migrate=False)

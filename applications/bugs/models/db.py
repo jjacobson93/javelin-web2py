@@ -97,4 +97,4 @@ db.define_table('ticket',
 	Field('user_agent', 'string', notnull=True, required=True, default=str(user_agent.browser.name + " (" + user_agent.browser.version + ")"), writable=False, readable=False),
 	Field('os', 'string', notnull=True, required=True, default=str(user_agent.flavor.name + " " + user_agent.flavor.version), writable=False, readable=False),
 	Field('approved', 'boolean', notnull=True, default=False, writable=False, readable=False),
-	Field('fixed', 'boolean', notnull=True, default=False, writable=False, readable=False))
+	Field('fixed', 'boolean', notnull=True, default=False, writable=False, readable=False), migrate=False)

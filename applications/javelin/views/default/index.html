@@ -37,18 +37,71 @@
 		border-color: #fff;
 	} 
 
+	#apps-container {
+		margin-bottom: 25px;
+	}
+
+	#apps-container .btn {
+		height: 172px;
+		width: 172px;
+		border-width: 2px;
+	}
+
+	#apps-container i {
+		padding-right: 0;
+		font-size: 128px;
+	}
+
+	#apps-container span {
+		font-size: 20px;
+		white-space: pre-wrap;       /* css-3 */
+		white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+		white-space: -pre-wrap;      /* Opera 4-6 */
+		white-space: -o-pre-wrap;    /* Opera 7 */
+		word-wrap: break-word;       /* Internet Explorer 5.5+ */
+	}
+
 	@media (min-width: 767px) {
-		.javelin-head {
+		/*.javelin-head {
 			text-align: left;
-		}
+		}*/
 
 		h1 {
 			font-size: 115px;
 		}
 
 		p.lead {
-			font-size: 30px;
+			font-size: 24px;
 		}
+	}
+
+	@media (max-width: 767px) {
+		#apps-container i {
+			font-size: 64px;
+		}
+
+		#apps-container span {
+			font-size: 14px;
+		}
+
+		#apps-container .btn {
+			margin-bottom: 20px;
+		}
+
+		#apps-container .btn {
+			height: 112px;
+			width: 112px;
+		}
+	}
+
+	@media (max-width: 480px) {
+		#apps-container i {
+			font-size: 64px;
+		}
+
+	/*	#apps-container span {
+			font-size: 1px;
+		}*/
 	}
 </style>
 
@@ -58,6 +111,34 @@
 			<div class="col-12 col-sm-12">
 				<h1>Welcome to Javelin!</h1>
 				<p class="lead">Sleek, intuitive, and piercing web application for community management and organization.</p>
+				<div class="container" id="apps-container">
+					<div class="row">
+						<div class="col-3 col-xs-6 col-sm-3">
+							<a class="btn btn-javelin" href="{{=URL('javelin', 'default', 'index')}}">
+								<i class="icon-home"></i><br>
+								<span>Central</span>
+							</a>
+						</div>
+						<div class="col-3 col-xs-6 col-sm-3">
+							<a class="btn btn-javelin" href="{{=URL('studybuddies', 'default', 'index')}}">
+								<i class="icon-book"></i><br>
+								<span>Study Buddies</span>
+							</a>
+						</div>
+						<div class="col-3 col-xs-6 col-sm-3">
+							<a class="btn btn-javelin" href="{{=URL('bugs', 'default', 'index')}}">
+								<i class="icon-bug"></i><br>
+								<span>Bugs</span>
+							</a>
+						</div>
+						<div class="col-3 col-xs-6 col-sm-3">
+							<a class="btn btn-javelin" href="{{=URL('forms', 'default', 'index')}}">
+								<i class="icon-edit"></i><br>
+								<span>Forms</span>
+							</a>
+						</div>
+					</div>
+				</div>
 				<p><a class="btn btn-javelin btn-lg" href="{{=URL('default', 'changelog')}}">What's New</a></p>
 			</div>
 		</div>

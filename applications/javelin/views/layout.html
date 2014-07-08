@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="{{=T.accepted_language or 'en'}}" ng-app="JavelinApp">
+<html class="no-js" lang="{{=T.accepted_language or 'en'}}">
 <head>
 <title>{{=response.title or request.application}}</title>
 	<!--[if !HTML5]>
@@ -29,8 +29,15 @@
 			 HTML5 elements & feature detects -->
 	<script src="{{=URL('static','js/modernizr.custom.js')}}"></script>
 
+	<script src="{{=URL('static', 'bower_components/platform/platform.js')}}"></script>
+
+	<!-- POLYMER IMPORTS -->
+	<link rel="import" href="{{=URL('static', 'bower_components/core-toolbar/core-toolbar.html')}}">
+	<link rel="import" href="{{=URL('static', 'bower_components/core-drawer-panel/core-drawer-panel.html')}}">
+	<!-- END -->
+
 	<!-- STYLES -->
-	<link rel="stylesheet" href="{{=URL('static', 'bower_components/bootstrap/dist/css/bootstrap.min.css')}}">
+	<!-- <link rel="stylesheet" href="{{=URL('static', 'bower_components/bootstrap/dist/css/bootstrap.min.css')}}">
 	<link rel="stylesheet" href="{{=URL('static', 'bower_components/font-awesome/css/font-awesome.min.css')}}">
 	<link rel="stylesheet" href="{{=URL('static', 'bower_components/select2/select2.css')}}">
 	<link rel="stylesheet" href="{{=URL('static', 'bower_components/select2/select2-bootstrap.css')}}">
@@ -39,28 +46,10 @@
 	<link rel="stylesheet" href="{{=URL('static', 'css/pe-icon-helper.css')}}">
 	<link rel="stylesheet/less" href="{{=URL('static', 'css/theme.less')}}">
 	<link rel="stylesheet" href="{{=URL('static', 'css/colors.css')}}">
-	<link rel="stylesheet" href="{{=URL('static', 'css/fonts.css')}}">
+	<link rel="stylesheet" href="{{=URL('static', 'css/fonts.css')}}"> -->
 	<link rel="stylesheet/less" href="{{=URL('static', 'css/style.less')}}">
-	<link rel="stylesheet/less" href="{{=URL('static', 'css/variables.less')}}">
+	<!-- <link rel="stylesheet/less" href="{{=URL('static', 'css/variables.less')}}"> -->
 	<!-- STYLES END -->
-
-	{{if not auth.user:}}
-	<style type="text/css">
-		body {
-			padding-left: 0;
-		}
-
-		.navbar-javelin-top,
-		.navbar-javelin-top .navbar-brand,
-		.navbar-javelin-top ul.navbar-nav.navbar-right {
-			background-color: #2C3E50;
-		}
-
-		.javelin-main {
-			padding: 0;
-		}
-	</style>
-	{{pass}}
 
 	<!-- DEV: Less -->
 	<script src="{{=URL('static', 'bower_components/less/dist/less-1.7.1.min.js')}}"></script>
@@ -70,105 +59,28 @@
 	{{block head}}{{end}}
 </head>
 
-<div class="notification blue">
+<!-- <div class="notification blue">
 	<div class="overlay">
 		<p class="lead"></p>
 	</div>
-</div>
+</div> -->
 
-<body ng-controller="MainController">
-	<div class="navbar-javelin-top navbar-fixed-top">
-		<!-- <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target=".navbar-collapse">
-			<span class="sr-only">Toggle navigation</span>
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-		</button> -->
-		<a href="/" class="navbar-brand">
-			<span class="javelin-brand"><img src="{{=URL('static', 'images/javelin-icon-v2.svg')}}"></span>
-		</a>
+<body unresolved touch-action="auto">
 
-		<nav class="main-nav">
-			<ul class="nav navbar-nav navbar-right javelin-nav">
-				{{if auth.user:}}
-				<li class="dropdown">
-					<a a-prevent-default href="#" class="dropdown-toggle" data-toggle="dropdown">
-						<img class="person-pic" src="{{=URL('download', args=[db.person(db.auth_user(auth.user.id).person_id).picture])}}"> {{=' '.join([auth.user.first_name, auth.user.last_name])}} <span class="caret"></span>
-					</a>
-					<ul class="dropdown-menu">
-						<li><a href="{{=URL('user', 'logout')}}"><span class="pe-7s-lock pe-lg"></span> Logout</a></li>
-					</ul>
-				</li>
-				{{else:}}
-				<li>
-					<a type="button" class="btn navbar-btn teal" href="{{=URL('default', 'index', anchor='/login')}}" style="margin-right:24px">Login</a>
-				</li>
-				{{pass}}
-			</ul>
-		</nav>
-
-		{{if auth.user:}}
-		<form class="navbar-form navbar-right main-search">
-			<input class="form-control" style="width: 100%" ng-model="search.value" ng-change="search.change()">
-			<span class="pe-7s-search form-control-feedback"></span>
-			<span class="pe-7s-close-circle form-cancel-btn" ng-show="isSearching" ng-click="cancelSearch()"></span>
-		</form>
-		{{pass}}
-	</div>
-
-	{{if auth.user:}}
-	<div class="navbar-javelin-side">
-		<ul class="nav navbar-nav javelin-nav">
-			<li ng-class="{active: $location.url() == '/people'}">
-				<a href="/#/people">
-					<span class="green-border"><span class="pe-7s-users pe-3x"></span> People</span>
-				</a>
-			</li>
-			<li ng-class="{active: $location.url() == '/groups'}">
-				<a href="/#/groups">
-					<span class="red-border"><span class="pe-7s-network pe-3x"></span> Groups</span>
-				</a>
-			</li>
-			<li ng-class="{active: $location.url() == '/events'}">
-				<a href="/#/events">
-					<span class="purple-border"><span class="pe-7s-date pe-3x"></span> Events</span>
-				</a>
-			</li>
-			<li ng-class="{active: $location.url() == '/messages'}">
-				<a href="/#/messages">
-					<span class="yellow-border"><span class="pe-7s-comment pe-3x"></span> Messages</span>
-				</a>
-			</li>
-		</ul>
-	</div>
-
-	<div class="navbar navbar-default navbar-javelin-inner">
-		<button class="navbar-btn sidebar-btn navbar-toggle">
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-		</button>
-		<h4 class="navbar-text">{[controllerName]}</h4>
-	</div>
-
-	{{pass}}
+	<core-drawer-panel>
+		<div drawer></div>
+		<div main>
+			<core-toolbar>
+				<div class="icon-container">
+					<img src="{{=URL('static', 'images/javelin-icon-v2.svg')}}" height="50">
+				</div>
+			</core-toolbar>
+		</div>
+	</core-drawer-panel>
 
 	<div class="javelin-main">
 		{{include}}
 	</div>
-
-	<!-- <footer>
-		<div class="container">
-			<ul class="footer-links">
-				<li class="pull-right"><span>© {{=request.now.year}} Jacobson and Varni</span></li>
-				<li><span>Currently {{='v2.0.0-beta'}}</span></li>
-				<li><a href="/bugs">Bugs</a></li>
-				<li><a href="/forms">Forms</a></li>
-				<li><a href="/studybuddies">Study Buddies</a></li>
-				<li><a href="/changelog">Changelog</a></li>
-			</ul>
-		</div>
-	</footer> -->
 	
 	<!--===============-->
 	<!--=== SCRIPTS ===-->
@@ -198,10 +110,10 @@
 	<script src="{{=URL('static', 'bower_components/underscore/underscore.js')}}"></script>
 
 	<!-- APP -->
-	<script src="{{=URL('static', 'js/app/main.js')}}"></script>
-	<script src="{{=URL('static', 'js/app/controllers.js')}}"></script>
-	<script src="{{=URL('static', 'js/app/directives.js')}}"></script>
-	<script src="{{=URL('static', 'js/app/factories.js')}}"></script>
+	<!-- <script src="{{=URL('static', 'js/app/main.js')}}"></script>
+	// <script src="{{=URL('static', 'js/app/controllers.js')}}"></script>
+	// <script src="{{=URL('static', 'js/app/directives.js')}}"></script>
+	// <script src="{{=URL('static', 'js/app/factories.js')}}"></script> -->
 
 
 	<script type="text/javascript">
@@ -222,8 +134,6 @@
 	}
 
 	$(function() {
-
-
 		{{if response.flash:}}
 		notify("info", "{{=response.flash}}");
 		{{pass}}
@@ -237,19 +147,6 @@
 			$('body').removeClass('side-open');
 			$('.navbar-javelin-side').removeClass('side-open');
 		});
-
-		// var offset = $('.navbar-javelin-side li.active .fa').offset();
-		// $('.arrow').css({top: offset.top - 60});
-
-		// $('.navbar-javelin-side ul.javelin-nav li a').on('click', function(ev) {
-		// 	// $('.arrow').animate({top: "78px"}, 500);
-		// 	var offset = $(ev.currentTarget).find('.fa').offset();
-		// 	$('.arrow').animate({top: offset.top - 60}, 300);
-		// });
-
-		// $('a.dropdown-toggle').on('click', function(e) {
-		// 	e.preventDefault();
-		// });
 	});
 	</script>
 	<!--SCRIPTS END-->

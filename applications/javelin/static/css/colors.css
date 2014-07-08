@@ -1,0 +1,59 @@
+body {
+	color: #2C3E50;
+}
+
+.red {
+	background-color: #E74C3C;
+	color: #FFF;
+}
+
+.blue {
+	background-color: #3498DB;
+	color: #FFF;
+}
+
+.green {
+	background-color: #2ECC71;
+	color: #FFF;
+}
+
+.teal {
+	background-color: #1ABC9C;
+	color: #FFF;
+}
+
+.purple {
+	background-color: #9B59B6;
+	color: #FFF;
+}
+
+.black,
+.inverted {
+	background-color: #34495E;
+	color: #FFF;
+}
+
+.orange {
+	background-color: #E67E22;
+	color: #FFF;
+}
+
+.light-gray {
+	background-color: #ECF0F1;
+	color: #7F8C8D;
+}
+
+.btn {
+	background-color: #ECF0F1;
+	color: #7F8C8D;
+}
+
+.dark-gray {
+	background-color: #95A5A6;
+	color: #FFF;
+}
+
+.yellow, .gold {
+	background-color: #F1C40F;
+	color: #FFF;
+}

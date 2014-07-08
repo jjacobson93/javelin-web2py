@@ -1,0 +1,79 @@
+{{extend 'layout.html'}}
+
+<div class="jumbotron javelin-background">
+	<h1 class="fade-in">
+		<img class="javelin-icon" src="{{=URL('static', '/images/javelin-icon-v2.svg')}}"> Javelin
+		<p class="overview">A sleek, intuitive, and piercing web application for community management and organization.</p>
+		<p class="read-more" onclick="javascript:scrollToInfo()">
+			Read More
+			<i class="fa fa-chevron-down"></i>
+		</p>
+	</h1>
+</div>
+
+<section class="marketing">
+	<div class="container">
+		<!-- START THE FEATURETTES -->
+
+		<!-- <hr class="featurette-divider"> -->
+
+		<div class="row featurette">
+			<div class="col-md-7">
+			  <h2 class="featurette-heading">Integration. <span class="text-muted">A community connected.</span></h2>
+			  <p class="lead">The tools Javelin provides will help give your community a sense of connection and inclusion, allowing the members of your community to feel a sense of purpose. Not only will your community be integrated, but with Javelin's web app, you can integrate your community technologically.</p>
+			</div>
+			<div class="col-md-5">
+			  <img class="featurette-image img-responsive" src="{{=URL('static', '/images/flatui-icons/svg/map.svg')}}">
+			</div>
+		</div>
+
+		<hr class="featurette-divider">
+
+		<div class="row featurette">
+			<div class="col-md-7 col-md-push-5">
+			  <h2 class="featurette-heading">Sustainability. <span class="text-muted">The future counts.</span></h2>
+			  <p class="lead">In a world where techniques and perceptions are constantly changing, Javelin makes it easy to create a community that will last. With Javelin, we aren't trying to fit the mold, we're trying to break the mold.</p>
+			</div>
+			<div class="col-md-5 col-md-pull-7">
+			  <img class="featurette-image img-responsive" src="{{=URL('static', '/images/flatui-icons/svg/pencils.svg')}}">
+			</div>
+		</div>
+
+		<hr class="featurette-divider">
+
+		<div class="row featurette">
+			<div class="col-md-7">
+			  <h2 class="featurette-heading">Expansive. <span class="text-muted">Beyond the Scope.</span></h2>
+			  <p class="lead">There are many types of communities out there, but Javelin covers all the major aspects in order to provide you with the tools you need to establish your community and watch it grow. Javelin even allows you to expand the scope with alternative modules and add-ons.</p>
+			</div>
+			<div class="col-md-5">
+			  <img class="featurette-image img-responsive" src="{{=URL('static', '/images/flatui-icons/svg/compas.svg')}}">
+			</div>
+		</div>
+
+		<hr class="featurette-divider">
+
+		<div class="row featurette">
+			<div class="col-md-7 col-md-push-5">
+			  <h2 class="featurette-heading">Innovative. <span class="text-muted">The Community of Tomorrow.</span></h2>
+			  <p class="lead">For a community to be strong and prosper, it needs to be given the support of new and exciting techniques—not techniques that were developed in the 1990s. Javelin uses the latest techniques and technology to keep your community established and running smoothly.</p>
+			</div>
+			<div class="col-md-5 col-md-pull-7">
+			  <img class="featurette-image img-responsive" src="{{=URL('static', '/images/flatui-icons/svg/clipboard.svg')}}">
+			</div>
+		</div>
+
+
+
+	<!-- /END THE FEATURETTES -->
+
+	</div>
+</section>
+
+<script type="text/javascript">
+function scrollToInfo() {
+	$('body').animate({
+		scrollTop: $('.marketing').offset().top - 50
+	}, 1000);
+}
+</script>

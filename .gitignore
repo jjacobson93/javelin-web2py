@@ -9,6 +9,7 @@ applications/*/errors
 applications/*/sessions
 applications/*/databases
 applications/*/uploads
+applications/*/static/bower_components
 *.table
 *.log
 tmp/

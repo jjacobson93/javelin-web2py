@@ -1,0 +1,66 @@
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 300;
+  src: url('/static/fonts/opensans/OpenSans-Light-webfont.woff') format('woff'), url('/static/fonts/opensans/OpenSans-Light-webfont.eot') format('eot'), url('/static/fonts/opensans/OpenSans-Light-webfont.svg') format('svg'), url('/static/fonts/opensans/OpenSans-Light-webfont.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: url('/static/fonts/opensans/OpenSans-Regular-webfont.woff') format('woff'), url('/static/fonts/opensans/OpenSans-Regular-webfont.eot') format('eot'), url('/static/fonts/opensans/OpenSans-Regular-webfont.svg') format('svg'), url('/static/fonts/opensans/OpenSans-Regular-webfont.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 600;
+  src: url('/static/fonts/opensans/OpenSans-Semibold-webfont.woff') format('woff'), url('/static/fonts/opensans/OpenSans-Semibold-webfont.eot') format('eot'), url('/static/fonts/opensans/OpenSans-Semibold-webfont.svg') format('svg'), url('/static/fonts/opensans/OpenSans-Semibold-webfont.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 700;
+  src: url('/static/fonts/opensans/OpenSans-Bold-webfont.woff') format('woff'), url('/static/fonts/opensans/OpenSans-Bold-webfont.eot') format('eot'), url('/static/fonts/opensans/OpenSans-Bold-webfont.svg') format('svg'), url('/static/fonts/opensans/OpenSans-Bold-webfont.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 800;
+  src: url('/static/fonts/opensans/OpenSans-Extrabold-webfont.woff') format('woff'), url('/static/fonts/opensans/OpenSans-Extrabold-webfont.eot') format('eot'), url('/static/fonts/opensans/OpenSans-Extrabold-webfont.svg') format('svg'), url('/static/fonts/opensans/OpenSans-Extrabold-webfont.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-weight: 300;
+  src: url('/static/fonts/opensans/OpenSans-LightItalic-webfont.woff') format('woff'), url('/static/fonts/opensans/OpenSans-LightItalic-webfont.eot') format('eot'), url('/static/fonts/opensans/OpenSans-LightItalic-webfont.svg') format('svg'), url('/static/fonts/opensans/OpenSans-LightItalic-webfont.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-weight: 400;
+  src: url('/static/fonts/opensans/OpenSans-Italic-webfont.woff') format('woff'), url('/static/fonts/opensans/OpenSans-Italic-webfont.eot') format('eot'), url('/static/fonts/opensans/OpenSans-Italic-webfont.svg') format('svg'), url('/static/fonts/opensans/OpenSans-Italic-webfont.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-weight: 600;
+  src: url('/static/fonts/opensans/OpenSans-SemiboldItalic-webfont.woff') format('woff'), url('/static/fonts/opensans/OpenSans-SemiboldItalic-webfont.eot') format('eot'), url('/static/fonts/opensans/OpenSans-SemiboldItalic-webfont.svg') format('svg'), url('/static/fonts/opensans/OpenSans-SemiboldItalic-webfont.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-weight: 700;
+  src: url('/static/fonts/opensans/OpenSans-BoldItalic-webfont.woff') format('woff'), url('/static/fonts/opensans/OpenSans-BoldItalic-webfont.eot') format('eot'), url('/static/fonts/opensans/OpenSans-BoldItalic-webfont.svg') format('svg'), url('/static/fonts/opensans/OpenSans-BoldItalic-webfont.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-weight: 800;
+  src: url('/static/fonts/opensans/OpenSans-ExtraboldItalic-webfont.woff') format('woff'), url('/static/fonts/opensans/OpenSans-ExtraboldItalic-webfont.eot') format('eot'), url('/static/fonts/opensans/OpenSans-ExtraboldItalic-webfont.svg') format('svg'), url('/static/fonts/opensans/OpenSans-ExtraboldItalic-webfont.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Big Noodle';
+  font-style: oblique;
+  src: url("/static/fonts/big_noodle_titling_oblique.ttf") format("truetype");
+}

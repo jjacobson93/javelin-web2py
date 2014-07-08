@@ -89,7 +89,7 @@ def user():
         if not 'request_reset_password' in auth.settings.actions_disabled:
             form[0].append(DIV(A('Lost your password?', _href=URL(args='request_reset_password'))))
     elif request.args(0) == 'logout':
-        return auth.logout(next=URL('default', 'index', anchor='/login'))
+        return auth.logout(next=URL('default', 'index'))
     else:
         redirect(URL('default', 'index'))
 

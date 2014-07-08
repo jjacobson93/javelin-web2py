@@ -45,7 +45,7 @@ app.config(['$routeProvider', '$locationProvider',
 		})
 
 		.otherwise({
-			redirectTo: '/login'
+			redirectTo: '/'
 		});
 	}
 ]);

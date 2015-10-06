@@ -118,17 +118,19 @@
 
 	&:hover,
 	&:focus {
-		background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0.08)));
-		background-image: -webkit-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.08));
-		background-image: -moz-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.08));
-		background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.08));
+		// background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0.08)));
+		// background-image: -webkit-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.08));
+		// background-image: -moz-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.08));
+		// background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.08));
 		// color: rgba(0, 0, 0, 0.7);
+		background-color: darken(#ECF0F1, 3%);
 		outline: none;
 	}
 
 	&.active:hover,
 	&:active:hover, {
-		background-image: none;
+		// background-image: none;
+		background-color: #BDC3C7;
 	}
 
 	&.navbar-btn {
@@ -149,6 +151,13 @@
 	color: #7F8C8D;
 }
 
+.default.btn-group .btn:hover,
+.default.btn:hover,
+.default.btn.navbar-btn:hover {
+	background-color: darken(#ECF0F1, 3%);
+	color: #7F8C8D;
+}
+
 /*--- Black ---*/
 .black.btn-group .btn,
 .black.btn,
@@ -160,7 +169,7 @@
 .black.btn:hover,
 .black.btn-group .btn.navbar-btn:hover,
 .black.btn.navbar-btn:hover {
-  background-color: darken(@black-color, 2%);
+  background-color: darken(@black-color, 3%);
   color: #FFFFFF;
 }
 .black.btn-group .btn:active,
@@ -181,7 +190,7 @@
 .green.btn:hover,
 .green.btn-group .btn.navbar-btn:hover,
 .green.btn.navbar-btn:hover {
-  background-color: lighten(@green-color, 2%);
+  background-color: lighten(@green-color, 3%);
   color: #FFFFFF;
 }
 .green.btn-group .active.btn,
@@ -206,7 +215,7 @@
 .red.btn:hover,
 .red.btn-group .btn.navbar-btn:hover,
 .red.btn.navbar-btn:hover {
-  background-color: lighten(@red-color, 2%);
+  background-color: lighten(@red-color, 3%);
   color: #FFFFFF;
 }
 .red.btn-group .btn:active,
@@ -231,7 +240,7 @@
 .orange.btn:hover,
 .orange.btn-group .btn.navbar-btn:hover,
 .orange.btn.navbar-btn:hover {
-  background-color: lighten(@orange-color, 2%);
+  background-color: lighten(@orange-color, 3%);
   color: #FFFFFF;
 }
 .orange.btn-group .btn:active,
@@ -256,7 +265,7 @@
 .blue.btn:hover,
 .blue.btn-group .btn.navbar-btn:hover,
 .blue.btn.navbar-btn:hover {
-  background-color: lighten(@blue-color, 2%);
+  background-color: lighten(@blue-color, 3%);
   color: #FFFFFF;
 }
 .blue.btn-group .btn:active,
@@ -281,7 +290,7 @@
 .purple.btn:hover,
 .purple.btn-group .btn.navbar-btn:hover,
 .purple.btn.navbar-btn:hover {
-  background-color: darken(@purple-color, 2%);
+  background-color: darken(@purple-color, 3%);
   color: #FFFFFF;
 }
 .purple.btn-group .btn:active,
@@ -306,7 +315,7 @@
 .teal.btn:hover,
 .teal.btn-group .btn.navbar-btn:hover,
 .teal.btn.navbar-btn:hover {
-  background-color: darken(@teal-color, 2%);
+  background-color: darken(@teal-color, 3%);
   color: #FFFFFF;
 }
 .teal.btn-group .btn:active,

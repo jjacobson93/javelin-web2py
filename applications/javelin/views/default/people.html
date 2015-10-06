@@ -1,1 +1,115 @@
-<div ng-jtable="personTable"></div>
+<div javelin-navbar>
+	<a href="/#/people" class="navbar-link ng-fadeinoutleft" ng-show="state.current.name=='people.detail'" style="padding-right: 10px"><span class="fa fa-arrow-left"></span> Back</a>
+	<ol class="breadcrumb">
+		<li ng-class="{active: (state.current.name=='people')}">
+			<a href="/#/people">People</a>
+		</li>
+		<li ng-if="state.current.name == 'people.detail'" class="active">
+			{[ currentPerson.first_name + ' ' + currentPerson.last_name ]}
+		</li>
+	</ol>
+
+	<!-- <h4 class="navbar-text">
+		<a href="/#/people">People</a>
+	</h4>
+	<h4 class="navbar-text" ng-if="state.current.name == 'people.detail'">
+		&nbsp;/&nbsp;
+	</h4> -->
+</div>
+
+<div class="javelin-main" ng-switch="state.current.name" style="position:relative;overflow:hidden">
+	<!-- TABLE -->
+	<div ng-switch-when="people" class="slide-inright-outleft">
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div ng-jtable="personTable"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- DETAIL -->
+	<div ng-switch-when="people.detail" class="slide-inleft-outright">
+		<h2>{[ currentPerson.first_name + ' ' + currentPerson.last_name ]}</h2>
+
+		<div class="panel panel-default panel-tabbed">
+			<tabset>
+				<tab heading="Overview">
+					<div class="row">
+						<div class="form-group col-md-2">
+							<label>Student ID</label>
+							<input ng-model="currentPerson.student_id" class="form-control" type="text" placeholder="Student ID" disabled>
+						</div>
+						<div class="form-group col-md-1">
+							<label>Sex</label>
+							<input ng-model="currentPerson.sex" class="form-control" type="text" placeholder="Sex" disabled>
+						</div>
+						<div class="form-group col-md-3">
+							<label>Phone Number</label>
+							<input ng-model="currentPerson.phone_number" class="form-control" type="text" placeholder="Phone Number">
+						</div>
+						<div class="form-group col-md-3">
+							<label>Cell Number</label>
+							<input ng-model="currentPerson.cell_phone" class="form-control" type="text" placeholder="Cell Number">
+						</div>
+						<div class="form-group col-md-3">
+							<label>Email</label>
+							<input ng-model="currentPerson.email" class="form-control" type="text" placeholder="Email">
+						</div>
+					</div>
+					<div class="row">
+						<div class="form-group col-md-5">
+							<label>Address</label>
+							<input ng-model="currentPerson.address" class="form-control" type="text" placeholder="Address">
+						</div>
+						<div class="form-group col-md-4">
+							<label>City</label>
+							<input ng-model="currentPerson.city" class="form-control" type="text" placeholder="City">
+						</div>
+						<div class="form-group col-md-1">
+							<label>State</label>
+							<input ng-model="currentPerson.state" class="form-control" type="text" placeholder="State">
+						</div>
+						<div class="form-group col-md-2">
+							<label>Zip Code</label>
+							<input ng-model="currentPerson.zip_code" class="form-control" type="text" placeholder="Zip Code">
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="form-group col-md-12">
+							<label>Notes</label>
+							<textarea class="form-control" rows="5" placeholder="Write some notes here"></textarea>
+						</div>
+					</div>
+				</tab>
+				<tab heading="Schedule">
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th>Period</th>
+								<th>Course</th>
+								<th>Instructor</th>
+								<th>Session</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-if="!currentPerson.enrollment">
+								<td colspan="4" style="text-align:center">No Data Available</td>
+							</tr>
+							<tr ng-repeat="enroll in currentPerson.enrollment">
+								<td>{[enroll.section.period]}</td>
+								<td>{[enroll.course.code + ' ' + enroll.course.name]}</td>
+								<td>{[enroll.instructor.first_name + ' ' + enroll.instructor.last_name]}</td>
+								<td>{[enroll.session.name + ' ' + enroll.session.year]}</td>
+							</tr>
+						</tbody>
+					</table>
+				</tab>
+			</tabset>
+		</div>
+	</div>
+</div>

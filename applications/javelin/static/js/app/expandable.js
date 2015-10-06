@@ -30,8 +30,21 @@ app.directive('ngJtable', ['$interpolate', '$http', '$sce', '$timeout', function
 		'		<tbody>\n' +
 		'			<tr ng-if="isLoading" style="text-align:center;font-weight:bold;"><td style="border:none" colspan="' + START + 'columns.length' + END + '"><i class="fa fa-circle-o-notch fa-spin"></i> Loading Data</td></tr>\n' +
 		'			<tr ng-if="rows.length == 0 && !isLoading" style="text-align:center;font-weight:bold;"><td style="border:none" colspan="' + START + 'columns.length' + END + '">No Results</td></tr>\n' +
-		'			<tr ng-repeat="row in rows" ng-click="rowClick(row)">\n' +
+		'			<tr ng-repeat-start="row in rows" ng-class="{\'even-row\': ($index%2 == 0), \'odd-row\': ($index%2 == 1)}" ng-click="rowClick(row)">\n' +
 		'				<td ng-repeat="col in columns" ng-bind-html="\'<span>\' + (row[col.key] || trustAsHtml(col.template)) + \'</span>\'"></td>\n' +
+		'			</tr>\n' +
+		'			<tr ng-repeat-end class="expand-row" ng-if="expandedRow.row == row" style="width: 100%">\n' +
+		'				<td colspan="' + START + 'columns.length' + END + '">\n' +
+		'					<div ng-if="!expandedRow.loaded" style="width:100%;text-align:center;font-weight:bold;"><i class="fa fa-circle-o-notch fa-spin"></i> Loading Data</div>\n' +
+		'					<div ng-if="expandedRow.loaded" style="width:100%">\n' +
+		'						<div ng-if="expandedRow.type == \'form\'">\n' +
+		'							<h3>' + START + 'expandedRow.title' + END + '</h3>\n'+
+		'							' + START + 'expandedRow.data' + END + '\n' +
+		'						</div>\n' +
+		'						<div ng-if="expandedRow.type == \'readable\'">\n' +
+		'						</div>\n' +
+		'					</div>\n' +
+		'				</td>\n' +
 		'			</tr>\n' +
 		'		</tbody>\n' +
 		'	</table>\n' +
@@ -61,12 +74,45 @@ app.directive('ngJtable', ['$interpolate', '$http', '$sce', '$timeout', function
 			$scope.filteredData = [];
 			$scope.rows = [];
 			$scope.isLoading = false;
+			$scope.expandedRow = {
+				row: undefined,
+				data: undefined,
+				type: undefined,
+				title: undefined,
+				loaded: false
+			};
 			$scope.trustAsHtml = $sce.trustAsHtml;
 
 			// Set up row clicking
 			$scope.rowClick = function(row) {
-				if (table.rowClick !== undefined) {
-					table.rowClick(row);
+				$scope.expandedRow.data = undefined;
+				$scope.expandedRow.type = undefined;
+				$scope.expandedRow.title = undefined;
+				$scope.expandedRow.loaded = false;
+			
+				if ($scope.expandedRow.row == row) {
+					$scope.expandedRow.row = undefined;
+				} else {
+					if (table.rowClick != undefined) {
+
+						if (table.rowClick.data != undefined) {
+							table.rowClick.data(row, function(data) {
+								$scope.expandedRow.row = row;
+								$timeout(function() {
+									$scope.expandedRow.data = data.results;
+									$scope.expandedRow.type = data.type;
+									$scope.expandedRow.title = data.title;
+									$scope.expandedRow.loaded = true;
+								}, 2000);
+							});
+						}
+
+						// if (table.rowClick.action != undefined) {
+						// 	table.rowClick.action(row, function(result){
+
+						// 	});
+						// }
+					}
 				}
 			};
 
@@ -161,12 +207,9 @@ app.directive('ngJtable', ['$interpolate', '$http', '$sce', '$timeout', function
 						if (isAMatch) $scope.filteredData.push($scope.data[i]);
 					};
 
-				} else {
-					$scope.filteredData = $scope.data;
+					$scope.pageIndex = 0;
+					pageEntries();
 				}
-
-				$scope.pageIndex = 0;
-				pageEntries();
 			};
 
 			var columnWidths = function() {
@@ -216,127 +259,6 @@ app.directive('ngJtable', ['$interpolate', '$http', '$sce', '$timeout', function
 				$scope.searchValue = val;
 				filterDataAndPageEntries();
 			});
-
-			$scope.$watch('table.resetWidths', function(val) {
-				if (val == true) {
-					table.resetWidths = false;
-					columnWidths();
-				}
-			})
 		}
 	};
-}]);
-
-app.directive('javelinNavbar', ['$interpolate', function($interpolate) {
-	var START = $interpolate.startSymbol();
-	var END = $interpolate.endSymbol();
-	return {
-		template: 	'<div class="navbar-javelin-inner">\n' +
-					'	<button class="btn navbar-btn sidebar-btn navbar-toggle">\n' +
-					'		<span class="icon-bar"></span>\n' +
-					'		<span class="icon-bar"></span>\n' +
-					'		<span class="icon-bar"></span>\n' +
-					'	</button>\n' +
-					'	<div ng-transclude></div>\n'+
-					'</div>\n' +
-					'<script type="text/javascript">\n' +
-					"$(function() {" +
-					"	$('.sidebar-btn').on('click', function() {\n" +
-					"		$('body').toggleClass('side-open');\n" +
-					"		$('.navbar-javelin-inner').toggleClass('side-open');\n" +
-					"		$('.navbar-javelin-side').toggleClass('side-open');\n" +
-					"	});\n" +
-					"	$('.navbar-javelin-side .navbar-nav a').on('click', function() {\n" +
-					"		$('body').removeClass('side-open');\n" +
-					"		$('.navbar-javelin-side').removeClass('side-open');\n" +
-					"	});\n" +
-					"});\n" +
-					"</script>",
-		transclude: true,
-		link: function($scope, $element, attrs) {
-			$scope.controllerName = attrs.controller;
-			$scope.controllerState = attrs.state;
-		}
-	};
-}]);
-
-// app.directive('flatUiSelect')
-
-// app.directive('aDisabled', function ($compile) {
-// 	return {
-// 		restrict: 'A',
-// 		priority: -99999,
-// 		link: function ($scope, $elem, attrs) {
-// 			$scope.$watch(attrs.aDisabled, function (val, oldval) {
-// 				if (!val) {
-// 					$elem.unbind('click');
-// 				} else if (oldval) {
-// 					$elem.bind('click', function () {
-// 						scope.$apply(attrs.ngClick);
-// 					});
-// 				}
-// 			});
-// 		}
-// 	};
-// });
-
-app.directive('aPreventDefault', function() {
-	return {
-		restrict: 'A',
-		priority: -99999,
-		link: function($scope, $elem, attrs) {
-			$elem.on('click', function(e) {
-				e.preventDefault();
-			});
-		}
-	}
-});
-
-app.directive('ajaxForm', ['$http', function($http) {
-	return {
-		restrict: 'A',
-		link: function($scope, $elem, attrs) {
-			var url = undefined;
-			if (attrs.action) {
-				url = attrs.action;
-			} else {
-				url = attrs.ajaxUrl;
-			}
-
-			$scope.submitForm = function(e) {
-				e.preventDefault();
-				$http.post(url, $elem.serialize(), {
-					headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
-				}).success(function(data) {
-					console.log("SUCCESS");
-					console.log(data);
-				}).error(function(data) {
-					console.log("ERROR");
-					console.log(data);
-				});
-			};
-
-			attrs.$set('ng-submit', 'submitForm($event)');
-		}
-	}
-}]);
-
-app.directive('scrollSpy', ['$window', function ($window) {
-	return {
-		restrict: 'A',
-		controller: ['$scope', function($scope) {
-
-		}],
-		link: function($scope, $elem, attrs) {
-			var target = angular.element('#' + attrs.scrollSpy);
-			if (target) {
-				$window.on('scroll', function() {
-					var pos = target.offset().top;
-					if (pos - $window.scrollY <= 0) {
-						
-					}
-				});
-			}
-		}
-	}
 }]);

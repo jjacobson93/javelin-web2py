@@ -1,7 +1,10 @@
-app.factory('PeopleFactory', ['$resource', function($resource) {
+app.factory('PeopleFactory', ['$http', function($http) {
 	return {
-		getPeople: function() {
-			return $resource('/api/people.json').query().$promise;
-		} 
+		get: function(params) {
+			return $http.get('/api/people.json', {params: params});
+		},
+		filter: function(criteria) {
+			return $http.get('/api/people/filter')
+		}
 	}
 }]);

@@ -33,15 +33,32 @@
 	<link rel="stylesheet" href="{{=URL('static', 'bower_components/bootstrap/dist/css/bootstrap.min.css')}}">
 	<link rel="stylesheet" href="{{=URL('static', 'bower_components/font-awesome/css/font-awesome.min.css')}}">
 	<link rel="stylesheet" href="{{=URL('static', 'bower_components/select2/select2.css')}}">
-	<link rel="stylesheet" href="{{=URL('static', 'bower_components/select2/select2-bootstrap.css')}}">
+	<link rel="stylesheet" href="{{=URL('static', 'css/flat-ui-select2.css')}}">
 	<link rel="stylesheet" href="{{=URL('static', 'bower_components/fullcalendar/fullcalendar.css')}}">
+	<link rel="stylesheet" href="{{=URL('static', 'bower_components/angular-bootstrap-toggle-switch/style/bootstrap3/angular-toggle-switch-bootstrap-3.css')}}">
+	<link rel="stylesheet/less" href="{{=URL('static', 'css/flat-ui-switch.less')}}">
 	<link rel="stylesheet" href="{{=URL('static', 'css/pe-icon-7-stroke.css')}}">
 	<link rel="stylesheet" href="{{=URL('static', 'css/pe-icon-helper.css')}}">
 	<link rel="stylesheet/less" href="{{=URL('static', 'css/theme.less')}}">
 	<link rel="stylesheet" href="{{=URL('static', 'css/colors.css')}}">
 	<link rel="stylesheet" href="{{=URL('static', 'css/fonts.css')}}">
-	<link rel="stylesheet/less" href="{{=URL('static', 'css/style.less')}}">
+	<link rel="stylesheet" href="{{=URL('static', 'bower_components/animate.css/animate.min.css')}}">
+	<!-- LESS -->
 	<link rel="stylesheet/less" href="{{=URL('static', 'css/variables.less')}}">
+	<link rel="stylesheet/less" href="{{=URL('static', 'css/style.less')}}">
+	<link rel="stylesheet/less" href="{{=URL('static', 'css/animations.less')}}">
+	<link rel="stylesheet/less" href="{{=URL('static', 'css/typography.less')}}">
+	<link rel="stylesheet/less" href="{{=URL('static', 'css/login.less')}}">
+	<link rel="stylesheet/less" href="{{=URL('static', 'css/navigation.less')}}">
+	<link rel="stylesheet/less" href="{{=URL('static', 'css/marketing.less')}}">
+	<link rel="stylesheet/less" href="{{=URL('static', 'css/notifications.less')}}">
+	<link rel="stylesheet/less" href="{{=URL('static', 'css/form.less')}}">
+	<link rel="stylesheet/less" href="{{=URL('static', 'css/tables.less')}}">
+	<link rel="stylesheet/less" href="{{=URL('static', 'css/panels.less')}}">
+	<link rel="stylesheet/less" href="{{=URL('static', 'css/tabs.less')}}">
+	<link rel="stylesheet/less" href="{{=URL('static', 'css/people.less')}}">
+	<link rel="stylesheet/less" href="{{=URL('static', 'css/groups.less')}}">
+	<link rel="stylesheet/less" href="{{=URL('static', 'css/events.less')}}">
 	<!-- STYLES END -->
 
 	{{if not auth.user:}}
@@ -119,43 +136,37 @@
 	{{if auth.user:}}
 	<div class="navbar-javelin-side">
 		<ul class="nav navbar-nav javelin-nav">
-			<li ng-class="{active: $location.url() == '/people'}">
+			<li ng-class="{active: $state.current.name.split('.')[0] == 'people'}">
 				<a href="/#/people">
 					<span class="green-border"><span class="pe-7s-users pe-3x"></span> People</span>
 				</a>
 			</li>
-			<li ng-class="{active: $location.url() == '/groups'}">
+			<li ng-class="{active: $state.current.name.split('.')[0] == 'groups'}">
 				<a href="/#/groups">
 					<span class="red-border"><span class="pe-7s-network pe-3x"></span> Groups</span>
 				</a>
 			</li>
-			<li ng-class="{active: $location.url() == '/events'}">
+			<li ng-class="{active: $state.current.name.split('.')[0] == 'events'}">
 				<a href="/#/events">
 					<span class="purple-border"><span class="pe-7s-date pe-3x"></span> Events</span>
 				</a>
 			</li>
-			<li ng-class="{active: $location.url() == '/messages'}">
-				<a href="/#/messages">
-					<span class="yellow-border"><span class="pe-7s-comment pe-3x"></span> Messages</span>
+			<li ng-class="{active: $state.current.name.split('.')[0] == 'tutoring'}">
+				<a href="/#/tutoring">
+					<span class="orange-border"><span class="pe-7s-notebook pe-3x"></span> Tutoring</span>
+				</a>
+			</li>
+			<li ng-class="{active: $state.current.name.split('.')[0] == 'admin'}">
+				<a href="/#/admin">
+					<span class="yellow-border"><span class="pe-7s-tools pe-3x"></span> Admin</span>
 				</a>
 			</li>
 		</ul>
 	</div>
 
-	<div class="navbar navbar-default navbar-javelin-inner">
-		<button class="navbar-btn sidebar-btn navbar-toggle">
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-		</button>
-		<h4 class="navbar-text">{[controllerName]}</h4>
-	</div>
-
 	{{pass}}
 
-	<div class="javelin-main">
-		{{include}}
-	</div>
+	{{include}}
 
 	<!-- <footer>
 		<div class="container">
@@ -185,7 +196,11 @@
 	<script src="{{=URL('static', 'bower_components/angular-route/angular-route.min.js')}}"></script>
 	<script src="{{=URL('static', 'bower_components/angular-resource/angular-resource.min.js')}}"></script>
 	<script src="{{=URL('static', 'bower_components/angular-sanitize/angular-sanitize.min.js')}}"></script>
+	<script src="{{=URL('static', 'bower_components/angular-animate/angular-animate.min.js')}}"></script>
 	<script src="{{=URL('static', 'bower_components/angular-ui-bootstrap/dist/ui-bootstrap-tpls-0.11.0.min.js')}}"></script>
+	<script src="{{=URL('static', 'bower_components/angular-ui-router/release/angular-ui-router.min.js')}}"></script>
+	<script src="{{=URL('static', 'bower_components/angular-bootstrap-toggle-switch/angular-toggle-switch.min.js')}}"></script>
+	<script src="{{=URL('static', 'bower_components/angular-scroll/angular-scroll.min.js')}}"></script>
 	<!-- Select2 -->
 	<script src="{{=URL('static', 'bower_components/select2/select2.min.js')}}"></script>
 	<script src="{{=URL('static', 'bower_components/angular-ui-select2/src/select2.js')}}"></script>
@@ -199,44 +214,32 @@
 
 	<!-- APP -->
 	<script src="{{=URL('static', 'js/app/main.js')}}"></script>
-	<script src="{{=URL('static', 'js/app/controllers.js')}}"></script>
+	<script src="{{=URL('static', 'js/app/util.js')}}"></script>
+	<!-- CONTROLLERS -->
+	<script src="{{=URL('static', 'js/app/controllers/main.js')}}"></script>
+	<script src="{{=URL('static', 'js/app/controllers/dashboard.js')}}"></script>
+	<script src="{{=URL('static', 'js/app/controllers/people.js')}}"></script>
+	<script src="{{=URL('static', 'js/app/controllers/groups.js')}}"></script>
+	<script src="{{=URL('static', 'js/app/controllers/events.js')}}"></script>
+	<script src="{{=URL('static', 'js/app/controllers/tutoring.js')}}"></script>
+	<script src="{{=URL('static', 'js/app/controllers/admin.js')}}"></script>
+	<script src="{{=URL('static', 'js/app/controllers/messages.js')}}"></script>
+	<!-- DIRECTIVES -->
 	<script src="{{=URL('static', 'js/app/directives.js')}}"></script>
+	<!-- FACTORIES -->
 	<script src="{{=URL('static', 'js/app/factories.js')}}"></script>
+	<!-- SERVICES -->
+	<script src="{{=URL('static', 'js/app/services.js')}}"></script>
 
 
 	<script type="text/javascript">
-	function notify(status, text) {
-		if (status == "error") {
-			$('.notification').removeClass('blue');
-			$('.notification').addClass('yellow');
-		} else {
-			$('.notification').removeClass('yellow');
-			$('.notification').addClass('blue');
-		}
-
-		$('.notification .overlay p').html('<i class="fa fa-exclamation-triangle"></i> ' + text);
-		$('.notification').animate({right: "20px"}, 500);
-		setTimeout(function() {
-			$('.notification').animate({right: "-30%"}, 500);
-		}, 4000);
-	}
 
 	$(function() {
 
 
 		{{if response.flash:}}
-		notify("info", "{{=response.flash}}");
+		notify("{{='info' if not isinstance(response.flash, dict) else response.flash['status'] or 'info'}}", "{{=response.flash['message'] if isinstance(response.flash, dict) else response.flash}}");
 		{{pass}}
-
-		$('.sidebar-btn').on('click', function() {
-			$('body').toggleClass('side-open');
-			$('.navbar-javelin-side').toggleClass('side-open');
-		});
-
-		$('.navbar-javelin-side .navbar-nav a').on('click', function() {
-			$('body').removeClass('side-open');
-			$('.navbar-javelin-side').removeClass('side-open');
-		});
 
 		// var offset = $('.navbar-javelin-side li.active .fa').offset();
 		// $('.arrow').css({top: offset.top - 60});

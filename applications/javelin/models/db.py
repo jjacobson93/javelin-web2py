@@ -6,6 +6,10 @@
 from gluon import current
 import phonenumbers
 
+# import psycopg2
+# from gluon.dal import PostgresAdapter
+# PostgresAdapter.driver = psycopg2
+
 db = DAL('postgres://jjacobson:test@localhost/javelin',pool_size=1,check_reserved=['postgres'])
 current.db = db
 
@@ -43,11 +47,18 @@ auth.settings.register_verify_password = False
 from javelin_utils import IS_PHONE_NUMBER, IS_ALPHA
 
 db.define_table('person',
-	Field('student_id', 'integer', notnull=True, required=True),
+	Field('student_id', 'integer'),
 	Field('last_name', 'string', notnull=True, required=True, requires=IS_ALPHA()),
 	Field('first_name', 'string', notnull=True, required=True, requires=IS_ALPHA()),
-	Field('grade', 'integer', default=0),
-	Field('phone_number', 'string', requires=IS_PHONE_NUMBER()),
+	Field('sex', 'string', requires=IS_IN_SET(['M', 'F'])),
+	Field('grad_year', 'integer'),
+	Field('address', 'string'),
+	Field('city', 'string'),
+	Field('state', 'string'),
+	Field('zip_code', 'string'),
+	Field('phone_number', 'string', requires=IS_EMPTY_OR(IS_PHONE_NUMBER())),
+	Field('cell_number', 'string', requires=IS_EMPTY_OR(IS_PHONE_NUMBER())),
+	Field('email', 'string'),
 	Field('picture', 'upload'))
 
 auth.settings.extra_fields['auth_user'] = [
@@ -59,7 +70,10 @@ auth.define_tables(username=False, signature=False)
 
 db.define_table('groups',
 	Field('name', 'string', notnull=True, required=True, unique=True),
-	Field('description', 'text'))
+	Field('description', 'text'),
+	Field('permission', 'string', notnull=True, required=True, requires=IS_IN_SET(['user', 'admin', 'teachers', 'all'])),
+	Field('is_smart', 'boolean', notnull=True, default=False),
+	Field('criteria', 'json'))
 
 db.define_table('group_member',
 	Field('group_id', 'reference groups', notnull=True, required=True, requires=IS_IN_DB(db, db.groups, '%(name)s')),
@@ -80,8 +94,44 @@ db.define_table('attendance',
 	Field('person_id', 'reference person', notnull=True, required=True, requires=IS_IN_DB(db, db.person, '%(last_name)s, %(first_name)s')),
 	Field('attend_time', 'datetime'), notnull=True, required=True, default=request.utcnow)
 
-# from gluon.dal import Rows
-# from javelin_utils import resolve_refs
-# Rows.resolve_refs = resolve_refs
+# SCHOOL SPECIFIC
+db.define_table('department', 
+	Field('name', 'string', notnull=True, required=True))
 
-# from api import v1 as api
+db.define_table('course',
+	Field('name', 'string', notnull=True, required=True),
+	Field('code', 'string', notnull=True, required=True),
+	Field('department_id', 'reference department', notnull=True, required=True, requires=IS_IN_DB(db, db.department, '%(name)s')),
+	format='%(name)s (%(code)s)')
+
+db.define_table('session',
+	Field('name', 'string', notnull=True, required=True, requires=IS_IN_SET(['Winter', 'Spring', 'Summer', 'Fall'])),
+	Field('year', 'integer', notnull=True, required=True))
+
+db.define_table('section',
+	Field('identifier', 'integer'),
+	Field('period', 'integer'),
+	Field('course_id', 'reference course', notnull=True, required=True, requires=IS_IN_DB(db, db.course, '%(name)s (%(code)s)')),
+	Field('session_id', 'reference session', notnull=True, required=True, requires=IS_IN_DB(db, db.session, '%(name)s %(year)s')))
+
+db.define_table('enrollment',
+	Field('person_id', 'reference person', notnull=True, required=True, requires=IS_IN_DB(db, db.person, '%(last_name)s, %(first_name)s')),
+	Field('section_id', 'reference section', notnull=True, required=True, requires=IS_IN_DB(db, db.section)))
+
+db.define_table('instructor',
+	Field('person_id', 'reference person', notnull=True, required=True, requires=IS_IN_DB(db, db.person, '%(last_name)s, %(first_name)s')),
+	Field('section_id', 'reference section', notnull=True, required=True, requires=IS_IN_DB(db, db.section)))
+	
+db.define_table('transcript',
+	Field('enrollment_id', 'reference enrollment', notnull=True, required=True),
+	Field('first_grade', 'string'),
+	Field('second_grade', 'string'),
+	Field('final_grade', 'string'))
+
+db.define_table('tutoring_subject',
+	Field('title', 'string', notnull=True, required=True),
+	Field('department_id', 'reference department'))
+
+db.define_table('tutoring_attendance',
+	Field('person_id', 'reference person'),
+	Field('subject_id', 'reference tutoring_subject'))

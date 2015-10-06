@@ -33,6 +33,9 @@ header.navbar-javelin {
 </section>
 
 <script language="javascript">
+$(function() {
+	$("form input:visible:enabled:first").focus();
+});
 <!--
 // jQuery("#web2py_user_form input:visible:enabled:first").focus();
 // {{if request.args(0)=='register':}}

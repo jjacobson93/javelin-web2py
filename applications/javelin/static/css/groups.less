@@ -1,0 +1,76 @@
+@import "variables.less";
+
+.create-group-modal label {
+	vertical-align: middle;
+	margin-bottom: 0;
+	&:not(:last-child) {
+		margin-right: 10px;
+	}
+}
+
+a.criterion-delete {
+	text-decoration: none;
+
+	& span[class^="pe-7s-"] {
+		color: @dark-lightgray-color;
+		-webkit-transition: color 0.2s;
+		-moz-transition: color 0.2s;
+		-o-transition: color 0.2s;
+		transition: color 0.2s;
+	}
+
+	&:hover {
+		& span[class^="pe-7s-"] {
+			color: @red-color;
+		}
+	}
+}
+
+a.criterion-add {
+	text-decoration: none;
+
+	& span[class^="pe-7s-"] {
+		color: @dark-lightgray-color;
+		-webkit-transition: color 0.2s;
+		-moz-transition: color 0.2s;
+		-o-transition: color 0.2s;
+		transition: color 0.2s;
+	}
+
+	&:hover {
+		& span[class^="pe-7s-"] {
+			color: @green-color;
+		}
+	}
+}
+
+.filters {
+	& > .filter-group {
+		float: none;
+		padding-right: 104px; 
+
+		&:not(:last-child) {
+			margin-bottom: 15px;
+		}
+
+		& > * {
+			float: left;
+			padding-right: 6px;
+			padding-left: 6px;
+		}
+
+		& > *:first-child {
+			padding-left: 15px;
+		}
+
+		& > *:last-child {
+			padding-right: 15px;
+		}
+
+		& > .add-delete {
+			position: absolute;
+			right: 0;
+			width: 104px;
+		}
+	}
+}

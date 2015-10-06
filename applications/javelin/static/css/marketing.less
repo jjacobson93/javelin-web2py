@@ -1,0 +1,93 @@
+@import "variables.less";
+
+/*** MARKETING ***/
+
+.jumbotron.javelin-background {
+	top: 66px;
+	position: fixed; 
+	z-index: 1;
+	width: 100%;
+	background-color: #FFF;
+	background-image: url('/static/images/landscape_colorized2_blurred.png');
+	background-position: center center;
+	background-size: cover;
+	padding: 0;
+	height: 40vw;
+	text-align: center;
+	// -webkit-filter: blur(2px);
+    // -moz-filter: blur(2px);
+    // -o-filter: blur(2px);
+    // -ms-filter: blur(2px);
+    // filter: blur(2px);
+
+    & h1 {
+    	font-family: 'Big Noodle';
+    	font-style: oblique;
+    	font-size: 120px;
+    	font-size: 20vw;
+    	z-index: 1000;
+    	margin: 0;
+    	line-height: 30vw;
+    	// color: black;
+    	background-color: rgba(255, 255, 255, 0.25);
+
+    	& p.read-more {
+    		position: relative;
+    		top: -3vw;
+    		font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    		font-size: 2.5vw;
+    		font-style: normal;
+    		font-weight: 400;
+    		line-height: 4vw;
+    		// border: 2px solid @black-color;
+    		border-radius: 35px;
+    		margin: 0 auto;
+			width: 20vw;
+			padding: 0.5vw 1.2vw;
+			background-color: @javelin-color;
+			color: #FFF;
+
+			&:hover {
+				background-color: #FFF;
+				color: @javelin-color;
+				cursor: pointer;
+			}
+    	}
+
+    	& p.overview {
+    		position: relative;
+    		margin: 0 auto;
+    		width: 50%;
+    		line-height: 2.7vw;
+    		top: -4vw;
+    		font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    		font-style: normal;
+    		font-size: 2vw;
+    		color: #FFF;
+    		text-shadow: 0 0 12px #000;
+    	}
+    }
+
+    & img.javelin-icon {
+    	height: 20vw;
+    	// background: -webkit-radial-gradient(50% 0%, 50% 5px, #aaa 0%, transparent 100%);
+    	// border-radius: 99em;
+    	// box-shadow: 0px 0px 10px 3px rgba(0, 0, 0, 0.5), inset 0px 0px 10px 3px rgba(0, 0, 0, 0.5);
+    	// -webkit-filter: drop-shadow(12px 12px 25px rgba(0,0,0,0.5));
+    	// filter: url('/static/images/shadow.svg#drop-shadow');
+    }
+}
+
+section.marketing {
+	box-shadow: 0px -15px 15px -15px;
+	margin-top: 40vw;
+	padding: 40px 0;
+	position: relative;
+	z-index: 10;
+	background-color: #FFF;
+}
+
+.featurette-image {
+	width: 70%;
+	margin: 10px auto;
+}

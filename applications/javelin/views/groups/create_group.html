@@ -1,0 +1,150 @@
+<div class="create-group-modal">
+	<div class="modal-header">
+		<h3 class="modal-title">Create Group</h3>
+	</div>
+	<div class="modal-body">
+		<div class="form-group">
+			<p class="thin">Group Name</p>
+			<input type="text" class="form-control" placeholder="Group Name" ng-model="group.name">
+		</div>
+		<div class="form-group">
+			<label class="thin">SMART Group</label>
+			<input toggle-switch model="group.is_smart">
+		</div>
+		<div class="form-group">
+			<label class="thin">Permissions</label>
+			<label>
+				<input type="radio" name="permissions-radio" ng-model="group.permission" value="user"> Only You
+			</label>
+			<label>
+				<input type="radio" name="permissions-radio" ng-model="group.permission" value="admin"> Admin
+			</label>
+			<label>
+				<input type="radio" name="permissions-radio" ng-model="group.permission" value="teachers"> Teachers
+			</label>
+			<label>
+				<input type="radio" name="permissions-radio" ng-model="group.permission" value="all"> All
+			</label>
+		</div>
+
+		<div ng-show="group.is_smart" class="filters form-group">
+			<p class="thin">Criteria</p>
+
+			<!-- CRITERIA -->
+
+			<div class="row filter-group appear-cubic" ng-repeat="criterion in group.criteria">
+				
+				<!-- PROPERTY -->
+				<div class="col-sm-4">
+					<select ui-select2="{minimumResultsForSearch: -1, placeholder: 'Properties'}" ng-model="criterion.property" style="width:100%" ng-change="criterion.value = undefined" class="filled">
+						<option></option>
+						<option ng-repeat="(property, obj) in properties" value="{[property]}">{[obj.name]}</option>
+					</select>
+				</div>
+
+				<!-- VERB -->
+				<div class="col-sm-3" ng-show="criterion.property">
+					<select ui-select2="{minimumResultsForSearch: -1, placeholder: 'Verb'}" ng-model="criterion.verb" style="width:100%" ng-change="criterion.value = undefined" class="filled">
+						<option></option>
+						<option ng-repeat="(verb, obj) in properties[criterion.property].relationships">{[verb]}</option>
+					</select>
+				</div>
+
+				<!-- FOR STRINGS AND NUMBERS (with single value)-->
+				<div class="col-sm-5" 
+					ng-if="properties[criterion.property].relationships[criterion.verb].type == 'text' ||
+							 properties[criterion.property].relationships[criterion.verb].type == 'select'">
+
+					<!-- INPUT FIELD -->
+					<input
+						class="form-control"
+						ng-model="criterion.value"
+						ng-change="valueChanged()"
+						ng-if="properties[criterion.property].relationships[criterion.verb].type == 'text'">
+
+					<!-- SELECT2 FOR OPTIONS -->
+					<select
+						ui-select2="{minimumResultsForSearch: -1, placeholder: 'Value'}"
+						ng-model="criterion.value"
+						ng-change="valueChanged()"
+						ng-if="properties[criterion.property].relationships[criterion.verb].type == 'select' &&
+								 properties[criterion.property].relationships[criterion.verb].options"
+						style="width:100%">
+						<option></option>
+						<option ng-repeat="opt in properties[criterion.property].relationships[criterion.verb].options">{[opt]}</option>
+					</select>
+
+					<!-- SELECT2 FOR URL -->
+					<input
+						type="hidden"
+						ui-select2="selectOptionsForUrl(properties[criterion.property].relationships[criterion.verb].url)"
+						ng-model="criterion.value"
+						ng-change="valueChanged()"
+						ng-if="properties[criterion.property].relationships[criterion.verb].type == 'select' &&
+							   properties[criterion.property].relationships[criterion.verb].url" style="width:100%">
+				</div>
+
+				<!-- NUMBER RANGES -->
+				<div class="col-sm-5" ng-if="properties[criterion.property].relationships[criterion.verb].type == 'range'" ng-init="criterion.value = [undefined, undefined]">
+					<div class="row">
+						<div class="col-sm-5">
+							<!-- INPUT -->
+							<input class="form-control" ng-model="criterion.value[0]" ng-change="valueChanged()" ng-if="!properties[criterion.property].relationships[criterion.verb].options">
+							<!-- SELECT2 -->
+							<select
+								ui-select2="{minimumResultsForSearch: -1, placeholder: 'Value'}"
+								ng-model="criterion.value[0]"
+								ng-change="valueChanged()"
+								ng-if="properties[criterion.property].relationships[criterion.verb].options"
+								style="width:100%">
+								<option></option>
+								<option ng-repeat="opt in properties[criterion.property].relationships[criterion.verb].options[0]">{[opt]}</option>
+							</select>
+						</div>
+
+						<div class="col-sm-2">
+							<span style="line-height:40px">AND</span>
+						</div>
+
+						<div class="col-sm-5">
+							<!-- INPUT -->
+							<input class="form-control" ng-model="criterion.value[1]" ng-change="valueChanged()" ng-if="!properties[criterion.property].relationships[criterion.verb].options">
+							<!-- SELECT2 -->
+							<select
+								ui-select2="{minimumResultsForSearch: -1, placeholder: 'Value'}"
+								ng-model="criterion.value[1]"
+								ng-change="valueChanged()"
+								ng-if="properties[criterion.property].relationships[criterion.verb].options"
+								style="width:100%">
+								<option></option>
+								<option ng-repeat="opt in properties[criterion.property].relationships[criterion.verb].options[1]">{[opt]}</option>
+							</select>
+						</div>
+					</div>
+				</div>
+
+				<div class="add-delete">
+					<a href="#" a-prevent-default class="criterion-add pull-right" ng-click="addCriterion($index)">
+						<span class="pe-7s-plus pe-3x"></span>
+					</a>
+					<a href="#" a-prevent-default class="criterion-delete pull-right" ng-hide="$first && $last" ng-click="deleteCriterion($index)">
+						<span class="pe-7s-less pe-3x"></span>
+					</a>
+				</div>
+				
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="form-group">
+					<p class="thin">Add People</p>
+					<input type="hidden" ui-select2="addPeopleSelectOptions" ng-model="group.people" multiple style="width:100%">
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn" ng-click="cancel()">Cancel</button>
+		<button class="btn green" ng-click="done()">Create Group</button>
+	</div>
+</div>

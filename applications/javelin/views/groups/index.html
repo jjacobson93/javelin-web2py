@@ -1,0 +1,52 @@
+<div javelin-navbar controller="Groups" state="groups">
+	<button class="btn navbar-btn green pull-right" ng-click="openCreateGroupModal()"><i class="fa fa-plus"></i> Create Group</button>
+	<h4 class="navbar-text">Groups</h4>
+</div>
+
+<div class="container-fluid">
+	<div class="row javelin-main">
+		<div class="col-sm-3 col-md-2 sidebar">
+			<ul class="nav nav-sidebar">
+				<li ng-repeat="group in groups">
+					<a a-prevent-default href="#">{[ group.name ]}</a>
+				</li>
+			</ul>
+		</div>
+		<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2" style="padding-left:30px">
+			<h3 ng-if="isLoading">
+				<span class="fa fa-circle-o-notch fa-spin"></span> Loading Data...
+			</h3>
+
+			<h3 ng-if="!isLoading && groups.length == 0">
+				No groups. Click 'Create Group' to add one.
+			</h3>
+
+			<div class="panel panel-default fade-inout-downup" ng-repeat="group in groups" id="group-{[ group.id ]}">
+				<div class="panel-heading">
+					<button class="btn red pull-right" ng-click="openDeleteGroupModal(group, $index)"><span class="fa fa-trash-o"></span> Delete Group</button>
+					<h3>{[ group.name ]}</h3>
+				</div>
+				<div class="panel-body">
+					<table class="table table-striped table-hover">
+						<thead>
+							<tr>
+								<th>Last Name</th>
+								<th>First Name</th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="member in group.members">
+								<td>{[ member.last_name ]}</td>
+								<td>{[ member.first_name ]}</td>
+								<td>
+									<button class="btn btn-xs red">Remove</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

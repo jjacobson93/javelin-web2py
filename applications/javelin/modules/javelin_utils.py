@@ -1,6 +1,14 @@
 from gluon.dal import Row, Rows
 import phonenumbers
 
+try:
+    import simplejson as json_parser                # try external module
+except ImportError:
+    try:
+        import json as json_parser                  # try stdlib (Python >= 2.6)
+    except:
+        import gluon.contrib.simplejson as json_parser    # fallback to pure-Python module
+
 def resolve_refs(self, foreign_key, foreign_table):
 
 	if isinstance(self, Row):
@@ -30,6 +38,14 @@ def custom_json(o):
         return o.as_dict()
     else:
         raise TypeError(repr(o) + " is not JSON serializable")
+
+def json(value, default=custom_json):
+    # replace JavaScript incompatible spacing
+    # http://timelessrepo.com/json-isnt-a-javascript-subset
+    return json_parser.dumps(value,
+        default=default).replace(ur'\u2028',
+                                 '\\u2028').replace(ur'\2029',
+                                                    '\\u2029')
 
 
 class IS_PHONE_NUMBER:

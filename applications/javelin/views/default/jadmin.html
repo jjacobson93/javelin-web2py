@@ -1,0 +1,13 @@
+<div javelin-navbar controller="Admin"></div>
+
+<div class="javelin-main">
+	<button class="btn" ng-click="load()">Load</button>	
+	<table class="table">
+		<tr style="text-align:center" ng-show="!isLoaded">
+			<td>Loading...</td>
+		</tr>
+		<tr style="text-align:center" ng-show="isLoaded">
+			<td>Loaded</td>
+		</tr>
+	</table>
+</div>

@@ -24,10 +24,16 @@
     "datatables": "~1.10.0",
     "angular-datatables": "~0.0.1",
     "angular-ui-select2": "~0.0.5",
-    "angular-ui-calendar": "~0.8.1"
+    "angular-ui-calendar": "~0.8.1",
+    "angular-ui-router": "~0.2.10",
+    "angular-bootstrap-toggle-switch": "~0.5.1",
+    "angular-bootstrap-switch": "~0.3.0",
+    "angular-animate": "~1.2.20",
+    "animate.css": "~3.2.0",
+    "angular-scroll": "~0.6.1"
   },
   "resolutions": {
-    "angular": "1.2.18",
+    "angular": "1.2.20",
     "jquery": "2.1.1",
     "datatables": "~1.10.0",
     "select2": "~3.5.0"

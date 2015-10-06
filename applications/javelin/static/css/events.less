@@ -1,0 +1,80 @@
+@import "variables.less";
+
+/**** EVENTS ****/
+
+.fc-button {
+	min-height: 35px;
+
+	padding: 0.65em 1.5em;
+	text-transform: uppercase;
+	line-height: 1;
+	font-weight: bold;
+	font-style: normal;
+	text-align: center;
+	text-decoration: none;
+	background-color: none;
+
+	background-position: initial;
+
+	background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0.05)));
+
+	background-image: -webkit-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.05));
+
+	background-image: -moz-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.05));
+
+	background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.05));
+
+	cursor: pointer;
+
+	&.fc-button-prev,
+	&.fc-button-next {
+		padding: 0.3em 1.5em;
+	}
+
+	&:hover,
+	&:focus {
+		background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0.08)));
+		background-image: -webkit-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.08));
+		background-image: -moz-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.08));
+		background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.08));
+		// color: rgba(0, 0, 0, 0.7);
+		outline: none;
+	}
+}
+
+.fc-button [class^="pe-7s-"] {
+	line-height: 0.8;
+}
+
+.fc-event {
+	background-color: @blue-color;
+	border: none;
+}
+
+.fc-view {
+	background-color: white;
+}
+
+.fc-today {
+	background-color: @lightgray-color;//rgb(238, 238, 238);
+	font-weight: bold;
+	color: rgb(27,121,243);
+}
+
+.fc-grid {
+	& .fc-day-number {
+		font-weight: 600;
+	}
+}
+
+.fc-widget-header {
+	border-top: 0;
+	border-left: 0;
+	border-right: 0;
+	font-size: 16px;
+	font-weight: 200;
+
+	@media (min-width: 768px) {
+		font-size: 20px
+	}
+}

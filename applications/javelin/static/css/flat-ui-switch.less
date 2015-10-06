@@ -1,0 +1,125 @@
+.ats-switch {
+	border-radius: 30px;
+	display: inline-block;
+	cursor: pointer;
+	line-height: 1.72222;
+	overflow: hidden;
+	position: relative;
+	text-align: left;
+	width: 80px;
+	min-width: 0px;
+	border: 0;
+	// -webkit-mask: url('../images/switch/mask.png') 0 0 no-repeat;
+	// mask: url('../images/switch/mask.png') 0 0 no-repeat;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+
+	&:hover {
+		-webkit-box-shadow: none;
+		box-shadow: none;
+	}
+
+	text-transform: uppercase;
+
+
+	// &.deactivate {
+	// 	opacity: 0.5;
+	// 	filter: alpha(opacity=50);
+	// 	cursor: default !important;
+	// }
+
+	// &.deactivate label,
+	// &.deactivate span {
+	// 	cursor: default !important;
+	// }
+
+	& > div {
+		width: 163%;
+		position: relative;
+		top: 0;
+	}
+
+	& > .switch-animate {
+		-webkit-transition: left 0.25s ease-out;
+		transition: left 0.25s ease-out;
+	}
+
+	& > .switch-off {
+		left: -50px;
+	}
+
+	& > .switch-off .knob {
+		// background-color: #7f8c9a;
+		border-color: #bdc3c7;
+		-webkit-box-shadow: -1px 0 0 rgba(255, 255, 255, 0.5);
+		box-shadow: -1px 0 0 rgba(255, 255, 255, 0.5);
+	}
+
+	& > .switch-on {
+		left: 0;
+	}
+
+	// & > .switch-on .knob {
+	// 	background-color: #FFF;
+	// }
+
+	& input[type=checkbox] {
+		display: none;
+	}
+
+	& span {
+		cursor: pointer;
+		font-size: 15px;
+		font-weight: 700;
+		float: left;
+		height: 29px;
+		line-height: 19px;
+		margin: 0;
+		padding: 0;
+		padding-bottom: 6px;
+		padding-top: 5px;
+		position: relative;
+		text-align: center;
+		width: 50%;
+		z-index: 1;
+		-webkit-transition: 0.25s ease-out;
+		transition: 0.25s ease-out;
+	}
+
+	& span.switch-left {
+		border-radius: 30px 0 0 30px;
+		background-color: #2ECC71;
+		color: #FFF;
+		border-left: 1px solid transparent;
+	}
+
+	& span.switch-right {
+		border-radius: 0 30px 30px 0;
+		background-color: #bdc3c7;
+		color: #ffffff;
+		text-indent: 7px;
+	}
+
+	& span.switch-right [class*="fui-"] {
+		text-indent: 0;
+	}
+
+	& .knob {
+		border: 4px solid #2ECC71;
+		border-radius: 50%;
+		background-color: #FFF;
+		float: left;
+		height: 29px;
+		margin: 0 -15px;
+		padding: 0;
+		position: relative;
+		vertical-align: middle;
+		width: 29px;
+		z-index: 100;
+		-webkit-transition: 0.25s ease-out;
+		transition: 0.25s ease-out;
+	}
+}

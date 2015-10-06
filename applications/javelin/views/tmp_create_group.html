@@ -1,0 +1,105 @@
+<div class="create-group-modal">
+	<div class="modal-header">
+		<h3 class="modal-title">Create Group</h3>
+	</div>
+	<div class="modal-body">
+		<div class="form-group">
+			<label class="thin">SMART Group</label>
+			<input toggle-switch model="isSmart">
+		</div>
+		<div class="form-group">
+			<label class="thin">Permissions</label>
+			<label>
+				<input type="radio" name="permissions-radio" ng-model="permissions" value="user"> Only You
+			</label>
+			<label>
+				<input type="radio" name="permissions-radio" ng-model="permissions" value="admin"> Admin
+			</label>
+			<label>
+				<input type="radio" name="permissions-radio" ng-model="permissions" value="teachers"> Teachers
+			</label>
+			<label>
+				<input type="radio" name="permissions-radio" ng-model="permissions" value="all"> All
+			</label>
+		</div>
+
+		<div ng-show="isSmart" class="filters">
+			<p class="thin">Criteria</p>
+
+			<!-- CRITERIA -->
+
+			<div class="row filter-group appear-cubic" ng-repeat="criterion in criteria">
+
+				<!-- PROPERTY -->
+				<div class="col-sm-4">
+					<select ui-select2="{minimumResultsForSearch: -1, placeholder: 'Properties'}" ng-model="criterion.property" ng-change="propertyChange($index)" style="width:100%">
+						<option></option>
+						<option ng-repeat="property in properties" value="{[property.value]}">{[property.name]}</option>
+					</select>
+				</div>
+
+				<!-- VERB -->
+				<div class="col-sm-3">
+					<select ui-select2="{minimumResultsForSearch: -1, placeholder: 'Verb'}" ng-model="criterion.verb" style="width:100%">
+						<option></option>
+						<option ng-repeat="(verb, obj) in criterion.object.relationships">{[verb]}</option>
+					</select>
+				</div>
+
+				<!-- FOR STRINGS AND NUMBERS (with single value)-->
+				<div class="col-sm-5" ng-show="criterion.object.relationships[criterion.verb].type == 'text' || criterion.object.relationships[criterion.verb].type == 'select'">
+					<!-- INPUT FIELD -->
+					<input class="form-control" ng-model="criterion.value" ng-show="criterion.object.relationships[criterion.verb] == 'text'">
+
+					<!-- SELECT2 FOR OPTIONS -->
+					<select ui-select2="{minimumResultsForSearch: -1, placeholder: 'Value'}" ng-model="criterion.value" ng-show="criterion.object.relationships[criterion.verb].type == 'select' && criterion.object.relationships[criterion.verb].options" style="width:100%">
+						<option></option>
+						<option ng-repeat="opt in criterion.object.options">{[opt]}</option>
+					</select>
+
+					<!-- SELECT2 FOR URL -->
+					<input type="hidden" ui-select2="selectOptionsForUrl(criterion.object.relationships[criterion.verb].url)" ng-model="criterion.value" ng-show="criterion.object.relationships[criterion.verb].type == 'select' && criterion.object.relationships[criterion.verb].url" style="width:100%">
+				</div>
+
+				<!-- NUMBER RANGES -->
+				<div class="col-sm-5" ng-show="criterion.object.relationships[criterion.verb].type == 'range'">
+					<div class="row">
+						<div class="col-sm-2">
+							<input class="form-control" ng-model="criterion.value">
+						</div>
+
+						<div class="col-sm-1">
+							<span></span>
+						</div>
+
+						<div class="col-sm-2">
+							<input class="form-control" ng-model="criterion.value2">
+						</div>
+					</div>
+				</div>
+
+				<div class="add-delete">
+					<a href="#" a-prevent-default class="criterion-add pull-right" ng-click="addCriterion($index)">
+						<span class="pe-7s-plus pe-3x"></span>
+					</a>
+					<a href="#" a-prevent-default class="criterion-delete pull-right" ng-hide="$first && $last" ng-click="deleteCriterion($index)">
+						<span class="pe-7s-less pe-3x"></span>
+					</a>
+				</div>
+				
+			</div>
+			<div class="row">
+				<div class="col-xs-12">
+					<div class="form-group">
+						<p class="thin">Add People</p>
+						<input type="hidden" ui-select2="addPeopleSelectOptions" ng-model="people" multiple style="width:100%">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn" ng-click="cancel()">Cancel</button>
+		<button class="btn green" ng-click="done()">Create Group</button>
+	</div>
+</div>

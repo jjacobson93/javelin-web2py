@@ -1,0 +1,129 @@
+@import "variables.less";
+
+/***** LOGIN *****/
+
+section.login {
+	// max-height: 242px;
+	max-width: 388px;
+	margin: 80px auto 0;
+	position: relative;
+	// top: -100px;
+	// bottom: 0;
+	left: 80px;
+	// right: 0;
+
+	&:before {
+		content: '';
+		border-style: solid;
+		border-width: 12px 12px 12px 0;
+		border-color: transparent @lightgray-color transparent transparent;
+		height: 0;
+		position: absolute;
+		left: -12px;
+		top: 35px;
+		width: 0;
+		-webkit-transform: rotate(360deg);
+	}
+}
+
+.login-icon {
+	// border: 2px solid darken(@lightgray-color, 10%);
+	// border-radius: 90px;
+	// display: inline-block;
+	position: absolute;
+	left: -190px;
+	top: -20px;
+
+	& img {
+		margin: -2px;
+	}
+
+	& h4 {
+		line-height: 34px;
+		padding: 0 20px;
+		font-weight: 300;
+		color: @lightgray-color;
+	}
+
+	& h4 > small {
+		display: block;
+		font-size: 100%;
+		font-weight: 700;
+		color: @lightgray-color;
+	}
+}
+
+.login-form {
+	padding: 24px;
+	border-radius: 6px;
+	background-color: @lightgray-color;
+	// margin: 20px auto 66px;
+}
+
+.login-form .form-group:last-child {
+	margin-bottom: 0;
+}
+
+.login-form a {
+	text-align: center;
+	color: @dark-lightgray-color;
+	display: block;
+
+	&:hover,
+	&:focus,
+	&:active, 
+	&::selection {
+		color: @blue-color;
+		text-decoration: none;
+	}
+}
+
+// @media screen and (max-width: 480px) {
+// 	div.login-form {
+// 		width: 100%;
+// 	}
+// }
+
+@media screen and (max-width: 620px) {
+	.login-icon {
+		left: 8px;
+		top: -184px;
+
+		& h4 {
+			display: inline-block;
+			margin-top: 18px;
+			vertical-align: middle;
+		}
+	}
+
+	section.login {
+		top: 200px;
+		left: 0;
+		width: 100%;
+		margin: 0;
+		max-width: 100%;
+
+		&:before {
+			content: '';
+			border-style: solid;
+			border-width: 12px 12px 12px 0;
+			border-color: transparent @lightgray-color transparent transparent;
+			height: 0;
+			position: absolute;
+			left: 78px;
+			top: -18px;
+			width: 0;
+			-webkit-transform: rotate(90deg);
+		}
+	}
+
+	.login-form {
+		width: 100%;
+	}
+}
+
+div.login-form input {
+	width: 100%;
+	height: 45px;
+	// font-weight: bold;
+}

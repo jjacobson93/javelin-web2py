@@ -1,0 +1,49 @@
+.tab-pane {
+	opacity: 0;
+	-webkit-transition: opacity 1s linear;
+	-o-transition: opacity 1s linear;
+	transition: opacity 1s linear;
+
+	&.active {
+		opacity: 1;
+	}
+
+	&.active-add {
+		-webkit-animation: fadeIn 0.8s;
+		-moz-animation: fadeIn 0.8s;
+		-ms-animation: fadeIn 0.8s;
+		animation: fadeIn 0.8s;
+	}
+
+	&.active-remove {
+		-webkit-animation: fadeOut 0.8s;
+		-moz-animation: fadeOut 0.8s;
+		-ms-animation: fadeOut 0.8s;
+		animation: fadeOut 0.8s;
+	}
+}
+
+// .fade-out-down {
+// 	&.ng-animate {
+
+// 	}
+
+// 	&.ng-enter,
+// 	&.ng-leave {
+
+// 	}
+
+// 	&.ng-enter {
+
+// 		&.ng-enter-active {
+
+// 		}
+// 	}
+
+// 	&.ng-leave {
+
+// 		&.ng-leave-active {
+			
+// 		}
+// 	}
+// }
